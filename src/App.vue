@@ -1,119 +1,71 @@
-<script setup>
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from '@/components/HelloWorld.vue'
-</script>
-
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
+  <section class="px-11 py-7.5 text-center bg-white shadow-layer1">
+    <h4>要結束對話嗎?</h4>
+    <h4>請為此客服評分</h4>
+    <div class="mt-2.5 text-gray-2 text-xs">
+      <h4>請為客服人員 劉傑明 本次的服務評分</h4>
+      <h4>留下評論讓我們做得更好</h4>
     </div>
-  </header>
-
-  <RouterView />
+    <div class="flex justify-center my-5">
+      <div
+        v-for="(item, idx) in 5"
+        :key="idx"
+        class="star cursor-pointer"
+        @click="handleScore(idx)"
+        @mouseover="handleMouseIn(idx)"
+        @mouseleave="handleMouseOut(idx)"
+      >
+        <StarIcon
+          :class="idx <= score - 1 ? 'text-green-Default' : 'text-gray-6'"
+        />
+      </div>
+    </div>
+    <textarea class="w-full h-16 resize-none outline-0"></textarea>
+    <button
+      class="w-35 mt-5 p-2.5 mx-auto text-gray-2 bg-orange-Default rounded-full"
+    >
+      結束對話
+    </button>
+    <button
+      class="w-35 mt-5 p-2.5 mx-auto text-gray-2 border border-orange-Default rounded-full"
+      @click="$emit('onCloseDialog')"
+    >
+      返回對話
+    </button>
+  </section>
 </template>
 
-<style>
-@import '@/assets/base.css';
+<script>
+import StarIcon from "@/components/svg/BigStar.vue";
+// import { reactive } from '@vue/reactivity'
+import { ref } from "vue";
+export default {
+  setup() {
+    const score = ref(0);
+    // const rating = reactive({
+    //   score
+    // })
+    return { score };
+  },
+  components: {
+    StarIcon,
+  },
+  methods: {
+    handleScore(idx) {
+      this.clickScore = idx + 1;
+    },
+    handleMouseIn(idx) {
+      this.score = idx + 1;
+    },
+    handleMouseOut() {
+      this.score = this.clickScore;
+    },
+  },
+};
+</script>
 
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-
-  font-weight: normal;
-}
-
-header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-a,
-.green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
-}
-
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
-  }
-}
-
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
-  }
-
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
-  }
-
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
+<style scoped>
+.star + .star {
+  @apply ml-2.5;
 }
 </style>
