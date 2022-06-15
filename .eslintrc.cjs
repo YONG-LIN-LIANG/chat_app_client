@@ -10,8 +10,18 @@ module.exports = {
   ],
   rules: {
     "prettier/prettier": ["error", { endOfLine: "auto" }],
+    "vue/no-multiple-template-root": "off",
+    "vue/multi-word-component-names": [
+      "error",
+      {
+        ignores: ["default"],
+      },
+    ],
   },
   env: {
     "vue/setup-compiler-macros": true,
+    browser: true,
+    amd: true,
+    node: true,
   },
 };

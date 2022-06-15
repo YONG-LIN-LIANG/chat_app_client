@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Login from "@/views/Login.vue";
+import CsLogin from "@/views/CsLogin.vue";
 import CsRoom from "@/views/CsRoom.vue";
 import ClientRoom from "@/views/ClientRoom.vue";
 
@@ -7,18 +7,18 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: "/Login",
-      name: "Login",
-      component: Login,
+      path: "/login",
+      name: "login",
+      component: CsLogin,
     },
     {
-      path: "/CsRoom",
-      name: "CsRoom",
+      path: "/csRoom",
+      name: "csRoom",
       component: CsRoom,
     },
     {
-      path: "/ClientRoom",
-      name: "ClientRoom",
+      path: "/clientRoom",
+      name: "clientRoom",
       component: ClientRoom,
     },
     // {
