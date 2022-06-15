@@ -1,0 +1,123 @@
+@font-face {
+	font-family: 'Noto Sans TC';
+	font-style: normal;
+	src: local('Noto Sans TC');
+	/* // src: url(@/assets/Noto_Sans_TC/NotoSansTC-Thin.otf) format('opentype'); */
+}
+
+/* // scss變數
+// $gray1: #333;
+// $gray2: #4f4f4f;
+//  $gray3: #828282;
+// $gray4: #bdbdbd;
+// $gray5: #e0e0e0;
+// $gray6: #f2f2f2;
+// $gray7: #FCFCFC;
+// $cs_green: #bbdc75;
+// $cs_green20: #f1f8e3;
+// $cs_green50: #ddedba;
+// $cs_green-50: #5d6e3a;
+// $cs_green-70: #384223;
+// $cs_neon_green: #e3ff39;
+// $cs_orange: #faa677;
+// $cs_orange20: #feede4;
+// $cs_orange-90: #e1956b;
+// $cs_red: #ff483d; */
+
+
+/* // 通用css */
+
+
+
+body {
+	font-family: 'Noto Sans TC', sans-serif;
+	@apply m-0
+}
+
+img {
+	@apply w-full h-full object-contain
+}
+
+ul,
+li {
+	@apply list-none m-0 p-0
+}
+
+select, input, textarea{
+	height: 40px;
+	@apply text-sm text-gray-2 box-border border border-green-w50 rounded px-2.5;
+}
+select:focus, input:focus{
+	@apply outline-none border border-solid border-green-Default
+}
+
+/* // 必填 * */
+.required{
+	@apply text-red
+}
+/* width */
+::-webkit-scrollbar {
+	width: 6px;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+	@apply bg-gray-6 rounded
+  }
+   
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+	background: #ddedba; 
+	@apply rounded
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+	background: #bbdc75; 
+  }
+
+
+#app {
+	font-family: 'Noto Sans TC', sans-serif;
+	@apply m-0
+}
+.btn_primary--orange{
+	width: 140px;
+	height: 36px;
+
+	@apply bg-orange-Default text-gray-1 flex items-center justify-center cursor-pointer tracking-wider rounded-3xl font-normal /*font-weight: 400;  */
+}
+.btn_primary--green{
+	width: 140px;
+	height: 36px;
+
+	@apply bg-green-Default text-gray-1 flex items-center justify-center cursor-pointer tracking-wider rounded-3xl font-normal
+}
+.btn_secondary-orange{
+	width: 140px;
+	height: 36px;
+
+	@apply bg-white border border-orange-Default text-gray-1 flex items-center justify-center cursor-pointer tracking-wider rounded-3xl font-normal /*font-weight: 400;  */
+}
+.title{
+	height: 40px;
+	@apply box-border w-full px-14 lg:px-7 shadow-layer2 bg-white fixed top-0  left-48 lg:left-36 sm:top-16 sm:left-0 z-20 leading-12
+}
+.unread {
+	width: 18px;
+	height: 18px;
+	@apply text-center text-white bg-orange-Default rounded-full
+}
+.chat_source {
+	@apply text-sm inline-block text-gray-2 bg-orange-w20 m-1 px-3.5 py-1 rounded-tl-20 rounded-br-20 rounded-tr-3 rounded-bl-3;
+}
+
+/* 置中 */
+.flex-center {
+	@apply flex justify-center items-center;
+}
+
+/* form */
+.search_tag{
+	@apply  cursor-pointer text-sm text-gray-1 rounded-20 mx-1.5 my-0 px-3.5 py-1.5 border border-solid border-green-Default 
+}
