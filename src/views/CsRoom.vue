@@ -12,17 +12,15 @@ export default {
 		Msg,
 		Ranking,
 		Score,
-		// LeaveModule,
 	},
 }
 </script>
 
 <template>
 	<Sidebar />
-	<Msg />
+	<!-- <Msg /> -->
 	<!-- <Ranking /> -->
-	<!-- <Score /> -->
-	<!-- <LeaveModule /> -->
+	<Score />
 </template>
 
 <style scoped></style>
