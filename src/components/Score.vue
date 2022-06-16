@@ -1,5 +1,5 @@
 <script>
-import { ref, reactive } from 'vue'
+import { ref, reactive, watch } from 'vue'
 import StarIcon from '@/components/svg/Star.vue'
 import SearchIcon from '@/components/svg/Search.vue'
 import TriangleIcon from '@/components/svg/Triangle.vue'
@@ -17,7 +17,7 @@ export default {
 				rating: 5,
 				website: ' 大碩研究所官網',
 				comment: '讚不絕口讚不絕口服服貼貼服服貼貼',
-				created_time: '2022-01-01 14:10',
+				created_time: '2022-01-05 14:10',
 			},
 			{
 				name: '林昕柏辰',
@@ -25,7 +25,7 @@ export default {
 				website: '洋碩官網',
 				comment:
 					'好像有一點哪裡怪怪的他好像有一點怪怪的好像有一點哪裡怪怪的他好像有一點怪怪的好像有一點哪裡怪怪的他好像有一點怪怪的',
-				created_time: '2022-01-02 14:20',
+				created_time: '2022-01-04 14:20',
 			},
 			{
 				name: '林柏辰',
@@ -39,24 +39,46 @@ export default {
 				rating: 3,
 				website: '洋碩官網',
 				comment: '喔',
-				created_time: '2022-01-04 14:20',
+				created_time: '2022-01-02 14:20',
 			},
 			{
 				name: '余本',
 				rating: 4,
 				website: '洋碩官網',
 				comment: 'ㄛㄛ好',
-				created_time: '2022-01-05 14:30',
+				created_time: '2022-01-01 14:30',
 			},
 			{
 				name: '茶茶',
 				rating: 5,
 				website: '洋碩官網',
 				comment: '感覺克服很霸氣><喜翻>///<',
-				created_time: '2022-01-06 14:40',
+				created_time: '2022-01-01 14:40',
 			},
 		])
 		const commentsCount = comments.length
+
+		// 評論排序
+		// 評論排序預設為 1 最新
+		const sort = ref('1')
+
+		comments.forEach((i) => {
+			i.timeCode = Math.floor(new Date(i.created_time) / 1000)
+		})
+
+		watch(sort, (newVal, oldVal) => {
+			switch (newVal) {
+				case '1':
+					comments.sort((a, b) => b.timeCode - a.timeCode)
+					break
+				case '2':
+					comments.sort((a, b) => b.rating - a.rating)
+					break
+				case '3':
+					comments.sort((a, b) => a.rating - b.rating)
+					break
+			}
+		})
 
 		//轉換created_time
 		comments.forEach((i) => {
@@ -98,7 +120,7 @@ export default {
 			}
 		})
 
-		return { comments, commentsCount, ratingCount, ratingCountFilter, searchFilter, handleToggleSearch }
+		return { comments, commentsCount, ratingCount, ratingCountFilter, searchFilter, handleToggleSearch, sort }
 	},
 }
 </script>
@@ -228,10 +250,10 @@ export default {
 					</div>
 					<div class="flex items-center">
 						<label for="" class="text-sm text-gray-2 mx-3 my-1.5 whitespace-nowrap"> 排序 </label>
-						<select class="w-full h-7" name="" id="">
-							<option value="">最新</option>
-							<option value="">由高至低</option>
-							<option value="">由低至高</option>
+						<select v-model="sort" class="w-full h-7" name="" id="">
+							<option value="1">最新</option>
+							<option value="2">由高至低</option>
+							<option value="3">由低至高</option>
 						</select>
 					</div>
 				</div>
