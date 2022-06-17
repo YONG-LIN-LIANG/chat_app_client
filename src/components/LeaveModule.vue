@@ -1,20 +1,23 @@
-<script>
-export default {
-  props: {
-    chatEnd_closed: {
-      type: Boolean,
-    },
-    handle_chatEnd_closed: {
-      type: Function,
-    },
-  },
+<script setup>
+import { defineEmits } from "vue";
+const emit = defineEmits(["on-toggle"]);
+const handleToggleDialog = () => {
+  emit("on-toggle");
 };
+// const props = defineProps({
+//   chatEnd_closed: {
+//     type: Boolean,
+//   },
+// });
 </script>
+
 <template>
   <div
     :class="[
-      'module_section w-full h-full fixed top-0 left-0',
-      { hidden: chatEnd_closed },
+      'module_section w-full h-full fixed top-0 left-0 transition ease-in-out duration-300',
+      chatEnd_closed
+        ? 'opacity-0 pointer-events-none'
+        : 'opacity-100 pointer-events-auto',
     ]"
   >
     <div class="bg_black bg-gray-2 w-full h-full opacity-20"></div>
@@ -27,10 +30,10 @@ export default {
         <p>直到同個使用者再度傳送客服訊息。</p>
       </div>
       <div class="btn_wrap flex justify-center sm:flex-col">
-        <div class="btn_secondary-orange m-2" @click="handle_chatEnd_closed()">
+        <div class="btn_secondary-orange m-2" @click="handleToggleDialog">
           返回對話
         </div>
-        <div class="btn_primary--orange m-2" @click="handle_chatEnd_closed()">
+        <div class="btn_primary--orange m-2" @click="handleToggleDialog">
           結束對話
         </div>
       </div>
