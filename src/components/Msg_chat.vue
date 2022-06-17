@@ -10,8 +10,14 @@ export default {
   },
   setup() {
     const SourceList = reactive({
-      roomGroupId: "5487001",
-      userName: "Molly",
+      client: {
+        roomId: 0,
+        group: "",
+        website: "",
+        name: "",
+        uuid: "",
+        socketId: "",
+      },
       data: [
         {
           roomId: "1",
