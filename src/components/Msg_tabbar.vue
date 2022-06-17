@@ -10,14 +10,6 @@ import TabBtn from '@/components/TabBtn.vue'
 import slideUpDown from 'vue3-slide-up-down'
 export default {
 	setup() {
-		const tabList = reactive({
-			active: 2,
-			list: [
-				{ id: 1, name: '列表', icon: 'ChatIcon' },
-				{ id: 2, name: '搜尋', icon: 'SearchIcon' },
-				{ id: 3, name: '分類', icon: 'ListIcon' },
-			],
-		})
 		const chatList = reactive({
 			active: 0,
 			list: [
@@ -166,7 +158,7 @@ export default {
 			}
 		}
 
-		return { tabList, chatList, category, handleGroup }
+		return { chatList, category, handleGroup }
 	},
 	components: {
 		ChatIcon,
@@ -178,10 +170,15 @@ export default {
 		TabBtn,
 		slideUpDown,
 	},
+	props: {
+		tabList: {
+			type: Object,
+		},
+	},
 }
 </script>
 <template>
-	<div :class="tabList.active ? 'tabbar_func_open' : 'tabbar_func_closed'">
+	<div :class="['mr-16', tabList.active ? 'tabbar_func_open' : 'tabbar_func_closed']">
 		<!-- 列表 -->
 		<div
 			v-show="tabList.active === 1"
@@ -401,7 +398,9 @@ export default {
 		</div>
 	</div>
 
-	<ul class="tabbar_section w-16 min-w-16 flex flex-col items-center bg-gray-7 pt-5 tabbar_section--xs">
+	<ul
+		class="tabbar_section w-16 min-w-16 h-screen flex flex-col items-center bg-gray-7 pt-5 tabbar_section--xs fixed right-0"
+	>
 		<!-- xs:w-full xs:fixed xs:bottom-0 xs:left-0 xs:flex-row xs:justify-between xs:px-16 -->
 		<TabBtn
 			v-for="item in tabList.list"

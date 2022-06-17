@@ -25,13 +25,9 @@ export default {
 				},
 			],
 		})
-		// 預設頁面為訊息頁
-		const menuList_active = ref('訊息')
 
 		return {
 			menu,
-			// menuList,
-			menuList_active,
 		}
 	},
 	components: {
