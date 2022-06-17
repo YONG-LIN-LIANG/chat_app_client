@@ -18,9 +18,10 @@ export default {
 
 <template>
 	<Sidebar />
+	<router-view></router-view>
 	<!-- <Msg /> -->
 	<!-- <Ranking /> -->
-	<Score />
+	<!-- <Score /> -->
 </template>
 
 <style scoped></style>
