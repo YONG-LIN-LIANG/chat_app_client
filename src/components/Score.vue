@@ -186,7 +186,7 @@ export default {
 								包含評論
 							</div>
 						</div>
-						<form action="" class="mb-10">
+						<form action="" class="mb-8">
 							<div class="flex flex-col items-start mb-2.5">
 								<label for="" class="text-sm text-gray-2 m-1.5">
 									<span class="required opacity-0">*</span>
@@ -234,6 +234,7 @@ export default {
 								</div>
 							</div>
 						</form>
+						<div class="h-6 mb-8 text-red text-center">請輸入完整日期區間</div>
 						<div class="btn_primary--green mx-auto">搜尋</div>
 						<p class="text-green-b50 my-4 text-center cursor-pointer hover:text-orange-Default">
 							清除所有篩選條件
@@ -291,7 +292,7 @@ export default {
 }
 
 .search_filter_open {
-	@apply h-151;
+	@apply h-165;
 }
 .search_filter_close {
 	@apply h-0;
