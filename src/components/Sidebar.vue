@@ -1,41 +1,29 @@
-<script>
+<script setup>
 import CSLogo from '@/components/svg/Logo.vue'
 import StarIcon from '@/components/svg/Star.vue'
 import Hamburger from '@/components/svg/Hamburger.vue'
 import { ref, reactive } from 'vue'
-export default {
-	setup() {
-		const menu = reactive({
-			active: 0,
-			list: [
-				{
-					id: 0,
-					name: '訊息',
-					router: '/CsRoom/msg',
-				},
-				{
-					id: 1,
-					name: '排行榜',
-					router: '/CsRoom/ranking',
-				},
-				{
-					id: 2,
-					name: '登出',
-					router: '/Login',
-				},
-			],
-		})
 
-		return {
-			menu,
-		}
-	},
-	components: {
-		CSLogo,
-		StarIcon,
-		Hamburger,
-	},
-}
+const menu = reactive({
+	active: 0,
+	list: [
+		{
+			id: 0,
+			name: '訊息',
+			router: '/CsRoom/msg',
+		},
+		{
+			id: 1,
+			name: '排行榜',
+			router: '/CsRoom/ranking',
+		},
+		{
+			id: 2,
+			name: '登出',
+			router: '/Login',
+		},
+	],
+})
 </script>
 
 <template>

@@ -1,5 +1,5 @@
-<script>
-import { reactive } from 'vue'
+<script setup>
+import { reactive, props } from 'vue'
 import ChatIcon from '@/components/svg/Chat.vue'
 import SearchIcon from '@/components/svg/Search.vue'
 import ListIcon from '@/components/svg/List.vue'
@@ -8,174 +8,161 @@ import ReturnIcon from '@/components/svg/Return.vue'
 import TriangleIcon from '@/components/svg/Triangle.vue'
 import TabBtn from '@/components/TabBtn.vue'
 import slideUpDown from 'vue3-slide-up-down'
-export default {
-	setup() {
-		const chatList = reactive({
-			active: 0,
+
+const chatList = reactive({
+	active: 0,
+	list: [
+		{
+			id: 1,
+			customer: '伊藤馬林',
+			unread: 4,
+			time: '12:21',
+			type: 'text',
+			lastTag: '',
+			lastMsg: {
+				msg: '聽說你們補習班很厲害',
+				from: 'customer',
+			},
+		},
+		{
+			id: 2,
+			customer: '吳大揆',
+			unread: 11,
+			time: '12:10',
+			type: 'tag',
+			lastTag: '托福',
+			lastMsg: {
+				msg: '',
+				from: '',
+			},
+		},
+		{
+			id: 3,
+			customer: '林三良',
+			unread: 2,
+			time: '11:59',
+			type: 'text',
+			lastTag: '托福',
+			lastMsg: {
+				msg: '安安你好請問',
+				from: 'service',
+			},
+		},
+	],
+})
+const category = reactive({
+	groupActive: [0],
+	webActive: 1,
+	group: [
+		{
+			id: 1,
+			open: false,
+			name: '通路事業群',
 			list: [
 				{
-					id: 1,
-					customer: '伊藤馬林',
-					unread: 4,
-					time: '12:21',
-					type: 'text',
-					lastTag: '',
-					lastMsg: {
-						msg: '聽說你們補習班很厲害',
-						from: 'customer',
-					},
+					webId: 1,
+					webName: '數位學堂官網',
+					unread: '5',
 				},
 				{
-					id: 2,
-					customer: '吳大揆',
-					unread: 11,
-					time: '12:10',
-					type: 'tag',
-					lastTag: '托福',
-					lastMsg: {
-						msg: '',
-						from: '',
-					},
+					webId: 2,
+					webName: '大碩研究所官網',
+					unread: '5',
 				},
 				{
-					id: 3,
-					customer: '林三良',
-					unread: 2,
-					time: '11:59',
-					type: 'text',
-					lastTag: '托福',
-					lastMsg: {
-						msg: '安安你好請問',
-						from: 'service',
-					},
+					webId: 3,
+					webName: '龍門轉學考官網',
+					unread: '',
+				},
+				{
+					webId: 4,
+					webName: '百官官網',
+					unread: '5',
 				},
 			],
-		})
-		const category = reactive({
-			groupActive: [0],
-			webActive: 1,
-			group: [
+		},
+		{
+			id: 2,
+			open: false,
+			name: '美語事業群',
+			list: [
 				{
-					id: 1,
-					open: false,
-					name: '通路事業群',
-					list: [
-						{
-							webId: 1,
-							webName: '數位學堂官網',
-							unread: '5',
-						},
-						{
-							webId: 2,
-							webName: '大碩研究所官網',
-							unread: '5',
-						},
-						{
-							webId: 3,
-							webName: '龍門轉學考官網',
-							unread: '',
-						},
-						{
-							webId: 4,
-							webName: '百官官網',
-							unread: '5',
-						},
-					],
+					webId: 5,
+					webName: '洋碩官網',
+					unread: '4',
 				},
 				{
-					id: 2,
-					open: false,
-					name: '美語事業群',
-					list: [
-						{
-							webId: 5,
-							webName: '洋碩官網',
-							unread: '4',
-						},
-						{
-							webId: 6,
-							webName: '放洋留遊學官網 ',
-							unread: '12',
-						},
-						{
-							webId: 7,
-							webName: '約課系統',
-							unread: '5',
-						},
-						{
-							webId: 8,
-							webName: '線上購課與學習系統',
-							unread: '',
-						},
-					],
+					webId: 6,
+					webName: '放洋留遊學官網 ',
+					unread: '12',
 				},
 				{
-					id: 3,
-					open: false,
-					name: '學習顧問事業群',
-					list: [
-						{
-							webId: 9,
-							webName: '甄戰官網',
-							unread: '',
-						},
-						{
-							webId: 10,
-							webName: '落點分析平台 ',
-							unread: '1',
-						},
-						{
-							webId: 11,
-							webName: '18學群',
-							unread: '2',
-						},
-						{
-							webId: 12,
-							webName: '素養命題線上測驗',
-							unread: '',
-						},
-						{
-							webId: 13,
-							webName: '學習歷程',
-							unread: '3',
-						},
-						{
-							webId: 14,
-							webName: '線上家教',
-							unread: '',
-						},
-					],
+					webId: 7,
+					webName: '約課系統',
+					unread: '5',
+				},
+				{
+					webId: 8,
+					webName: '線上購課與學習系統',
+					unread: '',
 				},
 			],
-		})
-		const handleGroup = function (item) {
-			if (!category.groupActive.includes(item.id)) {
-				category.groupActive.push(item.id)
-				item.open = true
-			} else {
-				category.groupActive.splice(category.groupActive.indexOf(item.id), 1)
-				item.open = false
-			}
-		}
-
-		return { chatList, category, handleGroup }
-	},
-	components: {
-		ChatIcon,
-		SearchIcon,
-		ListIcon,
-		MemberIcon,
-		ReturnIcon,
-		TriangleIcon,
-		TabBtn,
-		slideUpDown,
-	},
+		},
+		{
+			id: 3,
+			open: false,
+			name: '學習顧問事業群',
+			list: [
+				{
+					webId: 9,
+					webName: '甄戰官網',
+					unread: '',
+				},
+				{
+					webId: 10,
+					webName: '落點分析平台 ',
+					unread: '1',
+				},
+				{
+					webId: 11,
+					webName: '18學群',
+					unread: '2',
+				},
+				{
+					webId: 12,
+					webName: '素養命題線上測驗',
+					unread: '',
+				},
+				{
+					webId: 13,
+					webName: '學習歷程',
+					unread: '3',
+				},
+				{
+					webId: 14,
+					webName: '線上家教',
+					unread: '',
+				},
+			],
+		},
+	],
+})
+const handleGroup = function (item) {
+	if (!category.groupActive.includes(item.id)) {
+		category.groupActive.push(item.id)
+		item.open = true
+	} else {
+		category.groupActive.splice(category.groupActive.indexOf(item.id), 1)
+		item.open = false
+	}
+}
+const props = defineProps({
 	props: {
 		tabList: {
 			type: Object,
 		},
 	},
-}
+})
 </script>
 <template>
 	<div :class="['mr-16', tabList.active ? 'tabbar_func_open' : 'tabbar_func_closed']">

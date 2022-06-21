@@ -1,35 +1,24 @@
-<script>
+<script setup>
 import { ref, reactive } from 'vue'
 import Msg_topbar from '@/components/Msg_topbar.vue'
 import Msg_chat from '@/components/Msg_chat.vue'
 import Msg_send from '@/components/Msg_send.vue'
 import Msg_tabbar from '@/components/Msg_tabbar.vue'
 import LeaveModule from '@/components/LeaveModule.vue'
-export default {
-	setup() {
-		const chatEnd_closed = ref(true)
-		const handle_chatEnd_closed = () => {
-			chatEnd_closed.value = !chatEnd_closed.value
-		}
 
-		const tabList = reactive({
-			active: 0,
-			list: [
-				{ id: 1, name: '列表', icon: 'ChatIcon' },
-				{ id: 2, name: '搜尋', icon: 'SearchIcon' },
-				{ id: 3, name: '分類', icon: 'ListIcon' },
-			],
-		})
-		return { chatEnd_closed, handle_chatEnd_closed, tabList }
-	},
-	components: {
-		Msg_topbar,
-		Msg_chat,
-		Msg_send,
-		Msg_tabbar,
-		LeaveModule,
-	},
+const chatEnd_closed = ref(true)
+const handle_chatEnd_closed = () => {
+	chatEnd_closed.value = !chatEnd_closed.value
 }
+
+const tabList = reactive({
+	active: 0,
+	list: [
+		{ id: 1, name: '列表', icon: 'ChatIcon' },
+		{ id: 2, name: '搜尋', icon: 'SearchIcon' },
+		{ id: 3, name: '分類', icon: 'ListIcon' },
+	],
+})
 </script>
 <template>
 	<div class="msg ml-48 lg:ml-36 sm:ml-0">
