@@ -3,9 +3,9 @@ import CsLogin from '@/views/CsLogin.vue'
 import CsRoom from '@/views/CsRoom.vue'
 import ClientRoom from '@/views/ClientRoom.vue'
 import { MagicString } from 'vue/compiler-sfc'
-import Msg from '@/components/Msg.vue'
-import Ranking from '@/components/Ranking.vue'
-import Score from '@/components/Score.vue'
+import Msg from '@/components/csRoom/Msg.vue'
+import Ranking from '@/components/csRoom/Ranking.vue'
+import Score from '@/components/csRoom/Score.vue'
 
 const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),

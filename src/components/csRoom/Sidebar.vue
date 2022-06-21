@@ -2,7 +2,7 @@
 import CSLogo from '@/components/svg/Logo.vue'
 import StarIcon from '@/components/svg/Star.vue'
 import Hamburger from '@/components/svg/Hamburger.vue'
-import { ref, reactive } from 'vue'
+import { reactive } from 'vue'
 
 const menu = reactive({
 	active: 0,

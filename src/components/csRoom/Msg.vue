@@ -1,10 +1,10 @@
 <script setup>
 import { ref, reactive } from 'vue'
-import Msg_topbar from '@/components/Msg_topbar.vue'
-import Msg_chat from '@/components/Msg_chat.vue'
-import Msg_send from '@/components/Msg_send.vue'
-import Msg_tabbar from '@/components/Msg_tabbar.vue'
-import LeaveModule from '@/components/LeaveModule.vue'
+import MsgTopbar from '@/components/csRoom/MsgTopbar.vue'
+import MsgChat from '@/components/csRoom/MsgChat.vue'
+import MsgSend from '@/components/csRoom/MsgSend.vue'
+import MsgTabbar from '@/components/csRoom/MsgTabbar.vue'
+import LeaveModule from '@/components/csRoom/LeaveModule.vue'
 
 const chatEnd_closed = ref(true)
 const handle_chatEnd_closed = () => {
@@ -25,11 +25,11 @@ const tabList = reactive({
 		<div class="title">訊息</div>
 		<div class="flex mt-10 sm:mt-[6.5rem]">
 			<div :class="['msg_chatBox w-full', tabList.active === 0 ? '' : 'lg:hidden']">
-				<Msg_topbar @onToggle="handle_chatEnd_closed" />
-				<Msg_chat />
-				<Msg_send />
+				<MsgTopbar @onToggle="handle_chatEnd_closed" />
+				<MsgChat />
+				<MsgSend />
 			</div>
-			<Msg_tabbar :tabList="tabList" />
+			<MsgTabbar :tabList="tabList" />
 			<LeaveModule :chatEnd_closed="chatEnd_closed" @onToggle="handle_chatEnd_closed" />
 		</div>
 	</div>

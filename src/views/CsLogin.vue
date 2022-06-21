@@ -1,45 +1,45 @@
 <script setup>
 import CSLogo from '@/components/svg/Logo.vue'
-import { useSocketStore } from '@/stores/socket'
+// import { useSocketStore } from '@/stores/socket'
 import { useCsStore } from '@/stores/cs'
 import { reactive, onBeforeMount } from 'vue'
 import { useRouter } from 'vue-router'
 const router = useRouter()
-const socketStore = useSocketStore()
+// const socketStore = useSocketStore()
 const csStore = useCsStore()
-const { socket } = socketStore
-onBeforeMount(() => {
-	socket.on('resLogin', (data) => {
-		const { identity, status } = data
-		if (identity !== 1) return
-		else {
-			if (status === 201) {
-				// 登入成功
-				console.log('loginData', data)
-				csStore.setCs({
-					uuid: data.uuid,
-					socketId: data.socketId,
-					name: data.name,
-				})
-				csStore.setRoomList(data.roomList)
-				router.push({ name: 'csRoom' })
-			} else {
-				// 帳號密碼錯誤
-				console.log('loginFail', data)
-			}
-		}
-	})
-	socket.on('resLogout', (data) => {
-		const { identity } = data
-		if (identity === 1) {
-			console.log('this is..', identity)
-			// 推回登入頁
-			router.push({ name: 'login' })
-			// 把客服人員個人資料清空
-			csStore.setCs({})
-		}
-	})
-})
+// const { socket } = socketStore
+// onBeforeMount(() => {
+// 	socket.on('resLogin', (data) => {
+// 		const { identity, status } = data
+// 		if (identity !== 1) return
+// 		else {
+// 			if (status === 201) {
+// 				// 登入成功
+// 				console.log('loginData', data)
+// 				csStore.setCs({
+// 					uuid: data.uuid,
+// 					socketId: data.socketId,
+// 					name: data.name,
+// 				})
+// 				csStore.setRoomList(data.roomList)
+// 				router.push({ name: 'csRoom' })
+// 			} else {
+// 				// 帳號密碼錯誤
+// 				console.log('loginFail', data)
+// 			}
+// 		}
+// 	})
+// 	socket.on('resLogout', (data) => {
+// 		const { identity } = data
+// 		if (identity === 1) {
+// 			console.log('this is..', identity)
+// 			// 推回登入頁
+// 			router.push({ name: 'login' })
+// 			// 把客服人員個人資料清空
+// 			csStore.setCs({})
+// 		}
+// 	})
+// })
 const form = reactive({
 	account: '',
 	password: '',
@@ -51,12 +51,12 @@ function handleLogin() {
 		return
 	}
 	form.errorMessage = ''
-	const socketData = {
-		identity: 1,
-		account: form.account,
-		password: form.password,
-	}
-	socket.emit('reqLogin', socketData)
+	// const socketData = {
+	// 	identity: 1,
+	// 	account: form.account,
+	// 	password: form.password,
+	// }
+	// socket.emit('reqLogin', socketData)
 }
 </script>
 

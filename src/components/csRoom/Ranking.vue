@@ -1,6 +1,6 @@
 <script setup>
 import { reactive } from 'vue'
-import RankingInfo from '@/components/RankingInfo.vue'
+import RankingInfo from '@/components/csRoom/RankingInfo.vue'
 import SunIcon from '@/components/svg/Sun.vue'
 
 const ratingList = reactive([

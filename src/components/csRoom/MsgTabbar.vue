@@ -1,12 +1,12 @@
 <script setup>
-import { reactive, props } from 'vue'
+import { reactive, defineProps } from 'vue'
 import ChatIcon from '@/components/svg/Chat.vue'
 import SearchIcon from '@/components/svg/Search.vue'
 import ListIcon from '@/components/svg/List.vue'
 import MemberIcon from '@/components/svg/Member.vue'
 import ReturnIcon from '@/components/svg/Return.vue'
 import TriangleIcon from '@/components/svg/Triangle.vue'
-import TabBtn from '@/components/TabBtn.vue'
+import TabBtn from '@/components/csRoom/TabBtn.vue'
 import slideUpDown from 'vue3-slide-up-down'
 
 const chatList = reactive({
@@ -157,10 +157,8 @@ const handleGroup = function (item) {
 	}
 }
 const props = defineProps({
-	props: {
-		tabList: {
-			type: Object,
-		},
+	tabList: {
+		type: Object,
 	},
 })
 </script>
