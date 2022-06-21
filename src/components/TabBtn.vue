@@ -1,3 +1,14 @@
+<script setup>
+import { defineProps } from 'vue'
+import ChatIcon from '@/components/svg/Chat.vue'
+import SearchIcon from '@/components/svg/Search.vue'
+import ListIcon from '@/components/svg/List.vue'
+
+const props = defineProps({
+	info: Object,
+	tabList: Object,
+})
+</script>
 <template>
 	<li
 		:class="[
@@ -11,20 +22,6 @@
 		<span class="select-none xs:hidden">{{ info.name }}</span>
 	</li>
 </template>
-
-<script>
-import ChatIcon from '@/components/svg/Chat.vue'
-import SearchIcon from '@/components/svg/Search.vue'
-import ListIcon from '@/components/svg/List.vue'
-export default {
-	components: {
-		ChatIcon,
-		SearchIcon,
-		ListIcon,
-	},
-	props: { info: Object, tabList: Object },
-}
-</script>
 
 <style>
 .btn_tab--xs {
