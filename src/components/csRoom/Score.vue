@@ -162,73 +162,78 @@ comments.forEach((i) => {
 						</div>
 						<TriangleIcon :class="['transition duration-300', searchFilter ? '' : 'rotate-180']" />
 					</div>
-					<div
+					<form
+						action=""
 						:class="[
 							'search_filter_toggle transition-all duration-300 ease-in-out overflow-hidden',
 							searchFilter ? 'search_filter_open' : 'search_filter_close',
 						]"
 					>
 						<div class="chat_tags_opts_wrap my-4 flex">
-							<div
-								class="chat_tags_opts text-sm text-gray-2 rounded-20 m-1 bg-white border border-solid border-green-Default px-3.5 py-1.5"
+							<input class="hidden" type="checkbox" id="tag_containComment" />
+							<label
+								for="tag_containComment"
+								class="chat_tags_opts text-sm text-gray-2 rounded-20 m-1 border border-solid border-green-Default px-3.5 py-1.5 cursor-pointer"
+								checked
 							>
 								包含評論
+							</label>
+						</div>
+						<!-- <form action="" class="mb-8"> -->
+						<div class="flex flex-col items-start mb-2.5">
+							<label for="" class="text-sm text-gray-2 m-1.5">
+								<span class="required opacity-0">*</span>
+								<span>關鍵字</span>
+							</label>
+							<input type="text" class="w-full" />
+						</div>
+						<div class="flex flex-col items-start mb-2.5">
+							<label for="" class="text-sm text-gray-2 m-1.5">
+								<span class="required opacity-0">*</span>
+								<span>事業群</span>
+							</label>
+							<select class="w-full" name="" id="">
+								<option value="">請選擇事業群</option>
+								<option value="">美語業群</option>
+								<option value="">通路事業群</option>
+								<option value="">學習顧問事業群</option>
+								<option value="">千碩教育事業群</option>
+								<option value="">大碩教育</option>
+							</select>
+						</div>
+						<div class="search_filter flex flex-col items-start mb-2.5">
+							<label for="" class="text-sm text-gray-2 m-1.5">
+								<span class="required opacity-0">*</span>
+								<span>網站</span>
+							</label>
+							<select class="w-full" name="" id="">
+								<option value="">請選擇網站</option>
+								<option value="">美語業群</option>
+								<option value="">通路事業群</option>
+								<option value="">學習顧問事業群</option>
+								<option value="">千碩教育事業群</option>
+								<option value="">大碩教育</option>
+							</select>
+						</div>
+						<div class="flex flex-col items-start mb-2.5">
+							<label for="" class="text-sm text-gray-2 m-1.5">
+								<span class="required opacity-0">*</span>
+								<span>日期</span>
+							</label>
+							<div class="w-full flex flex-col items-center">
+								<input type="date" class="w-full" />
+								<p class="my-2">至</p>
+								<input type="date" class="w-full border-red" />
 							</div>
 						</div>
-						<form action="" class="mb-8">
-							<div class="flex flex-col items-start mb-2.5">
-								<label for="" class="text-sm text-gray-2 m-1.5">
-									<span class="required opacity-0">*</span>
-									<span>關鍵字</span>
-								</label>
-								<input type="text" class="w-full" />
-							</div>
-							<div class="flex flex-col items-start mb-2.5">
-								<label for="" class="text-sm text-gray-2 m-1.5">
-									<span class="required opacity-0">*</span>
-									<span>事業群</span>
-								</label>
-								<select class="w-full" name="" id="">
-									<option value="">請選擇事業群</option>
-									<option value="">美語業群</option>
-									<option value="">通路事業群</option>
-									<option value="">學習顧問事業群</option>
-									<option value="">千碩教育事業群</option>
-									<option value="">大碩教育</option>
-								</select>
-							</div>
-							<div class="search_filter flex flex-col items-start mb-2.5">
-								<label for="" class="text-sm text-gray-2 m-1.5">
-									<span class="required opacity-0">*</span>
-									<span>網站</span>
-								</label>
-								<select class="w-full" name="" id="">
-									<option value="">請選擇網站</option>
-									<option value="">美語業群</option>
-									<option value="">通路事業群</option>
-									<option value="">學習顧問事業群</option>
-									<option value="">千碩教育事業群</option>
-									<option value="">大碩教育</option>
-								</select>
-							</div>
-							<div class="flex flex-col items-start mb-2.5">
-								<label for="" class="text-sm text-gray-2 m-1.5">
-									<span class="required opacity-0">*</span>
-									<span>日期</span>
-								</label>
-								<div class="w-full flex flex-col items-center">
-									<input type="date" class="w-full" />
-									<p class="my-2">至</p>
-									<input type="date" class="w-full border-red" />
-								</div>
-							</div>
-						</form>
-						<div class="h-6 mb-8 text-red text-center">請輸入完整日期區間</div>
+
+						<div class="h-6 my-8 text-red text-center">請輸入完整日期區間</div>
 						<div class="btn_primary--green mx-auto">搜尋</div>
 						<p class="text-green-b50 my-4 text-center cursor-pointer hover:text-orange-Default">
 							清除所有篩選條件
 						</p>
-					</div>
+					</form>
+					<!-- </div> -->
 				</div>
 			</div>
 			<div class="comment_container w-[calc(100%-20rem)] py-10 lg:w-full px-10 sm:px-0">
@@ -285,5 +290,8 @@ comments.forEach((i) => {
 }
 .search_filter_close {
 	@apply h-0;
+}
+#tag_containComment:checked + .chat_tags_opts {
+	@apply bg-green-w50;
 }
 </style>
