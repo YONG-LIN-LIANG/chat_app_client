@@ -23,6 +23,8 @@ const props = defineProps({
 				'border-orange-Default': rateItem.showDetail,
 			},
 		]"
+		@mouseover="rateItem.showDetail = true"
+		@mouseleave="rateItem.showDetail = false"
 	>
 		<div class="ranking_name w-20 font-semibold">{{ rateItem.name }}</div>
 		<div class="ranking_star_wrap flex items-center mr-5">
