@@ -1,3 +1,39 @@
+<script>
+// import { defineProps } from 'vue'
+import DoingIcon from '@/components/svg/Doing.vue'
+
+export default {
+	components: {
+		DoingIcon,
+	},
+	props: {
+		roomInfo: {
+			type: Object,
+			default: () => {},
+		},
+		messageInfo: {
+			type: Object,
+			default: () => {},
+		},
+	},
+	setup() {
+		const formatTime = (time) => {
+			return time.split(' ')[1]
+		}
+		const formatDate = (time) => {
+			const today = new Date()
+			const timeDate = new Date(time.split(' ')[0])
+			if (today.toDateString() === timeDate.toDateString()) {
+				return '今天'
+			}
+			const formatTimeDate = time.replace(/-/g, '/').split(' ')[0]
+			return formatTimeDate
+		}
+		return { formatTime, formatDate }
+	},
+}
+</script>
+
 <template>
 	<div class="flex items-center flex-col px-5 pt-5 box-border">
 		<div class="w-full flex items-center flex-col">
@@ -76,34 +112,7 @@
 		</div>
 	</div>
 </template>
-<script setup>
-import { defineProps } from 'vue'
-import DoingIcon from '@/components/svg/Doing.vue'
 
-const props = defineProps({
-	roomInfo: {
-		type: Object,
-		default: () => {},
-	},
-	messageInfo: {
-		type: Object,
-		default: () => {},
-	},
-})
-
-const formatTime = (time) => {
-	return time.split(' ')[1]
-}
-const formatDate = (time) => {
-	const today = new Date()
-	const timeDate = new Date(time.split(' ')[0])
-	if (today.toDateString() === timeDate.toDateString()) {
-		return '今天'
-	}
-	const formatTimeDate = time.replace(/-/g, '/').split(' ')[0]
-	return formatTimeDate
-}
-</script>
 <style scoped>
 /* .chat_section {
     @apply h-[calc(100vh-168px)] max-h-[calc(100vh-168px)];
