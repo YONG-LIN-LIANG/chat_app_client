@@ -3,11 +3,13 @@
     <div class="w-full flex items-center flex-col">
       <!-- messageInfo.chatList[0].created_time -->
       <div
+        v-show="props.messageInfo.beginTime"
         class="chat_date w-16 relative text-xs font-light text-center text-gray-3 mx-0 my-5"
       >
-        {{ formatDate(messageInfo.chatList[0].created_time) }}
+        {{ formatDate(props.messageInfo.chatList[0].createdTime) }}
       </div>
       <div
+        v-show="props.messageInfo.chatList.length"
         class="text-sm font-medium text-green-Default text-center mx-0 my-1.5"
       >
         開始聊天
@@ -15,25 +17,30 @@
       <!-- v-for="(item, idx) in messageInfo.chatList" :key="idx" -->
 
       <div
-        v-for="(item, idx) in messageInfo.chatList"
+        v-for="(item, idx) in props.messageInfo.chatList"
         :key="idx"
         class="w-full"
       >
         <div
-          v-if="item.status === 0 && item.question_id === 1"
+          v-if="item.status === 0 && item.questionId === 1"
           class="mx-0 my-2.5"
         >
           <div class="text-xs text-gray-2 text-center mx-0 my-2.5">
-            請選擇想詢問的問題
+            {{ item.question }}
           </div>
           <div class="chat_tags_opts_wrap flex justify-center">
             <div
               v-for="(option, idx2) in item.optionList"
               :key="idx2"
               :class="[
-                'chat_tags_opts text-sm text-gray-2 rounded-20 m-1 border border-solid border-green-Default px-3.5 py-1.5',
-                item.answer === option ? 'bg-green-w50' : '',
+                'chat_tags_opts text-sm text-gray-2 rounded-20 m-1 border border-solid border-green-Default px-3.5 py-1.5 cursor-pointer',
+                !item.answer
+                  ? 'hover:bg-green-w50'
+                  : item.answer === option
+                  ? 'bg-green-w50'
+                  : '',
               ]"
+              @click="handleSendMessage(0, item.questionId, option)"
             >
               {{ option }}
             </div>
@@ -94,12 +101,12 @@
           </div>
         </div>
       </div>
-      <div v-show="true" class="chat_action flex items-center">
+      <div v-show="props.csInfo.typing" class="chat_action flex items-center">
         <span class="text-xs text-gray-3 mx-1.5 my-0">林三良 正在輸入訊息</span>
         <DoingIcon />
       </div>
 
-      <div class="mb-5">
+      <div v-show="props.messageInfo.endTime" class="mb-5">
         <div
           class="text-sm font-medium text-green-Default text-center mx-0 my-1.5"
         >
@@ -107,44 +114,49 @@
         </div>
         <div class="text-gray-3">
           <span class="text-xs">客服人員 : </span>
-          <span class="text-xs">{{ messageInfo.csName }}</span>
+          <span class="text-xs">{{ props.messageInfo.csName }}</span>
         </div>
       </div>
     </div>
   </div>
 </template>
 
-<script>
+<script setup>
 import DoingIcon from "@/components/svg/Doing.vue";
-export default {
-  components: {
-    DoingIcon,
+import { defineProps, defineEmits } from "vue";
+const props = defineProps({
+  messageInfo: {
+    type: Object,
+    default: () => {},
   },
-  props: {
-    roomInfo: {
-      type: Object,
-      default: () => {},
-    },
-    messageInfo: {
-      type: Object,
-      default: () => {},
-    },
+  csInfo: {
+    type: Object,
+    default: () => {},
   },
-  methods: {
-    formatTime(time) {
-      return time.split(" ")[1];
-    },
-    formatDate(time) {
-      const today = new Date();
-      const timeDate = new Date(time.split(" ")[0]);
-      if (today.toDateString() === timeDate.toDateString()) {
-        return "今天";
-      }
-      const formatTimeDate = time.replace(/-/g, "/").split(" ")[0];
-      return formatTimeDate;
-    },
+  roomInfo: {
+    type: Object,
+    default: () => {},
   },
+});
+console.log("messageInfo", props.messageInfo);
+const emit = defineEmits(["onSendMessage"]);
+const formatDate = (time) => {
+  console.log("timee", time);
+  const today = new Date();
+  const timeDate = new Date(time.split(" ")[0]);
+  if (today.toDateString() === timeDate.toDateString()) {
+    return "今天";
+  }
+  const formatTimeDate = time.replace(/-/g, "/").split(" ")[0];
+  return formatTimeDate;
 };
+
+const handleSendMessage = (status, questionId, content) => {
+  // 檢查房間有無結束，已結束的房間return
+  if (props.messageInfo.endTime) return;
+  emit("onSendMessage", { status, questionId, content });
+};
+console.log(props);
 </script>
 
 <style scoped>

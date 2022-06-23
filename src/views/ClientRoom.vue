@@ -29,11 +29,13 @@
         </div>
       </div>
       <div v-show="isInRoom" class="flex-grow overflow-y-auto">
+        <!-- :roomInfo="roomInfo" -->
         <MsgChat
-          v-for="(item, idx) in formatChatList"
+          v-for="(item, idx) in roomInfo.chat"
           :key="idx"
           :messageInfo="item"
-          :roomInfo="roomInfo"
+          :csInfo="roomInfo.cs"
+          @onSendMessage="handleSendMessage"
         />
       </div>
       <div v-show="isInRoom" class="flex-none h-15">
@@ -109,7 +111,7 @@
     </div>
   </section>
 </template>
-<script>
+<script setup>
 import SearchIcon from "@/components/svg/Search.vue";
 import HideIcon from "@/components/svg/Hide.vue";
 import CrossIcon from "@/components/svg/Cross.vue";
@@ -118,295 +120,177 @@ import MsgSend from "@/components/clientRoom/MsgSend.vue";
 import CsAvatar from "@/components/svg/CsAvatar.vue";
 // import CloseRoomDialog from "@/components/clientRoom/CloseRoomDialog";
 import { reactive } from "@vue/reactivity";
-import { ref } from "vue";
-import io from "socket.io-client";
-export default {
-  components: {
-    SearchIcon,
-    HideIcon,
-    CrossIcon,
-    MsgChat,
-    MsgSend,
-    CsAvatar,
-    // CloseRoomDialog,
-  },
-  setup() {
-    const roomInfo = reactive({
-      user: {
-        memberId: 0,
-        roomId: 0,
-        web_resource: 0,
-        authorization: 1,
-        name: "陳大倫",
-        uuid: "212131",
-        socketId: "dada",
-      },
-      cs: {
-        csSocketId: "",
-        csName: "",
-        csTyping: "",
-      },
-      chat: [
-        {
-          roomId: "1",
-          group: "通路事業群",
-          website: "大碩研究所官網",
-          csName: "強尼逮",
-          systemChatList: [
-            // 用created_time判斷在message前或後
-            {
-              // 如果之後客服可以發送問題給客戶端，可用question_id來做一些判斷
-              status: 0,
-              question_id: 1,
-              question: "請選擇想詢問的問題",
-              optionList: ["雅思", "多益", "托福"],
-              answer: "雅思",
-              created_time: "2022-06-05 05:02",
-            },
-            {
-              status: 0,
-              question_id: 2,
-              question: "請選擇服務的客服人員",
-              // 有的話幫我塞名子，沒有的話空陣列
-              optionList: ["強尼逮", "由系統隨機指派"],
-              // answer如果為人名則選擇了某客服，如為空表示選擇了系統隨機指派
-              answer: "強尼逮",
-              created_time: "2022-06-05 08:02",
-            },
-          ],
-          chatList: [
-            {
-              status: 1,
-              name: "陳大倫",
-              msg: "安尼阿誰優",
-              isRead: false,
-              created_time: "2022-06-05 14:02",
-            },
-            {
-              status: 1,
-              name: "陳大倫",
-              msg: "有啥問題",
-              isRead: true,
-              created_time: "2022-06-05 14:02",
-            },
-            {
-              status: 2,
-              name: "Molly",
-              msg: "您好想請問您貴姓",
-              isRead: false,
-              created_time: "2022-06-05 14:03",
-            },
-            {
-              status: 1,
-              name: "陳大倫",
-              msg: "敝姓張",
-              isRead: false,
-              created_time: "2022-06-05 14:04",
-            },
-          ],
-        },
-        {
-          roomId: "2",
-          group: "通路事業群",
-          website: "大碩研究所官網",
-          csName: "強尼逮",
-          systemChatList: [
-            // 用created_time判斷在message前或後
-            {
-              // 如果之後客服可以發送問題給客戶端，可用question_id來做一些判斷
-              status: 0,
-              question_id: 1,
-              question: "請選擇想詢問的問題",
-              optionList: ["雅思", "多益", "托福"],
-              answer: "雅思",
-              created_time: "2022-06-06 05:02",
-            },
-            {
-              status: 0,
-              question_id: 2,
-              question: "請選擇服務的客服人員",
-              // 有的話幫我塞名子，沒有的話空陣列
-              optionList: ["強尼逮", "由系統隨機指派"],
-              // answer如果為人名則選擇了某客服，如為空表示選擇了系統隨機指派
-              answer: "強尼逮",
-              created_time: "2022-06-06 08:02",
-            },
-          ],
-          chatList: [
-            {
-              status: 1,
-              name: "陳大倫",
-              msg: "安尼阿誰優",
-              isRead: false,
-              created_time: "2022-06-06 14:02",
-            },
-            {
-              status: 1,
-              name: "陳大倫",
-              msg: "有啥問題",
-              isRead: true,
-              created_time: "2022-06-06 14:02",
-            },
-            {
-              status: 2,
-              name: "Molly",
-              msg: "您好想請問您貴姓",
-              isRead: false,
-              created_time: "2022-06-06 14:03",
-            },
-            {
-              status: 1,
-              name: "陳大倫",
-              msg: "敝姓張",
-              isRead: false,
-              created_time: "2022-06-06 14:04",
-            },
-          ],
-        },
-      ],
-    });
-    const dialog = reactive({
-      name: "",
-      isOpen: false,
-    });
-    const visitorNameForm = reactive({
-      name: "",
-      errorMessage: "",
-    });
-    const isRoomOpen = ref(false);
-    const visitorStep = ref(1);
-    const isVisitor = roomInfo.user.authorization === 1;
-    const clientName = roomInfo.user.name;
-    const isInRoom = roomInfo.user.socketId;
-    let socket = reactive({});
+import { ref, computed, onMounted, onBeforeUnmount } from "vue";
+import { useClientStore } from "@/stores/client";
+import { useSocketStore } from "@/stores/socket";
+const clientStore = useClientStore();
+const socket = useSocketStore().socket;
 
-    // onBeforeMounted(() => {
-    //   window.addEventListener('message', handleMessage);
-    //   const endPoint = 'http://172.18.48.177:3001/'
-    //   socket = io(endPoint)
-    // })
-    // onUnmounted(() => {
-    //   window.removeEventListener('message', handleMessage);
-    // })
-    return {
-      socket,
-      isRoomOpen,
-      roomInfo,
-      isVisitor,
-      clientName,
-      isInRoom,
-      visitorStep,
-      visitorNameForm,
-      dialog,
+const roomInfo = reactive({
+  user: {
+    memberId: 0,
+    roomId: 0,
+    web_resource: 0,
+    authorization: 1,
+    name: "陳大倫",
+    uuid: "212131",
+    socketId: "dada",
+    group: "",
+    website: "",
+  },
+  cs: {
+    socketId: "",
+    name: "",
+    typing: "",
+  },
+  chat: [],
+});
+const dialog = reactive({
+  name: "",
+  isOpen: false,
+});
+const visitorNameForm = reactive({
+  name: "",
+  errorMessage: "",
+});
+let isRoomOpen = ref(false);
+const visitorStep = ref(1);
+const isVisitor = roomInfo.user.authorization === 1;
+const clientName = roomInfo.user.name;
+const isInRoom = roomInfo.user.socketId;
+
+const isLoginReminderDisplay = computed(
+  () => isVisitor && visitorStep.value === 1 && !isInRoom
+);
+const isFillClientNameDisplay = computed(
+  () => isVisitor && !clientName && visitorStep.value === 2 && !isInRoom
+);
+const isVisitorNameFilled = computed(
+  () => !visitorNameForm.name && visitorNameForm.errorMessage
+);
+onMounted(() => {
+  socket.on("resLogin", (data) => {
+    console.log("dataa", data);
+    const { chat, cs, user, question } = data;
+    roomInfo.user = {
+      ...roomInfo.user,
+      group: user.group_name,
+      website: user.website_name,
+      memberId: user.member_id,
+      roomId: user.room_id,
+      socketId: user.socket_id,
     };
-  },
-  computed: {
-    isLoginReminderDisplay() {
-      const { isVisitor, visitorStep, isInRoom } = this;
-      return isVisitor && visitorStep === 1 && !isInRoom;
-    },
-    isFillClientNameDisplay() {
-      const { isVisitor, clientName, visitorStep, isInRoom } = this;
-      return isVisitor && !clientName && visitorStep === 2 && !isInRoom;
-    },
-    isVisitorNameFilled() {
-      const { visitorNameForm } = this;
-      return !visitorNameForm.name && visitorNameForm.errorMessage;
-    },
-    formatChatList() {
-      const { chat } = this.roomInfo;
-      const chatList = chat.map((i) => {
-        let newChatList = i.chatList.concat(i.systemChatList).map((j) => ({
-          ...j,
-          timeStampDate: this.handleFormatTimestamp(j.created_time),
-        }));
-        newChatList = newChatList.sort(
-          (a, b) => a.timeStampDate - b.timeStampDate
-        );
-        const { roomId, group, website, csName } = i;
-        const newObj = {
-          roomId,
-          group,
-          website,
-          csName,
-          chatList: newChatList,
-        };
-        return newObj;
-      });
-      return chatList;
-    },
-  },
-  mounted() {
-    window.addEventListener("message", this.handleMessage);
+    roomInfo.chat = chat;
+    roomInfo.cs = {
+      ...roomInfo.cs,
+      ...cs,
+    };
+    // 判斷如果roomId為0，送出第一則系統訊息
+    if (user.room_id === 0) {
+      const firstMessage = {
+        roomId: 0,
+        group: roomInfo.user.group,
+        website: roomInfo.user.website,
+        csName: "",
+        csUuid: "",
+        isReadId: 0,
+        beginTime: "",
+        endTime: "",
+        chatList: [
+          {
+            status: 0,
+            questionId: question.question_id,
+            question: question.question_name,
+            optionList: question.question_content,
+            answer: "",
+            createdTime: "",
+          },
+        ],
+      };
+      roomInfo.chat.push(firstMessage);
+      console.log("roomInfo", roomInfo);
+    }
+  });
+  window.addEventListener("message", handleMessage);
+});
+onBeforeUnmount(() => {
+  window.removeEventListener("message", handleMessage);
+});
+// const handleConnect = (data) => {
+//   const endPoint = "http://172.18.48.177:3001/";
+//   socket = io(endPoint);
+//   // 處理是會員就建立會員
+//   this.socket.on("connect", () => {
+//     this.roomInfo.user = {
+//       ...data,
+//       socketId: this.socket.id,
+//     };
+//     console.log("check user", this.roomInfo.user);
+//     // 呼叫socket加入房間
+//     this.socket.emit("reqLogin", { ...this.roomInfo.user, identity: 2 });
+//   });
+// };
+const handleMessage = (message) => {
+  console.log("messageee", message);
+  const data = message.data;
+  if (!data) return;
+  console.log("checkkk", data);
+  clientStore.setClient(data);
+  console.log("client data", clientStore.client);
+  socket.emit("reqLogin", { ...data, identity: 2 });
+  // setTimeout(() => {
+  //   if (data.authentication === "1") {
+  //     console.log("here2");
+  //     handleConnect(data);
+  //   }
+  // }, 1);
+};
 
-    console.log(this.socket);
-  },
-  beforeUnmount() {
-    window.removeEventListener("message", this.handleMessage);
-  },
-  methods: {
-    handleConnect(data) {
-      const endPoint = "http://172.18.48.177:3001/";
-      this.socket = io(endPoint);
-      // 處理是會員就建立會員
-      this.socket.on("connect", () => {
-        this.roomInfo.user = {
-          ...data,
-          socketId: this.socket.id,
-        };
-        console.log("check user", this.roomInfo.user);
-        // 呼叫socket加入房間
-        this.socket.emit("reqLogin", { ...this.roomInfo.user, identity: 2 });
-      });
+const handleToggleRoom = () => {
+  isRoomOpen.value = !isRoomOpen.value;
+  window.parent.postMessage(
+    {
+      isRoomOpen: isRoomOpen.value,
     },
-    handleMessage(message) {
-      console.log("messageee", message);
-      const data = message.data;
-      if (!data) return;
-      console.log("checkkk");
-      // 先檢查身分
-      // if(data !== undefined || socketId !== undefined){
-      // console.log('dataaaaa', data)
-      // console.log('da222', data)
+    "*"
+  );
+};
 
-      setTimeout(() => {
-        if (data.authentication === "1") {
-          console.log("here2");
-          this.handleConnect(data);
-        }
-      }, 1);
-    },
-    handleToggleRoom() {
-      this.isRoomOpen = !this.isRoomOpen;
-      window.parent.postMessage(
-        {
-          isRoomOpen: this.isRoomOpen,
-        },
-        "*"
-      );
-    },
-    handleFormatTimestamp(time) {
-      return Math.floor(new Date(time) / 1000);
-    },
-    handleVisitorJoinRoom() {
-      // 檢查姓名有無填寫
-      const { visitorNameForm } = this;
-      // const {authorization, name, uuid} = this.roomInfo.user
-      if (!visitorNameForm.name) {
-        this.visitorNameForm.errorMessage = "欄位必填";
-        return;
-      }
-      // socket.emit('clientJoinRoom', {authorization, name, uuid})
-    },
-    handleOpenDialog(name) {
-      this.dialog.name = name;
-      this.dialog.isOpen = true;
-    },
-    handleCloseDialog() {
-      this.dialog.name = "";
-      this.dialog.isOpen = false;
-    },
-  },
+// const handleFormatTimestamp = (time) => {
+//   return Math.floor(new Date(time) / 1000);
+// };
+
+const handleVisitorJoinRoom = () => {
+  if (!visitorNameForm.name) {
+    visitorNameForm.errorMessage = "欄位必填";
+    return;
+  }
+  // socket.emit('clientJoinRoom', {authorization, name, uuid})
+};
+const handleOpenDialog = (name) => {
+  dialog.name = name;
+  dialog.isOpen = true;
+};
+
+const handleCloseDialog = () => {
+  dialog.name = "";
+  dialog.isOpen = false;
+};
+
+const handleSendMessage = (data) => {
+  console.log("sendData", data);
+  // 先將data的answer塞值，再打socket發api
+  const { status, questionId, content } = data;
+  if (status === 0) {
+    const findSmessage = roomInfo.chat[roomInfo.chat.length - 1].chatList.find(
+      (i) => i.status === status && i.questionId === questionId
+    );
+    console.log("findMessage", findSmessage);
+    if (findSmessage !== undefined) {
+      findSmessage.answer = content;
+      // 由於還沒建立房間，先把系統訊息傳送到redis的 message-clientMemberId-0的陣列裡，利用夾帶clientMemberId就不會跟別人重複
+    }
+  }
 };
 </script>
 <style scoped>

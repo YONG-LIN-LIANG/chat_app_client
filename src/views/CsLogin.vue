@@ -3,8 +3,9 @@ import CSLogo from "@/components/svg/Logo.vue";
 import { useSocketStore } from "@/stores/socket";
 import { useCsStore } from "@/stores/cs";
 import { reactive, onBeforeMount } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 const router = useRouter();
+const route = useRoute();
 const socketStore = useSocketStore();
 const csStore = useCsStore();
 const { socket } = socketStore;
@@ -37,6 +38,21 @@ onBeforeMount(() => {
       router.push({ name: "login" });
       // 把客服人員個人資料清空
       csStore.setCs({});
+    }
+  });
+
+  socket.emit("reqCsUser");
+  socket.on("resCsUser", (data) => {
+    if (data === null) return;
+    console.log("new user data", data);
+    const { status, userInfo } = data;
+    if (status === 200) {
+      csStore.setCs(userInfo);
+      if (route.name === "login") {
+        router.push({ name: "csRoom" });
+      }
+    } else {
+      router.push({ name: "login" });
     }
   });
 });
