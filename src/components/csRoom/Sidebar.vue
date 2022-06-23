@@ -2,10 +2,10 @@
 import CSLogo from "@/components/svg/Logo.vue";
 import StarIcon from "@/components/svg/Star.vue";
 import Hamburger from "@/components/svg/Hamburger.vue";
-import { reactive } from "vue";
-
+import { useRoute, onBeforeRouteUpdate } from "vue-router";
+import { onMounted, reactive, watch, computed } from "vue";
 const menu = reactive({
-  active: 0,
+  active: null,
   list: [
     {
       id: 0,
@@ -24,6 +24,145 @@ const menu = reactive({
     },
   ],
 });
+const route = useRoute();
+const routePath = computed(() => route.path);
+onMounted(() => {
+  // console.log("333", menu.active, path.value);
+  if (routePath.value === "/CsRoom/msg") {
+    menu.active = 0;
+  } else if (routePath.value === "/CsRoom/ranking") {
+    menu.active = 1;
+  } else if (routePath.value === "/Login") {
+    menu.active = 2;
+  } else if (routePath.value === "/CsRoom/score") {
+    menu.active = 3;
+  }
+  console.log("333", menu.active, routePath.value);
+});
+// onBeforeRouteUpdate((to) => {
+//   if (to.path === "/CsRoom/msg") {
+//     menu.active = 0;
+//   } else if (to.path === "/CsRoom/ranking") {
+//     menu.active = 1;
+//   } else if (to.path === "/Login") {
+//     menu.active = 2;
+//   } else if (to.path === "/CsRoom/score") {
+//     menu.active = 3;
+//   }
+// });
+
+// vue3--------------------------------------------------------
+
+watch(
+  () => route.path,
+  (to) => {
+    console.log("to", to, route.path);
+    if (to.path === "/CsRoom/msg") {
+      menu.active = 0;
+    } else if (to.path === "/CsRoom/ranking") {
+      menu.active = 1;
+    } else if (to.path === "/Login") {
+      menu.active = 2;
+    } else if (to.path === "/CsRoom/score") {
+      menu.active = 3;
+    }
+  }
+);
+
+// vue2--------------------------------------------------------
+// watch: {
+//     $route(to, from) {
+//       console.log("to", to.path);
+//       if (to.path === "/CsRoom/msg") {
+//         this.menu.active = 0;
+//       }
+//       else if(to.path === "/CsRoom/Ranking") {
+//         this.menu.active = 1;
+//       }
+//       else if(to.path === "/Login") {
+//         this.menu.active = 2;
+//       }
+//       else if(to.path === "/CsRoom/score") {
+//         this.menu.active = 3;
+//       }
+//     },
+//   },
+
+// const test = () => {
+//   if (window.location.href.indexOf("/CsRoom/msg") > -1) {
+//     menu.active = 0;
+//   } else if (window.location.href.indexOf("/CsRoom/ranking") > -1) {
+//     menu.active = 1;
+//   } else if (window.location.href.indexOf("/Login") > -1) {
+//     menu.active = 2;
+//   } else if (window.location.href.indexOf("/CsRoom/score") > -1) {
+//     menu.active = 3;
+//   }
+// };
+// test();
+
+// export default {
+//   components: {
+//     CSLogo,
+//     StarIcon,
+//     Hamburger,
+//   },
+
+//   setup() {
+//     const menu = reactive({
+//       active: 0,
+//       list: [
+//         {
+//           id: 0,
+//           name: "訊息",
+//           router: "/CsRoom/msg",
+//         },
+//         {
+//           id: 1,
+//           name: "排行榜",
+//           router: "/CsRoom/ranking",
+//         },
+//         {
+//           id: 2,
+//           name: "登出",
+//           router: "/Login",
+//         },
+//       ],
+//     });
+//     const test = () => {
+//       if (window.location.href.indexOf("/CsRoom/msg") > -1) {
+//         menu.active = 0;
+//       } else if (window.location.href.indexOf("/CsRoom/ranking") > -1) {
+//         menu.active = 1;
+//       } else if (window.location.href.indexOf("/Login") > -1) {
+//         menu.active = 2;
+//       } else if (window.location.href.indexOf("/CsRoom/score") > -1) {
+//         menu.active = 3;
+//       }
+//     };
+//     test();
+//     return { menu };
+//   },
+//   watch: {
+//     $route(to, from) {
+//       console.log("to", to.path);
+//       if (to.path === "/CsRoom/msg") {
+//         this.menu.active = 0;
+//       }
+//       else if(to.path === "/CsRoom/Ranking") {
+//         this.menu.active = 1;
+//       }
+//       else if(to.path === "/Login") {
+//         this.menu.active = 2;
+//       }
+//       else if(to.path === "/CsRoom/score") {
+//         this.menu.active = 3;
+//       }
+//     },
+//   },
+// };
+
+// });
 </script>
 
 <template>
@@ -84,43 +223,20 @@ const menu = reactive({
         "
       >
         <span class="sidabar_user_name text-sm text-gray-2">盧立倫</span>
-        <!-- <div
-          class="sidabar_user_score px-2 mx-4 lg:mx-2 flex items-center cursor-pointer text-sm bg-white text-green-b50 hover:bg-green-w50 rounded-xl ease-out duration-200"
-        > -->
         <router-link
           to="/CsRoom/score"
-          class="
-            sidabar_user_score
-            px-2
-            mx-4
-            lg:mx-2
-            flex
-            items-center
-            cursor-pointer
-            text-sm
-            bg-white
-            text-green-b50
-            hover:bg-green-w50
-            rounded-xl
-            ease-out
-            duration-200
-          "
+          :class="[
+            'sidabar_user_score ',
+            menu.active === 3 ? 'bg-green-w50 ' : 'bg-white',
+          ]"
+          @click="menu.active = 3"
         >
           <StarIcon class="w-4 text-green-Default" />
           <span>4.9</span>
-          <!-- </div> -->
         </router-link>
       </div>
     </div>
     <ul class="sidebar_menu sm:hidden">
-      <!-- <li
-				v-for="item in menuList"
-				@click="menuList_active = item"
-				:class="['cursor-pointer font-normal', { active: item === menuList_active }]"
-				:key="item"
-				>{{ item }}</li
-			> -->
-
       <router-link
         v-for="item in menu.list"
         :to="item.router"
@@ -131,7 +247,7 @@ const menu = reactive({
         ]"
         :key="item.id"
       >
-        {{ item.name }}
+        {{ item.name }}menu.active{{ menu.active }}
       </router-link>
     </ul>
   </div>
@@ -204,5 +320,8 @@ const menu = reactive({
 <style scoped>
 .sidebar_menu li.active {
   @apply bg-green-w50;
+}
+.sidabar_user_score {
+  @apply px-2 mx-4 lg:mx-2 flex items-center cursor-pointer text-sm text-green-b50 hover:bg-green-w50 rounded-xl ease-out duration-200;
 }
 </style>
