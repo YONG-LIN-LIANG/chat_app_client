@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, watch } from "vue";
+import { ref, reactive, watch, computed } from "vue";
 import StarIcon from "@/components/svg/Star.vue";
 import SearchIcon from "@/components/svg/Search.vue";
 import TriangleIcon from "@/components/svg/Triangle.vue";
@@ -48,8 +48,99 @@ const comments = reactive([
     comment: "感覺克服很霸氣><喜翻>///<",
     created_time: "2022-01-01 14:40",
   },
+  {
+    name: "茶茶",
+    rating: 5,
+    website: "洋碩官網",
+    comment: "感覺克服很霸氣><喜翻>///<",
+    created_time: "2022-01-01 14:40",
+  },
+  {
+    name: "茶茶",
+    rating: 5,
+    website: "洋碩官網",
+    comment: "感覺克服很霸氣><喜翻>///<",
+    created_time: "2022-01-01 14:40",
+  },
+  {
+    name: "茶茶",
+    rating: 5,
+    website: "洋碩官網",
+    comment: "感覺克服很霸氣><喜翻>///<",
+    created_time: "2022-01-01 14:40",
+  },
+  {
+    name: "茶茶",
+    rating: 5,
+    website: "洋碩官網",
+    comment: "感覺克服很霸氣><喜翻>///<",
+    created_time: "2022-01-01 14:40",
+  },
+  {
+    name: "茶茶",
+    rating: 5,
+    website: "洋碩官網",
+    comment: "感覺克服很霸氣><喜翻>///<",
+    created_time: "2022-01-01 14:40",
+  },
+  {
+    name: "茶茶",
+    rating: 5,
+    website: "洋碩官網",
+    comment: "感覺克服很霸氣><喜翻>///<",
+    created_time: "2022-01-01 14:40",
+  },
+  {
+    name: "茶茶",
+    rating: 5,
+    website: "洋碩官網",
+    comment: "感覺克服很霸氣><喜翻>///<",
+    created_time: "2022-01-01 14:40",
+  },
+  {
+    name: "茶茶",
+    rating: 5,
+    website: "洋碩官網",
+    comment: "感覺克服很霸氣><喜翻>///<",
+    created_time: "2022-01-01 14:40",
+  },
+  {
+    name: "茶茶",
+    rating: 5,
+    website: "洋碩官網",
+    comment: "感覺克服很霸氣><喜翻>///<",
+    created_time: "2022-01-01 14:40",
+  },
+  {
+    name: "茶茶",
+    rating: 5,
+    website: "洋碩官網",
+    comment: "感覺克服很霸氣><喜翻>///<",
+    created_time: "2022-01-01 14:40",
+  },
 ]);
+
 const commentsCount = comments.length;
+
+// 評論一頁顯示的數量
+const pageAmount = ref(10);
+// 評論共有幾頁
+const pageCount = computed(() => Math.ceil(commentsCount / pageAmount.value));
+// 評論最後一頁數量
+const pageLeft = computed(() => commentsCount % pageAmount.value);
+// 把所有評論分頁
+// const commentsPage = (comments, pageAmount, pageCount) => {
+//   return Array.from({ length: pageCount }, () =>
+//     comments.splice(0, pageAmount)
+//   );
+// };
+const commentsPage = computed(() => {
+  return Array.from({ length: pageCount.value }, () =>
+    comments.splice(0, pageAmount.value)
+  );
+});
+// 顯示頁面
+const showPage = ref(0);
 
 // 評論排序
 // 評論排序預設為 1 最新
@@ -116,6 +207,8 @@ comments.forEach((i) => {
 <template>
   <div class="msg mt-10 sm:mt-[104px] ml-48 lg:ml-36 sm:ml-0">
     <div class="title">個人評分</div>
+    <!-- {{ commentsPage }} -->
+    <!-- {{ commentsPage(comments, pageAmount, pageCount) }} -->
     <div
       class="
         score_name
@@ -288,7 +381,7 @@ comments.forEach((i) => {
         class="
           comment_container
           w-[calc(100%-20rem)]
-          py-10
+          pb-10
           lg:w-full
           px-10
           sm:px-0
@@ -314,30 +407,39 @@ comments.forEach((i) => {
             </select>
           </div>
         </div>
-        <div class="comment_list border border-green-neon rounded-xl p-4">
-          <div v-for="(item, idx) in comments" :key="idx" class="comment p-3">
+        <div
+          v-for="(item, idx) in commentsPage"
+          v-show="showPage === idx"
+          :key="idx"
+          class="comment_list border border-green-neon rounded-xl p-4"
+        >
+          <!-- <div v-for="(item, idx) in comments" :key="idx" class="comment p-3"> -->
+          <div v-for="comment in item" :key="comment.name" class="comment p-3">
             <div class="flex items-center justify-between sm:block">
               <div class="flex items-center">
                 <div class="comment_name w-16 text-gray-3 text-sm">
-                  {{ item.name }}
+                  {{ comment.name }}
                 </div>
                 <span class="chat_source whitespace-nowrap">
-                  {{ item.website }}
+                  {{ comment.website }}
                 </span>
               </div>
               <div class="comment_date text-xs text-gray-3">
-                {{ item.created_date }}
+                {{ comment.created_date }}
               </div>
             </div>
             <div class="flex items-center mt-2">
               <div class="comment_star flex items-center mr-3">
-                <span class="text-gray-3 mr-1.5">{{ item.rating }}</span>
+                <span class="text-gray-3 mr-1.5">{{ comment.rating }}</span>
                 <StarIcon class="flex items-center text-green-Default" />
               </div>
-              <p class="comment_content text-gray-3">{{ item.comment }}</p>
+              <p class="comment_content text-gray-3">
+                {{ comment.comment }}
+              </p>
             </div>
           </div>
         </div>
+        <!-- </div> -->
       </div>
     </div>
   </div>

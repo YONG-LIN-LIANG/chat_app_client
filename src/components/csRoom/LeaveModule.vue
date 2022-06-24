@@ -20,7 +20,10 @@ const props = defineProps({
         : 'opacity-100 pointer-events-auto',
     ]"
   >
-    <div class="bg_black bg-gray-2 w-full h-full opacity-20"></div>
+    <div
+      class="bg_black bg-gray-2 w-full h-full opacity-20"
+      @click="handleToggleDialog"
+    ></div>
     <div
       class="
         module_window

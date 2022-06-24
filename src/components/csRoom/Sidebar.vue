@@ -27,7 +27,6 @@ const menu = reactive({
 const route = useRoute();
 const routePath = computed(() => route.path);
 onMounted(() => {
-  // console.log("333", menu.active, path.value);
   if (routePath.value === "/CsRoom/msg") {
     menu.active = 0;
   } else if (routePath.value === "/CsRoom/ranking") {
@@ -39,35 +38,35 @@ onMounted(() => {
   }
   console.log("333", menu.active, routePath.value);
 });
-// onBeforeRouteUpdate((to) => {
-//   if (to.path === "/CsRoom/msg") {
-//     menu.active = 0;
-//   } else if (to.path === "/CsRoom/ranking") {
-//     menu.active = 1;
-//   } else if (to.path === "/Login") {
-//     menu.active = 2;
-//   } else if (to.path === "/CsRoom/score") {
-//     menu.active = 3;
-//   }
-// });
+onBeforeRouteUpdate((to) => {
+  if (to.path === "/CsRoom/msg") {
+    menu.active = 0;
+  } else if (to.path === "/CsRoom/ranking") {
+    menu.active = 1;
+  } else if (to.path === "/Login") {
+    menu.active = 2;
+  } else if (to.path === "/CsRoom/score") {
+    menu.active = 3;
+  }
+});
 
 // vue3--------------------------------------------------------
 
-watch(
-  () => route.path,
-  (to) => {
-    console.log("to", to, route.path);
-    if (to.path === "/CsRoom/msg") {
-      menu.active = 0;
-    } else if (to.path === "/CsRoom/ranking") {
-      menu.active = 1;
-    } else if (to.path === "/Login") {
-      menu.active = 2;
-    } else if (to.path === "/CsRoom/score") {
-      menu.active = 3;
-    }
-  }
-);
+// watch(
+//   () => route.path,
+//   (to) => {
+//     console.log("to", to, route.path);
+//     if (to.path === "/CsRoom/msg") {
+//       menu.active = 0;
+//     } else if (to.path === "/CsRoom/ranking") {
+//       menu.active = 1;
+//     } else if (to.path === "/Login") {
+//       menu.active = 2;
+//     } else if (to.path === "/CsRoom/score") {
+//       menu.active = 3;
+//     }
+//   }
+// );
 
 // vue2--------------------------------------------------------
 // watch: {
@@ -247,7 +246,7 @@ watch(
         ]"
         :key="item.id"
       >
-        {{ item.name }}menu.active{{ menu.active }}
+        {{ item.name }}
       </router-link>
     </ul>
   </div>
