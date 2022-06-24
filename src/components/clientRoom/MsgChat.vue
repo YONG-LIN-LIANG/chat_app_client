@@ -30,7 +30,7 @@
           </div>
           <div class="chat_tags_opts_wrap flex justify-center">
             <div
-              v-for="(option, idx2) in item.optionList"
+              v-for="(option, idx2) in item.questionContent"
               :key="idx2"
               :class="[
                 'chat_tags_opts text-sm text-gray-2 rounded-20 m-1 border border-solid border-green-Default px-3.5 py-1.5 cursor-pointer',
@@ -56,7 +56,7 @@
           </div>
           <div class="chat_tags_opts_wrap flex justify-center">
             <div
-              v-for="(option, idx2) in item.optionList"
+              v-for="(option, idx2) in item.questionContent"
               :key="idx2"
               :class="[
                 'chat_tags_opts text-sm text-gray-2 rounded-20 m-1 border border-solid border-green-Default px-3.5 py-1.5',

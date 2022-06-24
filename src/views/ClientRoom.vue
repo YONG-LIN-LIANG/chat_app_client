@@ -201,7 +201,7 @@ onMounted(() => {
             status: 0,
             questionId: question.question_id,
             question: question.question_name,
-            optionList: question.question_content,
+            questionContent: question.question_content,
             answer: "",
             createdTime: "",
           },
@@ -289,6 +289,18 @@ const handleSendMessage = (data) => {
     if (findSmessage !== undefined) {
       findSmessage.answer = content;
       // 由於還沒建立房間，先把系統訊息傳送到redis的 message-clientMemberId-0的陣列裡，利用夾帶clientMemberId就不會跟別人重複
+      // smessage data結構: { identity, roomId, clientMemberId, questionId, question, questionContent, answer}
+      const data = {
+        identity: 0,
+        roomId: 0,
+        memberId: roomInfo.user.memberId,
+        questionId,
+        question: findSmessage.question,
+        questionContent: findSmessage.questionContent.toString(),
+        answer: findSmessage.answer,
+      };
+      console.log("before send", data);
+      socket.emit("reqSendMessage", data);
     }
   }
 };
