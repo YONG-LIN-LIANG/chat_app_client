@@ -36,7 +36,6 @@ onMounted(() => {
   } else if (routePath.value === "/CsRoom/score") {
     menu.active = 3;
   }
-  console.log("333", menu.active, routePath.value);
 });
 onBeforeRouteUpdate((to) => {
   if (to.path === "/CsRoom/msg") {

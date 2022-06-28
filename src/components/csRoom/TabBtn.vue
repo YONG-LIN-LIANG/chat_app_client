@@ -12,7 +12,7 @@ const props = defineProps({
 <template>
   <li
     :class="[
-      'btn_tab w-11 h-14 flex flex-col items-center justify-center cursor-pointer text-sm text-green-b50 rounded-md border border-solid border-green-w50 mb-4 pt-0.5 btn_tab--xs',
+      'btn_tab w-11 h-14 flex flex-col items-center justify-center cursor-pointer text-sm text-green-b50 rounded-md border border-solid border-green-w50 mb-4 pt-0.5 xs:w-16 xs:h-9 xs:mx-4',
       info.id === tabList.active ? 'bg-green-w20' : 'bg-white',
     ]"
   >
@@ -24,7 +24,4 @@ const props = defineProps({
 </template>
 
 <style>
-.btn_tab--xs {
-  @apply xs:w-16 xs:h-9 xs:mx-4;
-}
 </style>

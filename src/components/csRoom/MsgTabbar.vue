@@ -166,7 +166,7 @@ console.log(props);
 <template>
   <div
     :class="[
-      'mr-16',
+      'mr-16 xs:mr-0',
       tabList.active ? 'tabbar_func_open' : 'tabbar_func_closed',
     ]"
   >
@@ -286,7 +286,7 @@ console.log(props);
         </div>
         <div class="btn_primary--green">搜尋</div>
       </div>
-      <div class="px-10 lg:px-40 md:px-20 xs:px-10 py-7">
+      <div class="px-10 lg:px-40 md:px-20 sm:px-10 py-7">
         <div class="text-sm text-gray-2 mb-5">
           <span>搜尋結果 共 </span>
           <span class="search_result_countNum">4</span>
@@ -524,7 +524,7 @@ console.log(props);
   @apply h-[calc(100vh-40px)] sm:h-[calc(100vh-104px)] lg:w-full overflow-x-hidden overflow-y-auto shadow-layer3;
 }
 .tabbar_func_content {
-  @apply min-w-66 px-10 lg:px-40 md:px-20  py-7 flex flex-col items-center shadow-underLine;
+  @apply min-w-66 px-10 lg:px-40 md:px-20 sm:px-10 py-7 flex flex-col items-center shadow-underLine;
 }
 /* 分類 */
 .cate_website.active {

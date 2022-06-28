@@ -3,6 +3,10 @@ import { ref, reactive, watch, computed } from "vue";
 import StarIcon from "@/components/svg/Star.vue";
 import SearchIcon from "@/components/svg/Search.vue";
 import TriangleIcon from "@/components/svg/Triangle.vue";
+import PageStart from "@/components/svg/PageStart.vue";
+import PageEnd from "@/components/svg/PageEnd.vue";
+import Prev from "@/components/svg/Prev.vue";
+import Next from "@/components/svg/Next.vue";
 
 const comments = reactive([
   {
@@ -119,47 +123,68 @@ const comments = reactive([
     created_time: "2022-01-01 14:40",
   },
 ]);
-
+comments.forEach((i) => {
+  i.timeCode = Math.floor(new Date(i.created_time) / 1000);
+});
 const commentsCount = comments.length;
 
 // 評論一頁顯示的數量
 const pageAmount = ref(10);
 // 評論共有幾頁
 const pageCount = computed(() => Math.ceil(commentsCount / pageAmount.value));
-// 評論最後一頁數量
-const pageLeft = computed(() => commentsCount % pageAmount.value);
+
+const pageActive = ref(1);
+
+let commentsPage = reactive([]);
 // 把所有評論分頁
-// const commentsPage = (comments, pageAmount, pageCount) => {
+// const handleCommentsPage = (comments, pageAmount, pageCount) => {
 //   return Array.from({ length: pageCount }, () =>
 //     comments.splice(0, pageAmount)
 //   );
 // };
-const commentsPage = computed(() => {
-  return Array.from({ length: pageCount.value }, () =>
-    comments.splice(0, pageAmount.value)
-  );
-});
-// 顯示頁面
-const showPage = ref(0);
 
+// commentsPage = hamdleCommentsPage(comments, pageAmount, pageCount);
+// hamdleCommentsPage(comments, pageAmount, pageCount);
+// let commentsPage = computed(() => {
+//   return Array.from({ length: pageCount.value }, () =>
+//     comments.splice(0, pageAmount.value)
+//   );
+// });
+
+// comments資料複製出來操作
+let commentsCopy = JSON.parse(JSON.stringify(comments));
+
+const handleCommentsPage = (comments, pageAmount, pageCount) => {
+  commentsCopy = JSON.parse(JSON.stringify(comments));
+  let newcommentsPage = Array.from({ length: pageCount.value }, () =>
+    commentsCopy.splice(0, pageAmount.value)
+  );
+  Object.assign(commentsPage, newcommentsPage);
+};
+handleCommentsPage(commentsCopy, pageAmount, pageCount);
+console.log("commentsCopy-1", commentsCopy);
 // 評論排序
 // 評論排序預設為 1 最新
-const sort = ref("1");
+const pageSortSelect = ref("1");
+const pageCountSelect = ref("10");
 
-comments.forEach((i) => {
-  i.timeCode = Math.floor(new Date(i.created_time) / 1000);
-});
-
-watch(sort, (newVal, oldVal) => {
+watch(pageSortSelect, (newVal, oldVal) => {
   switch (newVal) {
     case "1":
       comments.sort((a, b) => b.timeCode - a.timeCode);
+      handleCommentsPage(comments, pageAmount, pageCount);
+      console.log("commentsPage-2", commentsPage);
       break;
     case "2":
       comments.sort((a, b) => b.rating - a.rating);
+      handleCommentsPage(comments, pageAmount, pageCount);
+      console.log("commentsPage-2", commentsPage);
+
       break;
     case "3":
       comments.sort((a, b) => a.rating - b.rating);
+      handleCommentsPage(comments, pageAmount, pageCount);
+      console.log("commentsPage-2", commentsPage);
       break;
   }
 });
@@ -207,8 +232,6 @@ comments.forEach((i) => {
 <template>
   <div class="msg mt-10 sm:mt-[104px] ml-48 lg:ml-36 sm:ml-0">
     <div class="title">個人評分</div>
-    <!-- {{ commentsPage }} -->
-    <!-- {{ commentsPage(comments, pageAmount, pageCount) }} -->
     <div
       class="
         score_name
@@ -388,10 +411,28 @@ comments.forEach((i) => {
         "
       >
         <div class="flex items-center justify-between mb-3">
-          <div class="comment_count text-gray-2 text-sm">
+          <div class="comment_count text-gray-2 text-sm flex items-center">
             <span>共</span>
             <span class="mx-1">{{ commentsCount }}</span>
             <span>筆評論</span>
+            <div class="flex items-center ml-4">
+              <label
+                for=""
+                class="text-sm text-gray-2 mx-3 my-1.5 whitespace-nowrap"
+              >
+                一頁顯示
+              </label>
+              <select
+                v-model="pageCountSelect"
+                class="w-full h-7"
+                name="pageCountSelect"
+                id=""
+              >
+                <option value="5">5筆</option>
+                <option value="10" selected>10筆</option>
+                <option value="15">15筆</option>
+              </select>
+            </div>
           </div>
           <div class="flex items-center">
             <label
@@ -400,7 +441,12 @@ comments.forEach((i) => {
             >
               排序
             </label>
-            <select v-model="sort" class="w-full h-7" name="" id="">
+            <select
+              v-model="pageSortSelect"
+              class="w-full h-7"
+              name="pageSortSelect"
+              id=""
+            >
               <option value="1">最新</option>
               <option value="2">由高至低</option>
               <option value="3">由低至高</option>
@@ -409,7 +455,7 @@ comments.forEach((i) => {
         </div>
         <div
           v-for="(item, idx) in commentsPage"
-          v-show="showPage === idx"
+          v-show="pageActive - 1 === idx"
           :key="idx"
           class="comment_list border border-green-neon rounded-xl p-4"
         >
@@ -439,7 +485,31 @@ comments.forEach((i) => {
             </div>
           </div>
         </div>
-        <!-- </div> -->
+        <div class="pagination_wrap my-10 flex justify-center">
+          <div class="pagination">
+            <PageStart class="text-white" />
+          </div>
+          <div class="pagination">
+            <Prev class="text-white" />
+          </div>
+          <div
+            v-for="page in pageCount"
+            :key="page"
+            :class="[
+              'pagination text-gray-2 text-sm',
+              page === pageActive ? 'bg-green-Default' : '',
+            ]"
+            @click="pageActive = page"
+          >
+            {{ page }}
+          </div>
+          <div class="pagination">
+            <Next class="text-white" />
+          </div>
+          <div class="pagination">
+            <PageEnd class="text-white" />
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -457,5 +527,8 @@ comments.forEach((i) => {
 }
 #tag_containComment:checked + .chat_tags_opts {
   @apply bg-green-w50;
+}
+.pagination {
+  @apply w-7 h-9 mx-1 bg-green-w50 flex items-center justify-center rounded-lg hover:bg-green-Default cursor-pointer;
 }
 </style>
