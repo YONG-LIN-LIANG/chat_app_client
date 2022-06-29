@@ -132,18 +132,23 @@ const roomInfo = reactive({
     roomId: 0,
     web_resource: 0,
     authorization: 1,
-    name: "陳大倫",
-    uuid: "212131",
+    name: "",
+    uuid: "",
     socketId: "dada",
     group: "",
     website: "",
   },
   cs: {
+    memberId: 0,
     socketId: "",
     name: "",
     typing: "",
   },
   chat: [],
+  // 人員message物件
+  // status 1為客服，2為客戶端
+  // {status:1, messageId:1, csName:, message:, createdTime}
+  // 送出時先推送訊息，推送成功時返回系統時間及messageId並塞回原本的訊息
 });
 const dialog = reactive({
   name: "",
@@ -168,10 +173,55 @@ const isFillClientNameDisplay = computed(
 const isVisitorNameFilled = computed(
   () => !visitorNameForm.name && visitorNameForm.errorMessage
 );
+
+// 送出訊息第一則訊息
+const handleSendFirstSmessage = (question) => {
+  const firstMessage = {
+    roomId: 0,
+    group: roomInfo.user.group,
+    website: roomInfo.user.website,
+    csName: "",
+    csUuid: "",
+    isReadId: 0,
+    beginTime: "",
+    endTime: "",
+    chatList: [
+      {
+        status: 0,
+        questionId: question.question_id,
+        question: question.question_name,
+        questionContent: question.question_content,
+        answer: "",
+        createdTime: "",
+      },
+    ],
+  };
+  roomInfo.chat.push(firstMessage);
+  console.log("roomInfo", roomInfo);
+};
+const handleSendSecondSmessage = (secondSmessage) => {
+  roomInfo.chat[roomInfo.chat.length - 1].chatList.push({
+    ...secondSmessage,
+    answer: "",
+    createdTime: "",
+  });
+};
+const shouldFirstMsgSend = computed(
+  () =>
+    !roomInfo.chat.length ||
+    !roomInfo.chat[roomInfo.chat.length - 1].chatList.length
+);
+const shouldSecondMsgSend = computed(
+  () =>
+    roomInfo.chat.length &&
+    roomInfo.chat[roomInfo.chat.length - 1].chatList[0].answer &&
+    roomInfo.chat[roomInfo.chat.length - 1].chatList.length === 1
+);
 onMounted(() => {
+  // 接收登入回應時事件
   socket.on("resLogin", (data) => {
     console.log("dataa", data);
-    const { chat, cs, user, question } = data;
+    const { chat, cs, user, question, secondSmessage } = data;
     roomInfo.user = {
       ...roomInfo.user,
       group: user.group_name,
@@ -180,35 +230,94 @@ onMounted(() => {
       roomId: user.room_id,
       socketId: user.socket_id,
     };
-    roomInfo.chat = chat;
+    roomInfo.chat = chat.map((i) => {
+      const newChatList = i.chatList.map((msg) => {
+        if (msg.status === 0) {
+          return {
+            answer: msg.answer,
+            createdTime: msg.created_time,
+            question: msg.question,
+            questionContent: msg.question_content,
+            questionId: msg.question_id,
+            status: msg.status,
+          };
+        } else if (msg.status === 1 || msg.status === 2) {
+          return {
+            status: msg.status,
+            messageId: msg.message_id,
+            memberId: msg.member_id,
+            name: msg.name,
+            message: msg.message,
+            createdTime: msg.created_time,
+          };
+        }
+      });
+      const newRoomObject = {
+        beginTime: i.begin_time,
+        csName: i.cs_name,
+        csMemberId: i.cs_member_id,
+        endTime: i.end_time,
+        group: i.group,
+        isReadId: i.is_read_id,
+        roomId: i.room_id,
+        website: i.website,
+        chatList: newChatList,
+      };
+      return newRoomObject;
+    });
     roomInfo.cs = {
       ...roomInfo.cs,
       ...cs,
     };
-    // 判斷如果roomId為0，送出第一則系統訊息
+    // 判斷如果roomId為0且，送出第一則系統訊息
     if (user.room_id === 0) {
-      const firstMessage = {
-        roomId: 0,
-        group: roomInfo.user.group,
-        website: roomInfo.user.website,
-        csName: "",
-        csUuid: "",
-        isReadId: 0,
-        beginTime: "",
-        endTime: "",
-        chatList: [
-          {
-            status: 0,
-            questionId: question.question_id,
-            question: question.question_name,
-            questionContent: question.question_content,
-            answer: "",
-            createdTime: "",
-          },
-        ],
-      };
-      roomInfo.chat.push(firstMessage);
-      console.log("roomInfo", roomInfo);
+      // 確定是否滿足送出第一則系統訊息條件
+      if (shouldFirstMsgSend.value) {
+        handleSendFirstSmessage(question);
+        // 確定是否滿足送出第二則系統訊息條件
+      } else if (shouldSecondMsgSend.value) {
+        handleSendSecondSmessage(secondSmessage);
+      }
+    }
+    console.log("roomInfoo", roomInfo);
+  });
+  // 接收傳送訊息回應時事件
+  socket.on("resSendMessage", (data) => {
+    const { identity, messageCreatedTime } = data;
+    console.log("xxxxxxxx", data);
+    if (identity === 0) {
+      const { questionId } = data;
+      if (messageCreatedTime) {
+        roomInfo.chat[roomInfo.chat.length - 1].chatList.find(
+          (i) => i.questionId === questionId
+        ).createdTime = messageCreatedTime;
+        // 送第二則系統訊息，在handleSendSecondSmessage裡寫死
+        if (questionId === 1) {
+          const { secondSmessage } = data;
+          handleSendSecondSmessage(secondSmessage);
+        } else if (questionId === 2) {
+          const { roomId, csInfo, firstMessage } = data;
+          roomInfo.cs = {
+            ...roomInfo.cs,
+            ...csInfo,
+          };
+          roomInfo.user.roomId = roomId;
+          console.log("sec roominfo", roomInfo);
+          const currentRoom = roomInfo.chat[roomInfo.chat.length - 1];
+          currentRoom.chatList.push(firstMessage);
+          currentRoom.beginTime = messageCreatedTime;
+        }
+
+        // 發送第二則系統訊息(先寫死)
+        // roomInfo.chat[roomInfo.chat.length - 1].chatList.push({
+        //   ...secondSmessage,
+        //   answer: "",
+        //   createdTime: "",
+        // });
+        console.log("roomInfo", roomInfo);
+      } else {
+        // 提示系統異常
+      }
     }
   });
   window.addEventListener("message", handleMessage);
@@ -216,20 +325,6 @@ onMounted(() => {
 onBeforeUnmount(() => {
   window.removeEventListener("message", handleMessage);
 });
-// const handleConnect = (data) => {
-//   const endPoint = "http://172.18.48.177:3001/";
-//   socket = io(endPoint);
-//   // 處理是會員就建立會員
-//   this.socket.on("connect", () => {
-//     this.roomInfo.user = {
-//       ...data,
-//       socketId: this.socket.id,
-//     };
-//     console.log("check user", this.roomInfo.user);
-//     // 呼叫socket加入房間
-//     this.socket.emit("reqLogin", { ...this.roomInfo.user, identity: 2 });
-//   });
-// };
 const handleMessage = (message) => {
   console.log("messageee", message);
   const data = message.data;
@@ -237,6 +332,10 @@ const handleMessage = (message) => {
   console.log("checkkk", data);
   clientStore.setClient(data);
   console.log("client data", clientStore.client);
+  roomInfo.user = {
+    ...roomInfo.user,
+    ...data,
+  };
   socket.emit("reqLogin", { ...data, identity: 2 });
   // setTimeout(() => {
   //   if (data.authentication === "1") {
@@ -287,20 +386,30 @@ const handleSendMessage = (data) => {
     );
     console.log("findMessage", findSmessage);
     if (findSmessage !== undefined) {
-      findSmessage.answer = content;
+      if (questionId === 1) {
+        findSmessage.answer = content;
+      } else if (questionId === 2) {
+        findSmessage.answer = content.name;
+      }
+
       // 由於還沒建立房間，先把系統訊息傳送到redis的 message-clientMemberId-0的陣列裡，利用夾帶clientMemberId就不會跟別人重複
       // smessage data結構: { identity, roomId, clientMemberId, questionId, question, questionContent, answer}
+      console.log("555", findSmessage.questionContent);
       const data = {
         identity: 0,
         roomId: 0,
         memberId: roomInfo.user.memberId,
         questionId,
         question: findSmessage.question,
-        questionContent: findSmessage.questionContent.toString(),
+        // questionContent: findSmessage.questionContent.toString(),
+        questionContent: findSmessage.questionContent,
         answer: findSmessage.answer,
       };
       console.log("before send", data);
-      socket.emit("reqSendMessage", data);
+      socket.emit("reqSendMessage", {
+        ...data,
+        resourceId: roomInfo.user.web_resource,
+      });
     }
   }
 };

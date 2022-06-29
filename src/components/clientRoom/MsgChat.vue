@@ -22,7 +22,7 @@
         class="w-full"
       >
         <div
-          v-if="item.status === 0 && item.questionId === 1"
+          v-show="item.status === 0 && item.questionId === 1"
           class="mx-0 my-2.5"
         >
           <div class="text-xs text-gray-2 text-center mx-0 my-2.5">
@@ -33,14 +33,16 @@
               v-for="(option, idx2) in item.questionContent"
               :key="idx2"
               :class="[
-                'chat_tags_opts text-sm text-gray-2 rounded-20 m-1 border border-solid border-green-Default px-3.5 py-1.5 cursor-pointer',
+                'chat_tags_opts text-sm text-gray-2 rounded-20 m-1 border border-solid border-green-Default px-3.5 py-1.5 ',
                 !item.answer
-                  ? 'hover:bg-green-w50'
+                  ? 'cursor-pointer hover:bg-green-w50'
                   : item.answer === option
                   ? 'bg-green-w50'
                   : '',
               ]"
-              @click="handleSendMessage(0, item.questionId, option)"
+              @click="
+                handleSendMessage(0, item.questionId, option, item.createdTime)
+              "
             >
               {{ option }}
             </div>
@@ -48,11 +50,11 @@
         </div>
 
         <div
-          v-if="item.status === 0 && item.question_id === 2"
+          v-show="item.status === 0 && item.questionId === 2"
           class="mx-0 my-2.5"
         >
           <div class="text-xs text-gray-2 text-center mx-0 my-2.5">
-            請選擇服務的客服人員
+            {{ item.question }}
           </div>
           <div class="chat_tags_opts_wrap flex justify-center">
             <div
@@ -60,10 +62,17 @@
               :key="idx2"
               :class="[
                 'chat_tags_opts text-sm text-gray-2 rounded-20 m-1 border border-solid border-green-Default px-3.5 py-1.5',
-                item.answer === option ? 'bg-green-w50' : '',
+                !item.answer
+                  ? 'cursor-pointer hover:bg-green-w50'
+                  : item.answer === option.name
+                  ? 'bg-green-w50'
+                  : '',
               ]"
+              @click="
+                handleSendMessage(0, item.questionId, option, item.createdTime)
+              "
             >
-              {{ option }}
+              {{ option.name }}
             </div>
           </div>
         </div>
@@ -74,29 +83,29 @@
           class="w-full mx-0 my-2.5"
         >
           <div
-            v-if="item.status === 2"
+            v-if="item.status === 1"
             class="message w-full flex items-end mr-7"
           >
             <span
               class="text-md text-gray-1 bg-gray-6 tracking-wide rounded-md px-4 py-2"
-              >{{ item.msg }}</span
+              >{{ item.message }}</span
             >
             <span
               class="text-xs font-light text-gray-3 tracking-wide mx-2 my-0.5"
-              >{{ formatTime(item.created_time) }}</span
+              >{{ formatTime(item.createdTime) }}</span
             >
           </div>
           <div
-            v-if="item.status === 1"
+            v-if="item.status === 2"
             class="message w-full flex items-end justify-end mr-7"
           >
             <span
               class="text-xs font-light text-gray-3 tracking-wide mx-2 my-0.5"
-              >{{ formatTime(item.created_time) }}</span
+              >{{ formatTime(item.createdTime) }}</span
             >
             <span
               class="text-md text-gray-1 bg-green-w50 tracking-wide rounded-md px-4 py-2"
-              >{{ item.msg }}</span
+              >{{ item.message }}</span
             >
           </div>
         </div>
@@ -138,6 +147,9 @@ const props = defineProps({
     default: () => {},
   },
 });
+const formatTime = (time) => {
+  return time.split(" ")[1].slice(0, 5);
+};
 console.log("messageInfo", props.messageInfo);
 const emit = defineEmits(["onSendMessage"]);
 const formatDate = (time) => {
@@ -151,9 +163,10 @@ const formatDate = (time) => {
   return formatTimeDate;
 };
 
-const handleSendMessage = (status, questionId, content) => {
+const handleSendMessage = (status, questionId, content, createdTime) => {
   // 檢查房間有無結束，已結束的房間return
-  if (props.messageInfo.endTime) return;
+  console.log(status, questionId, content, createdTime);
+  if (props.messageInfo.endTime || createdTime) return;
   emit("onSendMessage", { status, questionId, content });
 };
 console.log(props);
