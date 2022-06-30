@@ -1,9 +1,15 @@
 <script setup>
-import { reactive } from "@vue/reactivity";
+import { ref, onMounted } from "vue";
 import { useCsRoomStore } from "@/stores/csRoom";
 
 const CsRoom = useCsRoomStore();
-console.log("ddd", CsRoom.userChatList[0].chatList[0].createdTimeClock);
+
+const chatSection = ref(null);
+
+onMounted(() => {
+  CsRoom.chatSectionHeight = chatSection.value.clientHeight;
+  CsRoom.chatSectionDom = chatSection.value;
+});
 
 // const SourceList = reactive({
 //   client: {
@@ -144,6 +150,7 @@ console.log("ddd", CsRoom.userChatList[0].chatList[0].createdTimeClock);
 </script>
 <template>
   <div
+    ref="chatSection"
     class="
       chat_section
       px-10
@@ -156,7 +163,6 @@ console.log("ddd", CsRoom.userChatList[0].chatList[0].createdTimeClock);
       box-border
     "
   >
-    <!-- v-for="item in SourceList.data" -->
     <div
       v-for="item in CsRoom.userChatList"
       :key="item.roomId"

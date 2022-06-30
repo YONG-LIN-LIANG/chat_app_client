@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref, reactive, watch, nextTick } from 'vue'
+import { ref, reactive } from 'vue'
 
 export const useCsRoomStore = defineStore('CsRoom', () => {
 	const userActive = reactive({
@@ -172,7 +172,6 @@ export const useCsRoomStore = defineStore('CsRoom', () => {
 	}
 	formatChatListTime()
 
-	const chat_section = document.getElementsByClassName('chat_section')[0]
 	const handleMsgSend = (inputValue) => {
 		userChatList
 			.find((i) => i.roomId === userActive.roomId)
@@ -182,8 +181,6 @@ export const useCsRoomStore = defineStore('CsRoom', () => {
 				status: 1,
 				createdTimeClock: currentTimeFormat().split(' ')[1].substring(0, 5),
 			})
-
-		// nextTick((chat_section.scrollTop = chat_section.scrollHeight))
 	}
 
 	const currentTimeFormat = () => {
@@ -200,6 +197,20 @@ export const useCsRoomStore = defineStore('CsRoom', () => {
 	// 	})
 	// 	i.chatList.sort((a, b) => a.timeCode - b.timeCode)
 	// })
+	// const divRef = ref(null)
+	// const testSend = () => {
+	// 	divRef.value.scrollTop = divRef.value.scrollHeight
+	// }
 
-	return { userActive, userChatList, userListActive, userList, handleMsgSend, currentTimeFormat }
+	const chatSectionDom = ref()
+
+	return {
+		userActive,
+		userChatList,
+		userListActive,
+		userList,
+		handleMsgSend,
+		currentTimeFormat,
+		chatSectionDom,
+	}
 })

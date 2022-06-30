@@ -4,6 +4,10 @@ import SendIcon from "@/components/svg/Send.vue";
 import { useCsRoomStore } from "@/stores/csRoom";
 const CsRoom = useCsRoomStore();
 let inputValue = ref("");
+
+const inputSend = async () => {
+  CsRoom.chatSectionDom.scrollTop = await CsRoom.chatSectionDom.scrollHeight;
+};
 </script>
 
 <template>
@@ -19,6 +23,7 @@ let inputValue = ref("");
       @click="
         CsRoom.handleMsgSend(inputValue);
         inputValue = '';
+        inputSend();
       "
       class="cursor-pointer text-orange-Default hover:text-orange-b90 m-2.5"
     />
