@@ -1,145 +1,156 @@
 <script setup>
-import { reactive } from "@vue/reactivity";
+import { ref, onMounted } from "vue";
+import { useCsRoomStore } from "@/stores/csRoom";
 
-const SourceList = reactive({
-  client: {
-    roomId: 0,
-    group: "",
-    website: "",
-    name: "",
-    uuid: "",
-    socketId: "",
-  },
-  data: [
-    {
-      roomId: "1",
-      group: "通路事業群",
-      website: "大碩研究所官網",
-      csName: "強尼逮",
-      systemChatList: [
-        // 用created_time判斷在message前或後
-        {
-          // 如果之後客服可以發送問題給客戶端，可用question_id來做一些判斷
-          status: 0,
-          question_id: 1,
-          question: "請選擇想詢問的問題",
-          optionList: ["雅思", "多益", "托福"],
-          answer: "雅思",
-          created_time: "2022-05-03 10:02",
-        },
-        {
-          status: 0,
-          question_id: 2,
-          question: "請選擇服務的客服人員",
-          // 有的話幫我塞名子，沒有的話空陣列
-          optionList: ["強尼逮", "由系統隨機指派"],
-          // answer如果為人名則選擇了某客服，如為空表示選擇了系統隨機指派
-          answer: "強尼逮",
-          created_time: "2022-05-03 14:02",
-        },
-      ],
-      chatList: [
-        {
-          status: 1,
-          name: "陳大倫",
-          msg: "安尼阿誰優",
-          isRead: false,
-          created_time: "2022-05-03 14:03",
-        },
-        {
-          status: 1,
-          name: "陳大倫",
-          msg: "有啥問題",
-          isRead: true,
-          created_time: "2022-05-03 14:04",
-        },
-        {
-          status: 2,
-          name: "Molly",
-          msg: "您好想請問您貴姓",
-          isRead: false,
-          created_time: "2022-05-03 14:10",
-        },
-        {
-          status: 1,
-          name: "陳大倫",
-          msg: "敝姓張",
-          isRead: false,
-          created_time: "2022-05-03 14:40",
-        },
-      ],
-    },
-    {
-      roomId: "2",
-      group: "美語事業群",
-      website: "洋碩官網",
-      csName: "尹思",
+const CsRoom = useCsRoomStore();
 
-      systemChatList: [
-        {
-          status: 0,
-          question_id: 1,
-          question: "請選擇想詢問的問題",
-          optionList: ["雅思", "多益", "托福"],
-          answer: "雅思",
-          created_time: "2022-05-04 14:10",
-        },
-        {
-          status: 0,
-          question_id: 2,
-          question: "請選擇服務的客服人員",
-          optionList: ["強尼逮", "由系統隨機指派"],
-          answer: "由系統隨機指派",
-          created_time: "2022-05-04 18:02",
-        },
-      ],
+const chatSection = ref(null);
 
-      chatList: [
-        {
-          status: 1,
-          name: "尹思",
-          msg: "安安",
-          isRead: false,
-          created_time: "2022-05-04 14:00",
-        },
-        {
-          status: 2,
-          name: "Molly",
-          msg: "您好想請問您貴姓",
-          isRead: false,
-          created_time: "2022-05-04 14:10",
-        },
-        {
-          status: 1,
-          name: "尹思",
-          msg: "敝姓張",
-          isRead: false,
-          created_time: "2022-05-04 14:20",
-        },
-      ],
-    },
-  ],
+onMounted(() => {
+  CsRoom.chatSectionHeight = chatSection.value.clientHeight;
+  CsRoom.chatSectionDom = chatSection.value;
 });
 
-// 把created_time轉換成時間代碼
-SourceList.data.forEach(function (i) {
-  // 把系統訊息跟聊天訊息合併，塞回原本data
-  const chatListAll = i.systemChatList.concat(i.chatList);
-  i["chatListAll"] = chatListAll;
-  // 依照陣列中物件的created_time排序
-  i.chatListAll.forEach((j) => {
-    j["timeCode"] = Math.floor(new Date(j.created_time) / 1000);
-  });
-  i.chatListAll.sort((a, b) => a.timeCode - b.timeCode);
-  //開始時間為 SourceList.data.chatListAll一時間排序後第一筆
-  i["startDate"] = i.chatListAll[0].created_time
-    .split(" ")[0]
-    .split("-")
-    .join("/");
-});
+// const SourceList = reactive({
+//   client: {
+//     roomId: 0,
+//     group: "",
+//     website: "",
+//     name: "",
+//     uuid: "",
+//     socketId: "",
+//   },
+//   data: [
+//     {
+//       roomId: "1",
+//       group: "通路事業群",
+//       website: "大碩研究所官網",
+//       csName: "強尼逮",
+//       systemChatList: [
+//         // 用created_time判斷在message前或後
+//         {
+//           // 如果之後客服可以發送問題給客戶端，可用question_id來做一些判斷
+//           status: 0,
+//           question_id: 1,
+//           question: "請選擇想詢問的問題",
+//           optionList: ["雅思", "多益", "托福"],
+//           answer: "雅思",
+//           created_time: "2022-05-03 10:02",
+//         },
+//         {
+//           status: 0,
+//           question_id: 2,
+//           question: "請選擇服務的客服人員",
+//           // 有的話幫我塞名子，沒有的話空陣列
+//           optionList: ["強尼逮", "由系統隨機指派"],
+//           // answer如果為人名則選擇了某客服，如為空表示選擇了系統隨機指派
+//           answer: "強尼逮",
+//           created_time: "2022-05-03 14:02",
+//         },
+//       ],
+//       chatList: [
+//         {
+//           status: 1,
+//           name: "陳大倫",
+//           msg: "安尼阿誰優",
+//           isRead: false,
+//           created_time: "2022-05-03 14:03",
+//         },
+//         {
+//           status: 1,
+//           name: "陳大倫",
+//           msg: "有啥問題",
+//           isRead: true,
+//           created_time: "2022-05-03 14:04",
+//         },
+//         {
+//           status: 2,
+//           name: "Molly",
+//           msg: "您好想請問您貴姓",
+//           isRead: false,
+//           created_time: "2022-05-03 14:10",
+//         },
+//         {
+//           status: 1,
+//           name: "陳大倫",
+//           msg: "敝姓張",
+//           isRead: false,
+//           created_time: "2022-05-03 14:40",
+//         },
+//       ],
+//     },
+//     {
+//       roomId: "2",
+//       group: "美語事業群",
+//       website: "洋碩官網",
+//       csName: "尹思",
+
+//       systemChatList: [
+//         {
+//           status: 0,
+//           question_id: 1,
+//           question: "請選擇想詢問的問題",
+//           optionList: ["雅思", "多益", "托福"],
+//           answer: "雅思",
+//           created_time: "2022-05-04 14:10",
+//         },
+//         {
+//           status: 0,
+//           question_id: 2,
+//           question: "請選擇服務的客服人員",
+//           optionList: ["強尼逮", "由系統隨機指派"],
+//           answer: "由系統隨機指派",
+//           created_time: "2022-05-04 18:02",
+//         },
+//       ],
+
+//       chatList: [
+//         {
+//           status: 1,
+//           name: "尹思",
+//           msg: "安安",
+//           isRead: false,
+//           created_time: "2022-05-04 14:00",
+//         },
+//         {
+//           status: 2,
+//           name: "Molly",
+//           msg: "您好想請問您貴姓",
+//           isRead: false,
+//           created_time: "2022-05-04 14:10",
+//         },
+//         {
+//           status: 1,
+//           name: "尹思",
+//           msg: "敝姓張",
+//           isRead: false,
+//           created_time: "2022-05-04 14:20",
+//         },
+//       ],
+//     },
+//   ],
+// });
+
+// // 把created_time轉換成時間代碼
+// SourceList.data.forEach(function (i) {
+//   // 把系統訊息跟聊天訊息合併，塞回原本data
+//   const chatListAll = i.systemChatList.concat(i.chatList);
+//   i["chatListAll"] = chatListAll;
+//   // 依照陣列中物件的created_time排序
+//   i.chatListAll.forEach((j) => {
+//     j["timeCode"] = Math.floor(new Date(j.created_time) / 1000);
+//   });
+//   i.chatListAll.sort((a, b) => a.timeCode - b.timeCode);
+//   //開始時間為 SourceList.data.chatListAll一時間排序後第一筆
+//   i["startDate"] = i.chatListAll[0].created_time
+//     .split(" ")[0]
+//     .split("-")
+//     .join("/");
+// });
 </script>
 <template>
   <div
+    ref="chatSection"
     class="
       chat_section
       px-10
@@ -153,7 +164,7 @@ SourceList.data.forEach(function (i) {
     "
   >
     <div
-      v-for="item in SourceList.data"
+      v-for="item in CsRoom.userChatList"
       :key="item.roomId"
       class="w-full flex items-center flex-col"
       data-part="0"
@@ -170,7 +181,7 @@ SourceList.data.forEach(function (i) {
           my-5
         "
       >
-        {{ item.startDate }}
+        {{ item.beginTime.split(" ")[0].split("-").join("/") }}
       </div>
       <div class="chat_start">
         <div
@@ -214,8 +225,8 @@ SourceList.data.forEach(function (i) {
         </div>
       </div>
       <div
-        v-for="chatItem in item.chatListAll"
-        :key="chatItem.created_time"
+        v-for="chatItem in item.chatList"
+        :key="chatItem.createdTime"
         class="w-full mx-0 my-3"
       >
         <div v-if="chatItem.status === 0" class="chat_tags_wrap">
@@ -226,19 +237,19 @@ SourceList.data.forEach(function (i) {
           </div>
           <div class="chat_tags_opts_wrap flex justify-center">
             <div
-              v-for="optItem in chatItem.optionList"
-              :key="optItem"
+              v-for="questionItem in chatItem.questionContent"
+              :key="questionItem"
               :class="[
-                { 'bg-green-w50': optItem === chatItem.answer },
+                { 'bg-green-w50': questionItem === chatItem.answer },
                 'chat_tags_opts text-sm text-gray-2 rounded-20 m-1 border border-solid border-green-Default px-3.5 py-1.5 cursor-pointer',
               ]"
             >
-              {{ optItem }}
+              {{ questionItem }}
             </div>
           </div>
         </div>
         <div v-if="chatItem.status === 2" class="msg_receive">
-          <span class="msg_receive_text bg-gray-6">{{ chatItem.msg }}</span>
+          <span class="msg_receive_text bg-gray-6">{{ chatItem.message }}</span>
           <span
             class="
               msg_time
@@ -249,7 +260,7 @@ SourceList.data.forEach(function (i) {
               mx-2
               my-0.5
             "
-            >{{ chatItem.created_time.split(" ")[1] }}</span
+            >{{ chatItem.createdTimeClock }}</span
           >
         </div>
         <div v-if="chatItem.status === 1" class="msg_send justify-end">
@@ -263,13 +274,13 @@ SourceList.data.forEach(function (i) {
               mx-2
               my-0.5
             "
-            >{{ chatItem.created_time.split(" ")[1] }}</span
+            >{{ chatItem.createdTimeClock }}</span
           >
-          <span class="msg_send_text bg-green-w50">{{ chatItem.msg }}</span>
+          <span class="msg_send_text bg-green-w50">{{ chatItem.message }}</span>
         </div>
       </div>
 
-      <div class="chat_end">
+      <div v-if="item.endTime" class="chat_end">
         <div
           class="
             chat_status
