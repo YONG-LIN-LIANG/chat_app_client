@@ -1,5 +1,5 @@
 <template>
-  <div class="flex items-center flex-col px-5 pt-5 box-border">
+  <div class="flex items-center flex-col px-5 py-5 box-border">
     <div class="w-full flex items-center flex-col">
       <!-- messageInfo.chatList[0].created_time -->
       <div
@@ -91,6 +91,7 @@
               >{{ item.message }}</span
             >
             <span
+              v-if="item.createdTime"
               class="text-xs font-light text-gray-3 tracking-wide mx-2 my-0.5"
               >{{ formatTime(item.createdTime) }}</span
             >
@@ -100,6 +101,7 @@
             class="message w-full flex items-end justify-end mr-7"
           >
             <span
+              v-if="item.createdTime"
               class="text-xs font-light text-gray-3 tracking-wide mx-2 my-0.5"
               >{{ formatTime(item.createdTime) }}</span
             >
@@ -165,7 +167,6 @@ const formatDate = (time) => {
 
 const handleSendMessage = (status, questionId, content, createdTime) => {
   // 檢查房間有無結束，已結束的房間return
-  console.log(status, questionId, content, createdTime);
   if (props.messageInfo.endTime || createdTime) return;
   emit("onSendMessage", { status, questionId, content });
 };

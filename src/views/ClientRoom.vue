@@ -28,7 +28,7 @@
           </button>
         </div>
       </div>
-      <div v-show="isInRoom" class="flex-grow overflow-y-auto">
+      <div ref="chatWindow" v-show="isInRoom" class="flex-grow overflow-y-auto">
         <!-- :roomInfo="roomInfo" -->
         <MsgChat
           v-for="(item, idx) in roomInfo.chat"
@@ -39,7 +39,13 @@
         />
       </div>
       <div v-show="isInRoom" class="flex-none h-15">
-        <MsgSend />
+        <MsgSend
+          :csSocketId="roomInfo.cs.socketId"
+          :roomId="roomInfo.user.roomId"
+          :memberId="roomInfo.user.memberId"
+          :clientName="roomInfo.user.name"
+          @onSendMessage="handleSendMessage"
+        />
       </div>
       <!-- 未登入提醒 -->
       <div v-show="isLoginReminderDisplay" class="text-center py-7.5">
@@ -125,7 +131,7 @@ import { useClientStore } from "@/stores/client";
 import { useSocketStore } from "@/stores/socket";
 const clientStore = useClientStore();
 const socket = useSocketStore().socket;
-
+const chatWindow = ref(null);
 const roomInfo = reactive({
   user: {
     memberId: 0,
@@ -218,6 +224,13 @@ const shouldSecondMsgSend = computed(
     roomInfo.chat[roomInfo.chat.length - 1].chatList.length === 1
 );
 onMounted(() => {
+  setTimeout(() => {
+    console.log(
+      "timeout",
+      chatWindow.value.scrollTop,
+      chatWindow.value.scrollHeight
+    );
+  }, 1);
   // 接收登入回應時事件
   socket.on("resLogin", (data) => {
     console.log("dataa", data);
@@ -318,6 +331,12 @@ onMounted(() => {
       } else {
         // 提示系統異常
       }
+    } else if (identity === 1 || identity === 2) {
+      const { messageId } = data;
+      // 用messageId找到那則訊息
+      roomInfo.chat[roomInfo.chat.length - 1].chatList.find(
+        (i) => i.messageId === messageId
+      ).createdTime = messageCreatedTime;
     }
   });
   window.addEventListener("message", handleMessage);
@@ -344,8 +363,11 @@ const handleMessage = (message) => {
   //   }
   // }, 1);
 };
-
-const handleToggleRoom = () => {
+const handleScrollToBottom = async () => {
+  chatWindow.value.scrollTop = await chatWindow.value.scrollHeight;
+};
+const handleToggleRoom = async () => {
+  await handleScrollToBottom();
   isRoomOpen.value = !isRoomOpen.value;
   window.parent.postMessage(
     {
@@ -376,7 +398,7 @@ const handleCloseDialog = () => {
   dialog.isOpen = false;
 };
 
-const handleSendMessage = (data) => {
+const handleSendMessage = async (data) => {
   console.log("sendData", data);
   // 先將data的answer塞值，再打socket發api
   const { status, questionId, content } = data;
@@ -411,7 +433,41 @@ const handleSendMessage = (data) => {
         resourceId: roomInfo.user.web_resource,
       });
     }
+  } else if (status === 2) {
+    console.log("send");
+    const { roomId, memberId, name } = roomInfo.user;
+    const { socketId } = roomInfo.cs;
+    const lastRoom = roomInfo.chat[roomInfo.chat.length - 1];
+    const memberMessageList = lastRoom.chatList.filter(
+      (i) => i.status === 2 || i.status === 1
+    );
+    console.log("clientMessageList", memberMessageList);
+    let currentMessageId = !memberMessageList.length
+      ? 1
+      : memberMessageList[memberMessageList.length - 1].messageId;
+    const newMessageId = currentMessageId + 1;
+    const message = {
+      name,
+      messageId: newMessageId,
+      message: content,
+      memberId,
+    };
+    const data = {
+      ...message,
+      identity: status,
+      socketId,
+      roomId,
+    };
+    console.log("hii", roomInfo.chat[roomInfo.chat.length - 1].chatList);
+    console.log("height1", chatWindow.value.scrollHeight);
+    roomInfo.chat[roomInfo.chat.length - 1].chatList.push({
+      ...message,
+      status,
+      createdTime: "",
+    });
+    socket.emit("reqSendMessage", data);
   }
+  await handleScrollToBottom();
 };
 </script>
 <style scoped>
