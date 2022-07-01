@@ -162,7 +162,7 @@ const handleCommentsPage = (comments, pageAmount, pageCount) => {
   Object.assign(commentsPage, newcommentsPage);
 };
 handleCommentsPage(commentsCopy, pageAmount, pageCount);
-console.log("commentsCopy-1", commentsCopy);
+
 // 評論排序
 // 評論排序預設為 1 最新
 const pageSortSelect = ref("1");
@@ -173,18 +173,17 @@ watch(pageSortSelect, (newVal, oldVal) => {
     case "1":
       comments.sort((a, b) => b.timeCode - a.timeCode);
       handleCommentsPage(comments, pageAmount, pageCount);
-      console.log("commentsPage-2", commentsPage);
+
       break;
     case "2":
       comments.sort((a, b) => b.rating - a.rating);
       handleCommentsPage(comments, pageAmount, pageCount);
-      console.log("commentsPage-2", commentsPage);
 
       break;
     case "3":
       comments.sort((a, b) => a.rating - b.rating);
       handleCommentsPage(comments, pageAmount, pageCount);
-      console.log("commentsPage-2", commentsPage);
+
       break;
   }
 });

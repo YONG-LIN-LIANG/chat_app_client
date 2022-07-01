@@ -161,7 +161,6 @@ const props = defineProps({
     type: Object,
   },
 });
-console.log(props);
 </script>
 <template>
   <div
@@ -510,7 +509,7 @@ console.log(props);
 
 <style scoped>
 .tabbar_func_open {
-  @apply opacity-100 w-full max-w-66 transition-all duration-500 lg:max-w-full;
+  @apply opacity-100 w-full max-w-66 transition-all duration-300 lg:max-w-full;
 }
 .tabbar_func_closed {
   @apply max-w-0;

@@ -122,7 +122,7 @@ export const useCsRoomStore = defineStore('CsRoom', () => {
 			memberId: 1,
 			name: '林三良',
 			// 0:系統 1:客服 or 2:學生
-			messageStatus: 1,
+			status: 1,
 			answer: '托福',
 			message: '請問課程',
 			massageTime: '2022-06-21 12:21:33',
@@ -136,7 +136,7 @@ export const useCsRoomStore = defineStore('CsRoom', () => {
 			memberId: 2,
 			name: '吳大揆',
 			// 0:系統 1:客服 or 2:學生
-			messageStatus: 0,
+			status: 0,
 			answer: '托福',
 			message: '',
 			massageTime: '2022-06-20 12:21:33',
@@ -150,7 +150,7 @@ export const useCsRoomStore = defineStore('CsRoom', () => {
 			memberId: 3,
 			name: '伊藤馬林',
 			// 0:系統 1:客服 or 2:學生
-			messageStatus: 2,
+			status: 2,
 			answer: '托福',
 			message: '你好嗎',
 			massageTime: '2022-06-19 12:21:33',
@@ -166,21 +166,22 @@ export const useCsRoomStore = defineStore('CsRoom', () => {
 		userChatList.forEach((i) => {
 			i.chatList.forEach((j) => {
 				j['createdTimeClock'] = j.createdTime.split(' ')[1].substring(0, 5)
-				console.log(j['createdTimeClock'])
 			})
 		})
 	}
 	formatChatListTime()
 
 	const handleMsgSend = (inputValue) => {
-		userChatList
-			.find((i) => i.roomId === userActive.roomId)
-			.chatList.push({
-				createdTime: currentTimeFormat(),
-				message: inputValue,
-				status: 1,
-				createdTimeClock: currentTimeFormat().split(' ')[1].substring(0, 5),
-			})
+		if (inputValue.trim()) {
+			userChatList
+				.find((i) => i.roomId === userActive.roomId)
+				.chatList.push({
+					createdTime: currentTimeFormat(),
+					message: inputValue.trim(),
+					status: 1,
+					createdTimeClock: currentTimeFormat().split(' ')[1].substring(0, 5),
+				})
+		}
 	}
 
 	const currentTimeFormat = () => {
