@@ -1,24 +1,18 @@
-<script>
+<script setup>
+import { defineProps } from "vue";
 import StarIcon from "@/components/svg/Star.vue";
-
-export default {
-  components: {
-    StarIcon,
+const props = defineProps({
+  rateItem: {
+    type: Object,
+    default: () => {},
   },
-  props: {
-    rateItem: {
-      type: Object,
-      default: () => {},
-    },
-    idx: {
-      type: Object,
-      default: () => {},
-    },
+  idx: {
+    type: Object,
+    default: () => {},
   },
-};
+});
 </script>
 <template>
-  <!-- <div class="relative"> -->
   <div
     :class="[
       'ranking_info w-85 h-12 flex items-center px-5 rounded-3xl  border border-solid ease-in-out duration-300',
@@ -29,6 +23,8 @@ export default {
         'border-orange-Default': rateItem.showDetail,
       },
     ]"
+    @mouseover="rateItem.showDetail = true"
+    @mouseleave="rateItem.showDetail = false"
   >
     <div class="ranking_name w-20 font-semibold">{{ rateItem.name }}</div>
     <div class="ranking_star_wrap flex items-center mr-5">
@@ -56,12 +52,35 @@ export default {
       <div class="w-14 h-px absolute bg-orange-Default top-1/2 left-0"></div>
 
       <div
-        class="ranking_personal w-48 flex flex-col items-center justify-center bg-gray-7 rounded-xl p-5 border border-solid border-orange-Default absolute top-[40%] left-14"
+        class="
+          ranking_personal
+          w-48
+          flex flex-col
+          items-center
+          justify-center
+          bg-gray-7
+          rounded-xl
+          p-5
+          border border-solid border-orange-Default
+          absolute
+          top-[40%]
+          left-14
+        "
       >
         <div
           v-for="ratingPer in rateItem.ratingCal"
           :key="ratingPer.rating"
-          class="ranking_perstar w-32 h-8 flex items-center bg-white rounded-2xl mb-2.5 px-5"
+          class="
+            ranking_perstar
+            w-32
+            h-8
+            flex
+            items-center
+            bg-white
+            rounded-2xl
+            mb-2.5
+            px-5
+          "
         >
           <div class="ranking_star_wrap flex items-center mr-5">
             <div class="ranking_average text-green-Default mr-1">

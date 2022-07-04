@@ -1,16 +1,22 @@
 import { defineStore } from "pinia";
-export const useCsStore = defineStore({
-  id: "cs",
-  state: () => ({
-    cs: {},
-    roomList: [],
-  }),
-  actions: {
-    setCs(value) {
-      this.cs = value;
-    },
-    setRoomList(value) {
-      this.roomList = value;
-    },
-  },
-});
+import { reactive } from "vue";
+export const useCsStore = defineStore(
+  "cs",
+  () => {
+    const cs = reactive({});
+
+    return { cs };
+  }
+  // state: () => ({
+  //   cs: {},
+  //   roomList: [],
+  // }),
+  // actions: {
+  // setCs(value) {
+  //   this.cs = value;
+  // },
+  //   setRoomList(value) {
+  //     this.roomList = value;
+  //   },
+  // },
+);

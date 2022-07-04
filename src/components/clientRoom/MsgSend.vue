@@ -1,11 +1,5 @@
-<script>
+<script setup>
 import SendIcon from "@/components/svg/Send.vue";
-
-export default {
-  components: {
-    SendIcon,
-  },
-};
 </script>
 
 <template>

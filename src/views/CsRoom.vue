@@ -1,26 +1,17 @@
 <script>
-import Sidebar from "@/components/Sidebar.vue";
-// import Msg from "@/components/Msg.vue";
-// import Ranking from "@/components/Ranking.vue";
-import Score from "@/components/Score.vue";
-// import LeaveModule from '@/components/LeaveModule.vue'
+import Sidebar from "@/components/csRoom/Sidebar.vue";
 
 export default {
   name: "CsRoom",
   components: {
     Sidebar,
-    // Msg,
-    // Ranking,
-    Score,
   },
 };
 </script>
 
 <template>
   <Sidebar />
-  <!-- <Msg /> -->
-  <!-- <Ranking /> -->
-  <Score />
+  <router-view></router-view>
 </template>
 
 <style scoped></style>
