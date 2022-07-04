@@ -1,7 +1,7 @@
 <script setup>
 import { defineProps } from "vue";
 import StarIcon from "@/components/svg/Star.vue";
-const props = defineProps({
+defineProps({
   rateItem: {
     type: Object,
     default: () => {},

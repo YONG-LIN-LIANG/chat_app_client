@@ -1,7 +1,10 @@
 import { defineStore } from 'pinia'
-import { ref, reactive } from 'vue'
+import { ref, reactive, computed } from 'vue'
 
 export const useCsRoomStore = defineStore('CsRoom', () => {
+	const cs = reactive({
+		memberId: 1,
+	})
 	const userActive = reactive({
 		roomId: 0,
 		group: '',
@@ -115,52 +118,53 @@ export const useCsRoomStore = defineStore('CsRoom', () => {
 			],
 		},
 	])
-	let userListActive = ref(1)
-	const userList = reactive([
-		// 第一個user
-		{
-			memberId: 1,
-			name: '林三良',
-			// 0:系統 1:客服 or 2:學生
-			status: 1,
-			answer: '托福',
-			message: '請問課程',
-			massageTime: '2022-06-21 12:21:33',
-			unread: 6,
-			roomId: 4,
-			group: '通路事業群',
-			website: '大碩研究所官網',
-			socketId: 'dada',
-		},
-		{
-			memberId: 2,
-			name: '吳大揆',
-			// 0:系統 1:客服 or 2:學生
-			status: 0,
-			answer: '托福',
-			message: '',
-			massageTime: '2022-06-20 12:21:33',
-			unread: 5,
-			roomId: 33,
-			group: '美語事業群',
-			website: '洋碩官網',
-			socketId: 'dodo',
-		},
-		{
-			memberId: 3,
-			name: '伊藤馬林',
-			// 0:系統 1:客服 or 2:學生
-			status: 2,
-			answer: '托福',
-			message: '你好嗎',
-			massageTime: '2022-06-19 12:21:33',
-			unread: 1,
-			roomId: 35,
-			group: '美語事業群',
-			website: '洋碩官網',
-			socketId: 'dede',
-		},
-	])
+	let userListActive = ref(null)
+	const userList = reactive([])
+	// const userList = reactive([
+	// 	// 第一個user
+	// 	{
+	// 		memberId: 1,
+	// 		name: '林三良',
+	// 		// 0:系統 1:客服 or 2:學生
+	// 		status: 1,
+	// 		answer: '托福',
+	// 		message: '請問課程',
+	// 		massageTime: '2022-06-21 12:21:33',
+	// 		unread: 6,
+	// 		roomId: 4,
+	// 		group: '通路事業群',
+	// 		website: '大碩研究所官網',
+	// 		socketId: 'dada',
+	// 	},
+	// 	{
+	// 		memberId: 2,
+	// 		name: '吳大揆',
+	// 		// 0:系統 1:客服 or 2:學生
+	// 		status: 0,
+	// 		answer: '托福',
+	// 		message: '',
+	// 		massageTime: '2022-06-20 12:21:33',
+	// 		unread: 5,
+	// 		roomId: 33,
+	// 		group: '美語事業群',
+	// 		website: '洋碩官網',
+	// 		socketId: 'dodo',
+	// 	},
+	// 	{
+	// 		memberId: 3,
+	// 		name: '伊藤馬林',
+	// 		// 0:系統 1:客服 or 2:學生
+	// 		status: 2,
+	// 		answer: '托福',
+	// 		message: '你好嗎',
+	// 		massageTime: '2022-06-19 12:21:33',
+	// 		unread: 1,
+	// 		roomId: 35,
+	// 		group: '美語事業群',
+	// 		website: '洋碩官網',
+	// 		socketId: 'dede',
+	// 	},
+	// ])
 
 	const formatChatListTime = () => {
 		userChatList.forEach((i) => {
@@ -170,6 +174,9 @@ export const useCsRoomStore = defineStore('CsRoom', () => {
 		})
 	}
 	formatChatListTime()
+	const createdTimeClock = (created_time) => {
+		return created_time.split(' ')[1].substring(0, 5)
+	}
 
 	const handleMsgSend = (inputValue) => {
 		if (inputValue.trim()) {
@@ -206,6 +213,7 @@ export const useCsRoomStore = defineStore('CsRoom', () => {
 	const chatSectionDom = ref()
 
 	return {
+		cs,
 		userActive,
 		userChatList,
 		userListActive,
@@ -213,5 +221,6 @@ export const useCsRoomStore = defineStore('CsRoom', () => {
 		handleMsgSend,
 		currentTimeFormat,
 		chatSectionDom,
+		createdTimeClock,
 	}
 })

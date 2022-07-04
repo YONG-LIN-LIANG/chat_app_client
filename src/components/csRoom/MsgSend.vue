@@ -3,6 +3,7 @@ import { ref } from "vue";
 import SendIcon from "@/components/svg/Send.vue";
 import { useCsRoomStore } from "@/stores/csRoom";
 const CsRoom = useCsRoomStore();
+
 let inputValue = ref("");
 
 const inputSend = async () => {
