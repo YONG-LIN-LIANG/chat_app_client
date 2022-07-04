@@ -20,7 +20,10 @@ const handleToggleDialog = () => {
         : 'opacity-100 pointer-events-auto',
     ]"
   >
-    <div class="bg_black bg-gray-2 w-full h-full opacity-20"></div>
+    <div
+      class="bg_black bg-gray-2 w-full h-full opacity-20"
+      @click="handleToggleDialog"
+    ></div>
     <div
       class="module_window w-100 flex flex-col items-center px-10 py-7 bg-white absolute top-1/2 left-1/2 translate-y-1/2Re translate-x-[-35%] sm:translate-x-1/2Re rounded-md"
     >

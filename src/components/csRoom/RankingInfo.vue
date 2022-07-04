@@ -1,24 +1,14 @@
-<script>
+<script setup>
+import { defineProps } from "vue";
 import StarIcon from "@/components/svg/Star.vue";
-
-export default {
-  components: {
-    StarIcon,
-  },
-  props: {
-    rateItem: {
-      type: Object,
-      default: () => {},
-    },
-    idx: {
-      type: Object,
-      default: () => {},
-    },
-  },
-};
+defineProps({
+  rateItem: Object,
+  idx: Object,
+});
 </script>
 <template>
-  <!-- <div class="relative"> -->
+  <!-- @mouseover="rateItem.showDetail = true"
+    @mouseleave="rateItem.showDetail = false" -->
   <div
     :class="[
       'ranking_info w-85 h-12 flex items-center px-5 rounded-3xl  border border-solid ease-in-out duration-300',
