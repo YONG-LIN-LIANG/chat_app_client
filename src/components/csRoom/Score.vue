@@ -168,7 +168,7 @@ console.log("commentsCopy-1", commentsCopy);
 const pageSortSelect = ref("1");
 const pageCountSelect = ref("10");
 
-watch(pageSortSelect, (newVal, oldVal) => {
+watch(pageSortSelect, (newVal) => {
   switch (newVal) {
     case "1":
       comments.sort((a, b) => b.timeCode - a.timeCode);
@@ -233,16 +233,7 @@ comments.forEach((i) => {
   <div class="msg mt-10 sm:mt-[104px] ml-48 lg:ml-36 sm:ml-0">
     <div class="title">個人評分</div>
     <div
-      class="
-        score_name
-        flex
-        items-center
-        px-14
-        py-7
-        top_bg
-        whitespace-nowrap
-        xs:px-7
-      "
+      class="score_name flex items-center px-14 py-7 top_bg whitespace-nowrap xs:px-7"
     >
       <div class="ranking_name w-20 font-semibold">盧立倫</div>
       <div class="ranking_star_wrap flex items-center mr-5">
@@ -288,14 +279,7 @@ comments.forEach((i) => {
         </div>
         <div class="search_filter_section px-10 py-3">
           <div
-            class="
-              search_filter_title
-              h-10
-              flex
-              items-center
-              justify-between
-              cursor-pointer
-            "
+            class="search_filter_title h-10 flex items-center justify-between cursor-pointer"
             @click="handleToggleSearch()"
           >
             <div class="flex items-center">
@@ -320,16 +304,7 @@ comments.forEach((i) => {
               <input class="hidden" type="checkbox" id="tag_containComment" />
               <label
                 for="tag_containComment"
-                class="
-                  chat_tags_opts
-                  text-sm text-gray-2
-                  rounded-20
-                  m-1
-                  border border-solid border-green-Default
-                  px-3.5
-                  py-1.5
-                  cursor-pointer
-                "
+                class="chat_tags_opts text-sm text-gray-2 rounded-20 m-1 border border-solid border-green-Default px-3.5 py-1.5 cursor-pointer"
                 checked
               >
                 包含評論
@@ -386,13 +361,7 @@ comments.forEach((i) => {
             <div class="h-6 my-8 text-red text-center">請輸入完整日期區間</div>
             <div class="btn_primary--green mx-auto">搜尋</div>
             <p
-              class="
-                text-green-b50
-                my-4
-                text-center
-                cursor-pointer
-                hover:text-orange-Default
-              "
+              class="text-green-b50 my-4 text-center cursor-pointer hover:text-orange-Default"
             >
               清除所有篩選條件
             </p>
@@ -401,14 +370,7 @@ comments.forEach((i) => {
         </div>
       </div>
       <div
-        class="
-          comment_container
-          w-[calc(100%-20rem)]
-          pb-10
-          lg:w-full
-          px-10
-          sm:px-0
-        "
+        class="comment_container w-[calc(100%-20rem)] pb-10 lg:w-full px-10 sm:px-0"
       >
         <div class="flex items-center justify-between mb-3">
           <div class="comment_count text-gray-2 text-sm flex items-center">

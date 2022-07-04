@@ -151,17 +151,7 @@ onMounted(() => {
 <template>
   <div
     ref="chatSection"
-    class="
-      chat_section
-      px-10
-      lg:px-7
-      py-7
-      flex
-      items-center
-      flex-col
-      overflow-auto
-      box-border
-    "
+    class="chat_section px-10 lg:px-7 py-7 flex items-center flex-col overflow-auto box-border"
   >
     <div
       v-for="item in CsRoom.userChatList"
@@ -170,56 +160,24 @@ onMounted(() => {
       data-part="0"
     >
       <div
-        class="
-          chat_date
-          w-16
-          relative
-          text-xs
-          font-light
-          text-center text-gray-3
-          mx-0
-          my-5
-        "
+        class="chat_date w-16 relative text-xs font-light text-center text-gray-3 mx-0 my-5"
       >
         {{ item.beginTime.split(" ")[0].split("-").join("/") }}
       </div>
       <div class="chat_start">
         <div
-          class="
-            chat_status
-            text-sm
-            font-medium
-            text-green-Default text-center
-            mx-0
-            my-1.5
-          "
+          class="chat_status text-sm font-medium text-green-Default text-center mx-0 my-1.5"
         >
           開始聊天
         </div>
         <div class="chat_source_wrap text-sm mx-0 my-5 text-center">
           <span class="text-sm text-gray-3 mr-1">來源 : </span>
           <span
-            class="
-              chat_source
-              inline-block
-              text-gray-2
-              bg-orange-w20
-              m-1
-              px-3.5
-              py-1
-            "
+            class="chat_source inline-block text-gray-2 bg-orange-w20 m-1 px-3.5 py-1"
             >{{ item.group }}</span
           >
           <span
-            class="
-              chat_source
-              inline-block
-              text-gray-2
-              bg-orange-w20
-              m-1
-              px-3.5
-              py-1
-            "
+            class="chat_source inline-block text-gray-2 bg-orange-w20 m-1 px-3.5 py-1"
             >{{ item.website }}</span
           >
         </div>
@@ -251,29 +209,13 @@ onMounted(() => {
         <div v-if="chatItem.status === 2" class="msg_receive">
           <span class="msg_receive_text bg-gray-6">{{ chatItem.message }}</span>
           <span
-            class="
-              msg_time
-              text-xs
-              font-light
-              text-gray-3
-              tracking-wide
-              mx-2
-              my-0.5
-            "
+            class="msg_time text-xs font-light text-gray-3 tracking-wide mx-2 my-0.5"
             >{{ chatItem.createdTimeClock }}</span
           >
         </div>
         <div v-if="chatItem.status === 1" class="msg_send justify-end">
           <span
-            class="
-              msg_time
-              text-xs
-              font-light
-              text-gray-3
-              tracking-wide
-              mx-2
-              my-0.5
-            "
+            class="msg_time text-xs font-light text-gray-3 tracking-wide mx-2 my-0.5"
             >{{ chatItem.createdTimeClock }}</span
           >
           <span class="msg_send_text bg-green-w50">{{ chatItem.message }}</span>
@@ -282,14 +224,7 @@ onMounted(() => {
 
       <div v-if="item.endTime" class="chat_end">
         <div
-          class="
-            chat_status
-            text-sm
-            font-medium
-            text-green-Default text-center
-            mx-0
-            my-1.5
-          "
+          class="chat_status text-sm font-medium text-green-Default text-center mx-0 my-1.5"
         >
           結束聊天
         </div>

@@ -3,7 +3,7 @@ import CSLogo from "@/components/svg/Logo.vue";
 import StarIcon from "@/components/svg/Star.vue";
 import Hamburger from "@/components/svg/Hamburger.vue";
 import { useRoute, onBeforeRouteUpdate } from "vue-router";
-import { onMounted, reactive, watch, computed } from "vue";
+import { onMounted, reactive, computed } from "vue";
 const menu = reactive({
   active: null,
   list: [
@@ -166,59 +166,23 @@ onBeforeRouteUpdate((to) => {
 <template>
   <!-- desktop -->
   <div
-    class="
-      sidebar_section
-      w-48
-      lg:w-36
-      sm:w-full
-      h-full
-      sm:h-fit
-      bg-green-w20
-      fixed
-      z-30
-      top-0
-      sm:top-16
-      left-0
-      shadow-layer1
-      border-b border-solid
-    "
+    class="sidebar_section w-48 lg:w-36 sm:w-full h-full sm:h-fit bg-green-w20 fixed z-30 top-0 sm:top-16 left-0 shadow-layer1 border-b border-solid"
   >
     <div
-      class="
-        sidebar_info
-        box-border
-        px-8
-        lg:px-3.5
-        py-6
-        border-b border-solid border-white
-        sm:hidden
-      "
+      class="sidebar_info box-border px-8 lg:px-3.5 py-6 border-b border-solid border-white sm:hidden"
     >
       <div class="flex items-center justify-between xxs:hidden">
         <div class="sidebar_logo w-9 flex">
           <CSLogo />
         </div>
         <div
-          class="
-            sidebar_title
-            whitespace-nowrap
-            text-lg
-            font-medium
-            text-purple
-          "
+          class="sidebar_title whitespace-nowrap text-lg font-medium text-purple"
         >
           客服平台
         </div>
       </div>
       <div
-        class="
-          flex
-          mt-4
-          sm:mt-0
-          justify-between
-          sm:justify-center sm:hidden
-          xxs:flex
-        "
+        class="flex mt-4 sm:mt-0 justify-between sm:justify-center sm:hidden xxs:flex"
       >
         <span class="sidabar_user_name text-sm text-gray-2">盧立倫</span>
         <router-link
@@ -251,21 +215,7 @@ onBeforeRouteUpdate((to) => {
   </div>
   <!-- mobile -->
   <div
-    class="
-      sidebar_section--mobile
-      h-16
-      px-7
-      w-full
-      hidden
-      sm:flex
-      items-center
-      justify-between
-      bg-green-w20
-      fixed
-      top-0
-      left-0
-      z-50
-    "
+    class="sidebar_section--mobile h-16 px-7 w-full hidden sm:flex items-center justify-between bg-green-w20 fixed top-0 left-0 z-50"
   >
     <div class="flex items-center">
       <div class="flex items-center justify-between">
@@ -273,13 +223,7 @@ onBeforeRouteUpdate((to) => {
           <CSLogo />
         </div>
         <div
-          class="
-            sidebar_title
-            whitespace-nowrap
-            text-lg
-            font-medium
-            text-purple
-          "
+          class="sidebar_title whitespace-nowrap text-lg font-medium text-purple"
         >
           客服平台
         </div>
@@ -289,22 +233,7 @@ onBeforeRouteUpdate((to) => {
           >盧立倫</span
         >
         <div
-          class="
-            sidabar_user_score
-            px-2
-            mx-4
-            lg:mx-2
-            flex
-            items-center
-            cursor-pointer
-            text-sm
-            bg-white
-            text-green-b50
-            hover:bg-green-w50
-            rounded-xl
-            ease-out
-            duration-200
-          "
+          class="sidabar_user_score px-2 mx-4 lg:mx-2 flex items-center cursor-pointer text-sm bg-white text-green-b50 hover:bg-green-w50 rounded-xl ease-out duration-200"
         >
           <StarIcon class="w-4 text-green-Default" />
           <span>4.9</span>

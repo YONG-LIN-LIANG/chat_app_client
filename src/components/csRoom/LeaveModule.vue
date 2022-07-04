@@ -4,11 +4,11 @@ const emit = defineEmits(["on-toggle"]);
 const handleToggleDialog = () => {
   emit("on-toggle");
 };
-const props = defineProps({
-  chatEnd_closed: {
-    type: Boolean,
-  },
-});
+// const props = defineProps({
+//   chatEnd_closed: {
+//     type: Boolean,
+//   },
+// });
 </script>
 
 <template>
@@ -25,21 +25,7 @@ const props = defineProps({
       @click="handleToggleDialog"
     ></div>
     <div
-      class="
-        module_window
-        w-100
-        flex flex-col
-        items-center
-        px-10
-        py-7
-        bg-white
-        absolute
-        top-1/2
-        left-1/2
-        translate-y-1/2Re translate-x-[-35%]
-        sm:translate-x-1/2Re
-        rounded-md
-      "
+      class="module_window w-100 flex flex-col items-center px-10 py-7 bg-white absolute top-1/2 left-1/2 translate-y-1/2Re translate-x-[-35%] sm:translate-x-1/2Re rounded-md"
     >
       <div>要結束對話嗎?</div>
       <div class="py-3 text-xs text-gray-4 text-center">

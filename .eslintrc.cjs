@@ -11,13 +11,14 @@ module.exports = {
   rules: {
     "prettier/prettier": ["error", { endOfLine: "auto" }],
     "vue/no-multiple-template-root": "off",
-    "vue/multi-word-component-names": [
-      "error",
-      {
-        ignores: ["default"],
-      },
-    ],
+    "vue/multi-word-component-names": "off",
   },
+  overrides: [
+    {
+      // 設定要使用的路徑
+      files: ["src/**/*.vue"],
+    },
+  ],
   env: {
     "vue/setup-compiler-macros": true,
     browser: true,

@@ -207,12 +207,7 @@ const ratingList = reactive([
   <div class="ranking_section mt-10 ml-48 lg:ml-36 sm:ml-0 sm:mt-[104px]">
     <div class="title">客服排行榜</div>
     <div
-      class="
-        ranking_container
-        min-h-screen
-        p-7
-        sm:flex sm:flex-col sm:items-center
-      "
+      class="ranking_container min-h-screen p-7 sm:flex sm:flex-col sm:items-center"
     >
       <div class="ranking_wrap_top mb-6">
         <div
@@ -224,28 +219,11 @@ const ratingList = reactive([
           ]"
         >
           <div
-            class="
-              ranking_rank
-              w-14
-              min-w-14
-              h-14
-              flex
-              items-center
-              justify-center
-              relative
-              text-gray-2
-              mr-2
-            "
+            class="ranking_rank w-14 min-w-14 h-14 flex items-center justify-center relative text-gray-2 mr-2"
           >
             <SunIcon v-if="idx < 3" />
             <span
-              class="
-                absolute
-                top-1/2
-                left-1/2
-                translate-x-1/2Re translate-y-1/2Re
-                leading-12
-              "
+              class="absolute top-1/2 left-1/2 translate-x-1/2Re translate-y-1/2Re leading-12"
               >{{ idx + 1 }}</span
             >
           </div>

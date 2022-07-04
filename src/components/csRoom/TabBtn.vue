@@ -23,5 +23,4 @@ const props = defineProps({
   </li>
 </template>
 
-<style>
-</style>
+<style></style>

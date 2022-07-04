@@ -187,17 +187,7 @@ console.log(props);
           <div
             v-for="item in chatList.list"
             :key="item.id"
-            class="
-              chat
-              rounded
-              px-3.5
-              py-2.5
-              shadow-underLine
-              cursor-pointer
-              hover:bg-green-w20
-              ease-out
-              duration-200
-            "
+            class="chat rounded px-3.5 py-2.5 shadow-underLine cursor-pointer hover:bg-green-w20 ease-out duration-200"
             @click="chatList.active = item.id"
             :class="{ active: item.id === chatList.active }"
           >
@@ -213,18 +203,7 @@ console.log(props);
                 />
                 <span
                   v-show="item.type === 'tag'"
-                  class="
-                    chat_tags_opts
-                    selected
-                    inline-block
-                    text-sm text-gray-2
-                    rounded-20
-                    bg-green-w20
-                    px-3.5
-                    py-1.5
-                    ml-1
-                    border border-solid border-green-Default
-                  "
+                  class="chat_tags_opts selected inline-block text-sm text-gray-2 rounded-20 bg-green-w20 px-3.5 py-1.5 ml-1 border border-solid border-green-Default"
                   >{{ item.lastTag }}</span
                 >
                 <span v-show="item.type === 'text'" class="text-gray-2">{{
@@ -300,17 +279,7 @@ console.log(props);
           <div
             v-for="item in chatList.list"
             :key="item.id"
-            class="
-              chat
-              rounded
-              px-3.5
-              py-2.5
-              shadow-underLine
-              cursor-pointer
-              hover:bg-green-w20
-              ease-out
-              duration-200
-            "
+            class="chat rounded px-3.5 py-2.5 shadow-underLine cursor-pointer hover:bg-green-w20 ease-out duration-200"
             @click="chatList.active = item.id"
             :class="{ active: item.id === chatList.active }"
           >
@@ -326,18 +295,7 @@ console.log(props);
                 />
                 <span
                   v-show="item.type === 'tag'"
-                  class="
-                    chat_tags_opts
-                    selected
-                    inline-block
-                    text-sm text-gray-2
-                    rounded-20
-                    bg-green-w20
-                    px-3.5
-                    py-1.5
-                    ml-1
-                    border border-solid border-green-Default
-                  "
+                  class="chat_tags_opts selected inline-block text-sm text-gray-2 rounded-20 bg-green-w20 px-3.5 py-1.5 ml-1 border border-solid border-green-Default"
                   >{{ item.lastTag }}</span
                 >
                 <span v-show="item.type === 'text'" class="text-gray-2">{{
@@ -368,15 +326,7 @@ console.log(props);
             >
               <div
                 @click="handleGroup(item)"
-                class="
-                  group_title
-                  flex
-                  items-center
-                  justify-between
-                  mx-0
-                  my-1
-                  cursor-pointer
-                "
+                class="group_title flex items-center justify-between mx-0 my-1 cursor-pointer"
               >
                 <span class="text-sm text-gray-2">{{ item.name }}</span>
                 <TriangleIcon class="rotate-180 text-gray-4" />
@@ -424,17 +374,7 @@ console.log(props);
           <div
             v-for="item in chatList.list"
             :key="item.id"
-            class="
-              chat
-              rounded
-              px-3.5
-              py-2.5
-              shadow-underLine
-              cursor-pointer
-              hover:bg-green-w20
-              ease-out
-              duration-200
-            "
+            class="chat rounded px-3.5 py-2.5 shadow-underLine cursor-pointer hover:bg-green-w20 ease-out duration-200"
             @click="chatList.active = item.id"
             :class="{ active: item.id === chatList.active }"
           >
@@ -450,18 +390,7 @@ console.log(props);
                 />
                 <span
                   v-show="item.type === 'tag'"
-                  class="
-                    chat_tags_opts
-                    selected
-                    inline-block
-                    text-sm text-gray-2
-                    rounded-20
-                    bg-green-w20
-                    px-3.5
-                    py-1.5
-                    ml-1
-                    border border-solid border-green-Default
-                  "
+                  class="chat_tags_opts selected inline-block text-sm text-gray-2 rounded-20 bg-green-w20 px-3.5 py-1.5 ml-1 border border-solid border-green-Default"
                   >{{ item.lastTag }}</span
                 >
                 <span v-show="item.type === 'text'" class="text-gray-2">{{
@@ -479,31 +408,18 @@ console.log(props);
   </div>
 
   <ul
-    class="
-      tabbar_section
-      w-16
-      min-w-16
-      h-screen
-      flex flex-col
-      items-center
-      bg-gray-7
-      pt-5
-      tabbar_section--xs
-      fixed
-      right-0
-    "
+    class="tabbar_section w-16 min-w-16 h-screen flex flex-col items-center bg-gray-7 pt-5 tabbar_section--xs fixed right-0"
   >
     <!-- xs:w-full xs:fixed xs:bottom-0 xs:left-0 xs:flex-row xs:justify-between xs:px-16 -->
+    <!-- @click="
+        item.id === tabList.active
+          ? (tabList.active = 0)
+          : (tabList.active = item.id)" -->
     <TabBtn
       v-for="item in tabList.list"
       :key="item.id"
       :tabList="tabList"
       :info="item"
-      @click="
-        item.id === tabList.active
-          ? (tabList.active = 0)
-          : (tabList.active = item.id)
-      "
     />
   </ul>
 </template>
