@@ -19,6 +19,9 @@ const tabList = reactive({
     { id: 3, name: "分類", icon: "ListIcon" },
   ],
 });
+const handletoggleTab = (activeNum)=>{
+  tabList.active = activeNum
+}
 </script>
 <template>
   <div class="msg ml-48 lg:ml-36 sm:ml-0">
@@ -31,7 +34,7 @@ const tabList = reactive({
         <MsgChat />
         <MsgSend />
       </div>
-      <MsgTabbar :tabList="tabList" />
+      <MsgTabbar :tabList="tabList" @toggleTab="handletoggleTab" />
       <LeaveModule
         :chatEnd_closed="chatEnd_closed"
         @onToggle="handle_chatEnd_closed"

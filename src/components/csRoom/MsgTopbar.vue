@@ -18,41 +18,14 @@ const handleToggleDialog = () => {
 <template>
   <div class="section_msg_topbar w-full">
     <div
-      class="
-        msg_topbar
-        h-16
-        px-14
-        lg:px-7
-        py-0
-        flex
-        justify-between
-        items-center
-        box-border
-        shadow-layer3
-      "
+      class="msg_topbar h-16 px-14 lg:px-7 py-0 flex justify-between items-center box-border shadow-layer3"
     >
       <div class="msg_name whitespace-nowrap text-lg font-medium text-gray-1">
         林三良
       </div>
       <div class="msg_funcgroup flex items-center justify-center">
         <div
-          class="
-            btn_search
-            w-9
-            h-9
-            flex
-            items-center
-            justify-center
-            cursor-pointer
-            text-gray-2
-            bg-gray-6
-            hover:bg-green-w20
-            rounded-md
-            mx-4
-            my-0
-            ease-in
-            duration-300
-          "
+          class="btn_search w-9 h-9 flex items-center justify-center cursor-pointer text-gray-2 bg-gray-6 hover:bg-green-w20 rounded-md mx-4 my-0 ease-in duration-300"
           @click="toggle_searchOpen()"
         >
           <SearchIcon class="search_icon" />
@@ -80,49 +53,17 @@ const handleToggleDialog = () => {
         <div class="flex justify-center items-center">
           <input
             type="text"
-            class="
-              input_search
-              w-64
-              h-10
-              box-border
-              tracking-wider
-              rounded-r-none
-              px-2.5
-              py-0
-            "
+            class="input_search w-64 h-10 box-border tracking-wider rounded-r-none px-2.5 py-0"
           />
           <div
-            class="
-              btn_search
-              w-10
-              h-10
-              flex
-              items-center
-              justify-center
-              cursor-pointer
-              text-white
-              bg-green-Default
-              hover:bg-green-w50
-              rounded-r
-              ease-in
-              duration-300
-            "
+            class="btn_search w-10 h-10 flex items-center justify-center cursor-pointer text-white bg-green-Default hover:bg-green-w50 rounded-r ease-in duration-300"
           >
             <SearchIcon />
           </div>
         </div>
         <div class="search_date"></div>
         <div
-          class="
-            search_results
-            flex
-            items-center
-            justify-center
-            box-border
-            text-xs text-gray-3 text-center
-            border-0
-            mt-5
-          "
+          class="search_results flex items-center justify-center box-border text-xs text-gray-3 text-center border-0 mt-5"
         >
           <span>第</span>
           <input
@@ -135,38 +76,12 @@ const handleToggleDialog = () => {
           <span>筆對話</span>
           <div class="btn_wrap flex mx-2.5 my-0">
             <div
-              class="
-                btn_UpDown
-                w-9
-                h-6
-                flex
-                items-center
-                justify-center
-                cursor-pointer
-                bg-green-w50
-                text-gray-6
-                rounded-md
-                mx-1
-                my-0
-              "
+              class="btn_UpDown w-9 h-6 flex items-center justify-center cursor-pointer bg-green-w50 text-gray-6 rounded-md mx-1 my-0"
             >
               <UpIcon />
             </div>
             <div
-              class="
-                btn_UpDown
-                w-9
-                h-6
-                flex
-                items-center
-                justify-center
-                cursor-pointer
-                bg-green-w50
-                text-gray-3
-                rounded-md
-                mx-1
-                my-0
-              "
+              class="btn_UpDown w-9 h-6 flex items-center justify-center cursor-pointer bg-green-w50 text-gray-3 rounded-md mx-1 my-0"
             >
               <DownIcon />
             </div>

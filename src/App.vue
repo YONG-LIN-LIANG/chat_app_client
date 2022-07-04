@@ -1,5 +1,6 @@
 <script setup>
 import { RouterView } from "vue-router";
+
 import { useSocketStore } from "@/stores/socket";
 import { useCsStore } from "@/stores/cs";
 import { useRouter, useRoute } from "vue-router";
@@ -9,6 +10,7 @@ import { io } from "socket.io-client";
 const endPoint = "http://172.18.48.177:3001";
 const socket = io(endPoint);
 const socketStore = useSocketStore();
+
 // const csStore = useCsStore()
 socketStore.setSocket(socket);
 console.log("data2", socket);

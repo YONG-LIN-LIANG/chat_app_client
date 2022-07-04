@@ -14,6 +14,13 @@ import { useCsRoomStore } from '@/stores/CsRoom'
 const socket = useSocketStore().socket
 const csRoom = useCsRoomStore()
 
+const emit = defineEmits(["toggleTab"]);
+
+const props = defineProps({
+	tabList: {
+		type: Object,
+	},
+})
 // const csId = csRoom.cs
 onMounted(() => {
 	socket.emit('reqLogin', { identity: 1, cs_id: csRoom.cs.memberId })
@@ -29,8 +36,8 @@ onMounted(() => {
 	})
 })
 
-console.log('csRoom.userList--2', csRoom)
-console.log('socket', socket)
+// console.log('csRoom.userList--2', csRoom)
+// console.log('socket', socket)
 const chatList = reactive({
 	active: 0,
 	list: [
@@ -178,249 +185,277 @@ const handleGroup = function (item) {
 		item.open = false
 	}
 }
-defineProps({
-	tabList: {
-		type: Object,
-	},
-})
 
-const test = (item) => {
-	csRoom.userListActive = item.member_id
-	console.log('fuck', item.member_id)
+
+const toggleTab = (item)=>{
+	item.id === props.tabList.active
+          ? emit('toggleTab',0)
+          : emit('toggleTab',item.id) 
 }
+
 </script>
 <template>
-	<div :class="['mr-16 xs:mr-0', tabList.active ? 'tabbar_func_open' : 'tabbar_func_closed']">
-		<!-- 列表 -->
-		<div
-			v-show="tabList.active === 1"
-			:class="['tabbar_func delay-200', tabList.active === 1 ? ' opacity-100' : 'opacity-0']"
-		>
-			<div class="tabbar_func_content">
-				<div class="tabbar_title_wrap w-full flex items-center">
-					<ChatIcon class="text-green-b50" />
-					<span class="tabbar_title text-green-b70 mx-2.5 my-0">聊天列表</span>
-				</div>
-				<div class="chat_list w-full rounded mx-0 my-5">
-					<div
-						v-for="item in csRoom.userList"
-						:key="item.member_id"
-						class="chat rounded px-3.5 py-2.5 shadow-underLine cursor-pointer hover:bg-green-w20 ease-out duration-200"
-						@click="test(item)"
-						:class="[item.member_id === csRoom.userListActive ? 'active' : '']"
-					>
-						<div class="chat_info flex justify-between items-center mb-1.5">
-							<div class="chat_name text-gray-2">{{ item.name }}</div>
-							<div class="unread text-xs font-light">{{ item.unread }}</div>
-						</div>
-						<div class="chat_msg flex items-center justify-between">
-							<div class="chat_tag flex items-center">
-								<ReturnIcon
-									v-show="item.message_status === 1"
-									class="min-w-3 text-green-Default mr-1.5"
-								/>
-								<span
-									v-show="item.message_status === 0"
-									class="chat_tags_opts selected inline-block text-sm text-gray-2 rounded-20 bg-green-w20 px-3.5 py-1.5 ml-1 border border-solid border-green-Default"
-									>{{ item.lastTag }}</span
-								>
-								<span v-show="item.message_status !== 0" class="text-gray-2">{{ item.message }}</span>
-							</div>
-							<div class="chat_time text-xs flex items-end h-full text-gray-3">
-								{{ csRoom.createdTimeClock(item.created_time) }}
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		<!-- 搜尋 -->
 
-		<div v-show="tabList.active === 2" class="tabbar_func">
-			<div class="tabbar_func_content">
-				<div class="tabbar_title_wrap w-full flex items-center">
-					<SearchIcon class="text-green-b50" />
-					<span class="tabbar_title text-green-b70 mx-2.5 my-0">訊息搜尋</span>
-				</div>
-				<div class="search_filter_wrap w-full mx-0 my-5">
-					<div class="search_filter flex flex-col items-start mb-2.5">
-						<label for="" class="text-sm text-gray-2 m-1.5">
-							<span class="required opacity-0">*</span>
-							<span>事業群</span>
-						</label>
-						<select class="w-full" name="" id="">
-							<option value="">請選擇事業群</option>
-							<option value="">美語業群</option>
-							<option value="">通路事業群</option>
-							<option value="">學習顧問事業群</option>
-							<option value="">千碩教育事業群</option>
-							<option value="">大碩教育</option>
-						</select>
-					</div>
-					<div class="search_filter flex flex-col items-start mb-2.5">
-						<label for="" class="text-sm text-gray-2 m-1.5">
-							<span class="required opacity-0">*</span>
-							<span>網站</span>
-						</label>
-						<select class="w-full" name="" id="">
-							<option value="">請選擇網站</option>
-							<option value="">美語業群</option>
-							<option value="">通路事業群</option>
-							<option value="">學習顧問事業群</option>
-							<option value="">千碩教育事業群</option>
-							<option value="">大碩教育</option>
-						</select>
-					</div>
-					<div class="search_filter flex flex-col items-start mb-2.5">
-						<label for="" class="text-sm text-gray-2 m-1.5">
-							<span class="required">*</span>
-							<span>關鍵字</span>
-						</label>
-						<input class="w-full" type="text" />
-					</div>
-				</div>
-				<div class="btn_primary--green">搜尋</div>
-			</div>
-			<div class="px-10 lg:px-40 md:px-20 sm:px-10 py-7">
-				<div class="text-sm text-gray-2 mb-5">
-					<span>搜尋結果 共 </span>
-					<span class="search_result_countNum">4</span>
-					<span> 個聊天室</span>
-				</div>
-				<div class="tabbar_title_wrap w-full flex items-center">
-					<MemberIcon class="text-green-b50" />
-					<span class="tabbar_title text-green-b70 mx-2.5 my-0">學員</span>
-				</div>
-				<div class="chat_list mx-0 my-5">
-					<div
-						v-for="item in chatList.list"
-						:key="item.id"
-						class="chat rounded px-3.5 py-2.5 shadow-underLine cursor-pointer hover:bg-green-w20 ease-out duration-200"
-						@click="chatList.active = item.id"
-						:class="{ active: item.id === chatList.active }"
-					>
-						<div class="chat_info flex justify-between items-center mb-1.5">
-							<div class="chat_name text-gray-2">{{ item.customer }}</div>
-							<div class="unread text-xs font-light">{{ item.unread }}</div>
-						</div>
-						<div class="chat_msg flex items-center justify-between">
-							<div class="chat_tag flex items-center">
-								<ReturnIcon
-									v-show="item.lastMsg.from === 'service'"
-									class="min-w-3 text-green-Default mr-1.5"
-								/>
-								<span
-									v-show="item.type === 'tag'"
-									class="chat_tags_opts selected inline-block text-sm text-gray-2 rounded-20 bg-green-w20 px-3.5 py-1.5 ml-1 border border-solid border-green-Default"
-									>{{ item.lastTag }}</span
-								>
-								<span v-show="item.type === 'text'" class="text-gray-2">{{ item.lastMsg.msg }}</span>
-							</div>
-							<div class="chat_time text-xs flex items-end h-full text-gray-3">
-								{{ item.time }}
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		<!-- 分類 -->
-		<div v-show="tabList.active === 3" class="tabbar_func">
-			<div class="tabbar_func_content">
-				<div class="tabbar_title_wrap w-full flex items-center">
-					<ListIcon class="text-green-b50" />
-					<span class="tabbar_title text-green-b70 mx-2.5 my-0">分類</span>
-				</div>
-				<div class="cate_group_wrap w-full mx-0 my-5">
-					<div>
-						<div v-for="item in category.group" :key="item.id" class="cate_group mb-3.5">
-							<div
-								@click="handleGroup(item)"
-								class="group_title flex items-center justify-between mx-0 my-1 cursor-pointer"
-							>
-								<span class="text-sm text-gray-2">{{ item.name }}</span>
-								<TriangleIcon class="rotate-180 text-gray-4" />
-							</div>
-							<!-- v-show="item.open" -->
-							<slideUpDown
-								v-model="item.open"
-								:duration="300"
-								class="cate_website_wrap mx-0 my-2.5 overflow-hidden"
-							>
-								<div
-									v-for="webItem in item.list"
-									:key="webItem.webId"
-									:class="[
-										{ active: webItem.webId === category.webActive },
-										'cate_website flex items-center px-4 py-2 cursor-pointer',
-									]"
-									@click="category.webActive = webItem.webId"
-								>
-									<div :class="[{ 'opacity-0': !webItem.unread }, 'unread text-xs font-light']">
-										{{ webItem.unread }}
-									</div>
-									<span class="text-gray-1 ml-2.5">{{ webItem.webName }}</span>
-								</div>
-							</slideUpDown>
-						</div>
-					</div>
-				</div>
-				<div class="btn_primary--green">搜尋</div>
-			</div>
-			<div class="px-10 lg:px-40 md:px-20 xs:px-10 py-7">
-				<div class="text-sm text-gray-2 mb-5">
-					<span class="search_result_category">龍門轉學考官網</span>
-				</div>
-				<div class="tabbar_title_wrap w-full flex items-center">
-					<MemberIcon class="text-green-b50" />
-					<span class="tabbar_title text-green-b70 mx-2.5 my-0">學員</span>
-				</div>
-				<div class="chat_list mx-0 my-5">
-					<div
-						v-for="item in chatList.list"
-						:key="item.id"
-						class="chat rounded px-3.5 py-2.5 shadow-underLine cursor-pointer hover:bg-green-w20 ease-out duration-200"
-						@click="chatList.active = item.id"
-						:class="{ active: item.id === chatList.active }"
-					>
-						<div class="chat_info flex justify-between items-center mb-1.5">
-							<div class="chat_name text-gray-2">{{ item.customer }}</div>
-							<div class="unread text-xs font-light">{{ item.unread }}</div>
-						</div>
-						<div class="chat_msg flex items-center justify-between">
-							<div class="chat_tag flex items-center">
-								<ReturnIcon
-									v-show="item.lastMsg.from === 'service'"
-									class="min-w-3 text-green-Default mr-1.5"
-								/>
-								<span
-									v-show="item.type === 'tag'"
-									class="chat_tags_opts selected inline-block text-sm text-gray-2 rounded-20 bg-green-w20 px-3.5 py-1.5 ml-1 border border-solid border-green-Default"
-									>{{ item.lastTag }}</span
-								>
-								<span v-show="item.type === 'text'" class="text-gray-2">{{ item.lastMsg.msg }}</span>
-							</div>
-							<div class="chat_time text-xs flex items-end h-full text-gray-3">
-								{{ item.time }}
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+  <div
+    :class="[
+      'mr-16 xs:mr-0',
+      tabList.active ? 'tabbar_func_open' : 'tabbar_func_closed',
+    ]"
+  >
+    <!-- 列表 -->
+    <div
+      v-show="tabList.active === 1"
+      :class="[
+        'tabbar_func delay-200',
+        tabList.active === 1 ? ' opacity-100' : 'opacity-0',
+      ]"
+    >
+      <div class="tabbar_func_content">
+        <div class="tabbar_title_wrap w-full flex items-center">
+          <ChatIcon class="text-green-b50" />
+          <span class="tabbar_title text-green-b70 mx-2.5 my-0">聊天列表</span>
+        </div>
+        <div class="chat_list w-full rounded mx-0 my-5">
+          <div
+            v-for="item in chatList.list"
+            :key="item.id"
+            class="chat rounded px-3.5 py-2.5 shadow-underLine cursor-pointer hover:bg-green-w20 ease-out duration-200"
+            @click="chatList.active = item.id"
+            :class="{ active: item.id === chatList.active }"
+          >
+            <div class="chat_info flex justify-between items-center mb-1.5">
+              <div class="chat_name text-gray-2">{{ item.customer }}</div>
+              <div class="unread text-xs font-light">{{ item.unread }}</div>
+            </div>
+            <div class="chat_msg flex items-center justify-between">
+              <div class="chat_tag flex items-center">
+                <ReturnIcon
+                  v-show="item.lastMsg.from === 'service'"
+                  class="min-w-3 text-green-Default mr-1.5"
+                />
+                <span
+                  v-show="item.type === 'tag'"
+                  class="chat_tags_opts selected inline-block text-sm text-gray-2 rounded-20 bg-green-w20 px-3.5 py-1.5 ml-1 border border-solid border-green-Default"
+                  >{{ item.lastTag }}</span
+                >
+                <span v-show="item.type === 'text'" class="text-gray-2">{{
+                  item.lastMsg.msg
+                }}</span>
+              </div>
+              <div class="chat_time text-xs flex items-end h-full text-gray-3">
+                {{ item.time }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 搜尋 -->
 
-	<ul
-		class="tabbar_section w-16 min-w-16 h-screen flex flex-col items-center bg-gray-7 pt-5 tabbar_section--xs fixed right-0"
-	>
-		<TabBtn
-			v-for="item in tabList.list"
-			:key="item.id"
-			:tabList="tabList"
-			:info="item"
-			@click="item.id === tabList.active ? (tabList.active = 0) : (tabList.active = item.id)"
-		/>
-	</ul>
+    <div v-show="tabList.active === 2" class="tabbar_func">
+      <div class="tabbar_func_content">
+        <div class="tabbar_title_wrap w-full flex items-center">
+          <SearchIcon class="text-green-b50" />
+          <span class="tabbar_title text-green-b70 mx-2.5 my-0">訊息搜尋</span>
+        </div>
+        <div class="search_filter_wrap w-full mx-0 my-5">
+          <div class="search_filter flex flex-col items-start mb-2.5">
+            <label for="" class="text-sm text-gray-2 m-1.5">
+              <span class="required opacity-0">*</span>
+              <span>事業群</span>
+            </label>
+            <select class="w-full" name="" id="">
+              <option value="">請選擇事業群</option>
+              <option value="">美語業群</option>
+              <option value="">通路事業群</option>
+              <option value="">學習顧問事業群</option>
+              <option value="">千碩教育事業群</option>
+              <option value="">大碩教育</option>
+            </select>
+          </div>
+          <div class="search_filter flex flex-col items-start mb-2.5">
+            <label for="" class="text-sm text-gray-2 m-1.5">
+              <span class="required opacity-0">*</span>
+              <span>網站</span>
+            </label>
+            <select class="w-full" name="" id="">
+              <option value="">請選擇網站</option>
+              <option value="">美語業群</option>
+              <option value="">通路事業群</option>
+              <option value="">學習顧問事業群</option>
+              <option value="">千碩教育事業群</option>
+              <option value="">大碩教育</option>
+            </select>
+          </div>
+          <div class="search_filter flex flex-col items-start mb-2.5">
+            <label for="" class="text-sm text-gray-2 m-1.5">
+              <span class="required">*</span>
+              <span>關鍵字</span>
+            </label>
+            <input class="w-full" type="text" />
+          </div>
+        </div>
+        <div class="btn_primary--green">搜尋</div>
+      </div>
+      <div class="px-10 lg:px-40 md:px-20 sm:px-10 py-7">
+        <div class="text-sm text-gray-2 mb-5">
+          <span>搜尋結果 共 </span>
+          <span class="search_result_countNum">4</span>
+          <span> 個聊天室</span>
+        </div>
+        <div class="tabbar_title_wrap w-full flex items-center">
+          <MemberIcon class="text-green-b50" />
+          <span class="tabbar_title text-green-b70 mx-2.5 my-0">學員</span>
+        </div>
+        <div class="chat_list mx-0 my-5">
+          <div
+            v-for="item in chatList.list"
+            :key="item.id"
+            class="chat rounded px-3.5 py-2.5 shadow-underLine cursor-pointer hover:bg-green-w20 ease-out duration-200"
+            @click="chatList.active = item.id"
+            :class="{ active: item.id === chatList.active }"
+          >
+            <div class="chat_info flex justify-between items-center mb-1.5">
+              <div class="chat_name text-gray-2">{{ item.customer }}</div>
+              <div class="unread text-xs font-light">{{ item.unread }}</div>
+            </div>
+            <div class="chat_msg flex items-center justify-between">
+              <div class="chat_tag flex items-center">
+                <ReturnIcon
+                  v-show="item.lastMsg.from === 'service'"
+                  class="min-w-3 text-green-Default mr-1.5"
+                />
+                <span
+                  v-show="item.type === 'tag'"
+                  class="chat_tags_opts selected inline-block text-sm text-gray-2 rounded-20 bg-green-w20 px-3.5 py-1.5 ml-1 border border-solid border-green-Default"
+                  >{{ item.lastTag }}</span
+                >
+                <span v-show="item.type === 'text'" class="text-gray-2">{{
+                  item.lastMsg.msg
+                }}</span>
+              </div>
+              <div class="chat_time text-xs flex items-end h-full text-gray-3">
+                {{ item.time }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 分類 -->
+    <div v-show="tabList.active === 3" class="tabbar_func">
+      <div class="tabbar_func_content">
+        <div class="tabbar_title_wrap w-full flex items-center">
+          <ListIcon class="text-green-b50" />
+          <span class="tabbar_title text-green-b70 mx-2.5 my-0">分類</span>
+        </div>
+        <div class="cate_group_wrap w-full mx-0 my-5">
+          <div>
+            <div
+              v-for="item in category.group"
+              :key="item.id"
+              class="cate_group mb-3.5"
+            >
+              <div
+                @click="handleGroup(item)"
+                class="group_title flex items-center justify-between mx-0 my-1 cursor-pointer"
+              >
+                <span class="text-sm text-gray-2">{{ item.name }}</span>
+                <TriangleIcon class="rotate-180 text-gray-4" />
+              </div>
+              <!-- v-show="item.open" -->
+              <slideUpDown
+                v-model="item.open"
+                :duration="300"
+                class="cate_website_wrap mx-0 my-2.5 overflow-hidden"
+              >
+                <div
+                  v-for="webItem in item.list"
+                  :key="webItem.webId"
+                  :class="[
+                    { active: webItem.webId === category.webActive },
+                    'cate_website flex items-center px-4 py-2 cursor-pointer',
+                  ]"
+                  @click="category.webActive = webItem.webId"
+                >
+                  <div
+                    :class="[
+                      { 'opacity-0': !webItem.unread },
+                      'unread text-xs font-light',
+                    ]"
+                  >
+                    {{ webItem.unread }}
+                  </div>
+                  <span class="text-gray-1 ml-2.5">{{ webItem.webName }}</span>
+                </div>
+              </slideUpDown>
+            </div>
+          </div>
+        </div>
+        <div class="btn_primary--green">搜尋</div>
+      </div>
+      <div class="px-10 lg:px-40 md:px-20 xs:px-10 py-7">
+        <div class="text-sm text-gray-2 mb-5">
+          <span class="search_result_category">龍門轉學考官網</span>
+        </div>
+        <div class="tabbar_title_wrap w-full flex items-center">
+          <MemberIcon class="text-green-b50" />
+          <span class="tabbar_title text-green-b70 mx-2.5 my-0">學員</span>
+        </div>
+        <div class="chat_list mx-0 my-5">
+          <div
+            v-for="item in chatList.list"
+            :key="item.id"
+            class="chat rounded px-3.5 py-2.5 shadow-underLine cursor-pointer hover:bg-green-w20 ease-out duration-200"
+            @click="chatList.active = item.id"
+            :class="{ active: item.id === chatList.active }"
+          >
+            <div class="chat_info flex justify-between items-center mb-1.5">
+              <div class="chat_name text-gray-2">{{ item.customer }}</div>
+              <div class="unread text-xs font-light">{{ item.unread }}</div>
+            </div>
+            <div class="chat_msg flex items-center justify-between">
+              <div class="chat_tag flex items-center">
+                <ReturnIcon
+                  v-show="item.lastMsg.from === 'service'"
+                  class="min-w-3 text-green-Default mr-1.5"
+                />
+                <span
+                  v-show="item.type === 'tag'"
+                  class="chat_tags_opts selected inline-block text-sm text-gray-2 rounded-20 bg-green-w20 px-3.5 py-1.5 ml-1 border border-solid border-green-Default"
+                  >{{ item.lastTag }}</span
+                >
+                <span v-show="item.type === 'text'" class="text-gray-2">{{
+                  item.lastMsg.msg
+                }}</span>
+              </div>
+              <div class="chat_time text-xs flex items-end h-full text-gray-3">
+                {{ item.time }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ul
+    class="tabbar_section w-16 min-w-16 h-screen flex flex-col items-center bg-gray-7 pt-5 tabbar_section--xs fixed right-0"
+  >
+    <!-- xs:w-full xs:fixed xs:bottom-0 xs:left-0 xs:flex-row xs:justify-between xs:px-16 -->
+    <!-- @click="
+        item.id === tabList.active
+          ? (tabList.active = 0)
+          : (tabList.active = item.id)" -->
+    <TabBtn
+      v-for="item in tabList.list"
+      :key="item.id"
+      :tabList="tabList"
+      :info="item"
+	  @click="toggleTab(item)"
+    />
+  </ul>
+
 </template>
 
 <style scoped>
@@ -456,6 +491,6 @@ const test = (item) => {
 	@apply xs:w-full xs:h-14 xs:fixed xs:bottom-0 xs:left-0 xs:flex-row xs:justify-between xs:px-12;
 }
 .chat_name {
-	@apply w-64 overflow-hidden whitespace-nowrap text-ellipsis line-clamp-1;
+	@apply w-64 overflow-hidden whitespace-nowrap text-ellipsis;
 }
 </style>

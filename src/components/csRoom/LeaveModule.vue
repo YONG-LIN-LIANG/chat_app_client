@@ -1,14 +1,15 @@
 <script setup>
 import { defineEmits } from "vue";
 const emit = defineEmits(["onToggle"]);
-// const handleToggleDialog = () => {
-//   emit("on-toggle");
-// };
+const handleToggleDialog = () => {
+  emit("on-toggle");
+};
 defineProps({
   chatEnd_closed: {
     type: Boolean,
   },
 });
+
 </script>
 
 <template>
@@ -24,7 +25,9 @@ defineProps({
       class="bg_black bg-gray-2 w-full h-full opacity-20"
       @click="emit('onToggle')"
     ></div>
+
     <div class="module_window">
+
       <div>要結束對話嗎?</div>
       <div class="py-3 text-xs text-gray-4 text-center">
         <p>對話結束後聊天室將被關閉，</p>

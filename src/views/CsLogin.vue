@@ -1,12 +1,12 @@
 <script setup>
 import CSLogo from "@/components/svg/Logo.vue";
 // import { useSocketStore } from '@/stores/socket'
-import { useCsStore } from "@/stores/cs";
-import { reactive, onBeforeMount } from "vue";
-import { useRouter } from "vue-router";
-const router = useRouter();
+// import { useCsStore } from "@/stores/cs";
+import { reactive } from "vue";
+// import { useRouter, useRoute } from "vue-router";
+// const router = useRouter();
 // const socketStore = useSocketStore()
-const csStore = useCsStore();
+// const csStore = useCsStore();
 // const { socket } = socketStore
 // onBeforeMount(() => {
 // 	socket.on('resLogin', (data) => {
@@ -62,16 +62,7 @@ function handleLogin() {
 
 <template>
   <div
-    class="
-      login_section
-      min-h-screen
-      pb-40
-      pt-10
-      flex flex-col
-      items-center
-      justify-center
-      bg-green-w20
-    "
+    class="login_section min-h-screen pb-40 pt-10 flex flex-col items-center justify-center bg-green-w20"
   >
     <div class="login_title flex flex-col items-center">
       <CSLogo />

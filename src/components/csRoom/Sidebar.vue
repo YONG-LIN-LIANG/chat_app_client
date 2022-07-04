@@ -6,6 +6,7 @@ import { useRoute, onBeforeRouteUpdate } from "vue-router";
 import { ref, onMounted, reactive, computed } from "vue";
 
 const hamOpen = ref(false);
+
 const menu = reactive({
   active: null,
   list: [
@@ -182,32 +183,20 @@ onBeforeRouteUpdate((to) => {
         sm:hidden
         xxs:block
       "
+
     >
       <div class="flex items-center justify-between xxs:hidden">
         <div class="sidebar_logo w-9 flex">
           <CSLogo />
         </div>
         <div
-          class="
-            sidebar_title
-            whitespace-nowrap
-            text-lg
-            font-medium
-            text-purple
-          "
+          class="sidebar_title whitespace-nowrap text-lg font-medium text-purple"
         >
           客服平台
         </div>
       </div>
       <div
-        class="
-          flex
-          mt-4
-          sm:mt-0
-          justify-between
-          sm:justify-center sm:hidden
-          xxs:flex
-        "
+        class="flex mt-4 sm:mt-0 justify-between sm:justify-center sm:hidden xxs:flex"
       >
         <span class="sidabar_user_name text-sm text-gray-2">盧立倫</span>
         <router-link
@@ -240,21 +229,7 @@ onBeforeRouteUpdate((to) => {
   </div>
   <!-- mobile -->
   <div
-    class="
-      sidebar_section--mobile
-      h-16
-      px-7
-      w-full
-      hidden
-      sm:flex
-      items-center
-      justify-between
-      bg-green-w20
-      fixed
-      top-0
-      left-0
-      z-50
-    "
+    class="sidebar_section--mobile h-16 px-7 w-full hidden sm:flex items-center justify-between bg-green-w20 fixed top-0 left-0 z-50"
   >
     <div class="flex items-center">
       <div class="flex items-center justify-between">
@@ -262,13 +237,7 @@ onBeforeRouteUpdate((to) => {
           <CSLogo />
         </div>
         <div
-          class="
-            sidebar_title
-            whitespace-nowrap
-            text-lg
-            font-medium
-            text-purple
-          "
+          class="sidebar_title whitespace-nowrap text-lg font-medium text-purple"
         >
           客服平台
         </div>
@@ -284,6 +253,7 @@ onBeforeRouteUpdate((to) => {
             menu.active === 3 ? 'bg-green-w50 ' : 'bg-white',
           ]"
           @click="menu.active = 3"
+
         >
           <StarIcon class="w-4 text-green-Default" />
           <span>4.9</span>
