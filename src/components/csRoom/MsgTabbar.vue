@@ -26,13 +26,12 @@ onMounted(() => {
 	socket.emit('reqLogin', { identity: 1, cs_id: csRoom.cs.memberId })
 	socket.on('resLogin', (data) => {
 		csRoom.userList = data
-		// console.log("csRoom.userList", csRoom.userList);
+		console.log("csRoom.userList", csRoom.userList);
 	})
 
 	csRoom.userList.forEach((i) => {
-		console.log('ˇˇd', i)
 		i['timeFormat'] = i.created_time.split(' ')[1].substring(0, 5)
-		console.log('eee', i['timeFormat'])
+		// console.log('eee', i['timeFormat'])
 	})
 })
 
@@ -192,10 +191,12 @@ const toggleTab = (item)=>{
           ? emit('toggleTab',0)
           : emit('toggleTab',item.id) 
 }
-
+const setuserListActive = (item) => {
+	csRoom.userListActive = item.member_id
+	
+}
 </script>
 <template>
-
   <div
     :class="[
       'mr-16 xs:mr-0',
@@ -217,33 +218,33 @@ const toggleTab = (item)=>{
         </div>
         <div class="chat_list w-full rounded mx-0 my-5">
           <div
-            v-for="item in chatList.list"
-            :key="item.id"
+            v-for="item in csRoom.userList"
+           :key="item.member_id"
             class="chat rounded px-3.5 py-2.5 shadow-underLine cursor-pointer hover:bg-green-w20 ease-out duration-200"
-            @click="chatList.active = item.id"
-            :class="{ active: item.id === chatList.active }"
+            @click="setuserListActive(item)"
+            :class="[item.member_id === csRoom.userListActive ? 'active' : '']"
           >
             <div class="chat_info flex justify-between items-center mb-1.5">
-              <div class="chat_name text-gray-2">{{ item.customer }}</div>
-              <div class="unread text-xs font-light">{{ item.unread }}</div>
+              <div class="chat_name ">{{ item.name }}</div>
+              <div v-if="item.unread" class="unread text-xs font-light">{{ item.unread }}</div>
             </div>
             <div class="chat_msg flex items-center justify-between">
-              <div class="chat_tag flex items-center">
+              <div class="chat_tag w-3/4 flex items-center">
                 <ReturnIcon
-                  v-show="item.lastMsg.from === 'service'"
+                  v-show="item.message_status === 1"
                   class="min-w-3 text-green-Default mr-1.5"
                 />
                 <span
-                  v-show="item.type === 'tag'"
+                  v-show="item.message_status === 0"
                   class="chat_tags_opts selected inline-block text-sm text-gray-2 rounded-20 bg-green-w20 px-3.5 py-1.5 ml-1 border border-solid border-green-Default"
-                  >{{ item.lastTag }}</span
+                  >{{ item.answer }}</span
                 >
-                <span v-show="item.type === 'text'" class="text-gray-2">{{
-                  item.lastMsg.msg
-                }}</span>
+                <div v-show="item.message_status !== 0" class="chat_list_msg">{{
+                  item.message 
+                }}</div>
               </div>
               <div class="chat_time text-xs flex items-end h-full text-gray-3">
-                {{ item.time }}
+               {{ csRoom.createdTimeClock(item.created_time) }}
               </div>
             </div>
           </div>
@@ -460,7 +461,7 @@ const toggleTab = (item)=>{
 
 <style scoped>
 .tabbar_func_open {
-	@apply opacity-100 w-full max-w-66 transition-all duration-300 lg:max-w-full;
+	@apply opacity-100 w-full max-w-66 xs:max-w-full transition-all duration-300 lg:max-w-[calc(100%-64px)];
 }
 .tabbar_func_closed {
 	@apply max-w-0;
@@ -491,6 +492,9 @@ const toggleTab = (item)=>{
 	@apply xs:w-full xs:h-14 xs:fixed xs:bottom-0 xs:left-0 xs:flex-row xs:justify-between xs:px-12;
 }
 .chat_name {
-	@apply w-64 overflow-hidden whitespace-nowrap text-ellipsis;
+	@apply w-3/4 text-gray-2 overflow-hidden whitespace-normal text-ellipsis;
+}
+.chat_list_msg{
+	@apply w-3/4 text-lg text-gray-2 overflow-hidden whitespace-normal text-ellipsis
 }
 </style>

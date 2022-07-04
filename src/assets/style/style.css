@@ -44,8 +44,7 @@ li {
 }
 
 select, input, textarea{
-	height: 40px;
-	@apply text-sm text-gray-2 box-border border border-green-w50 rounded px-2.5;
+	@apply h-10 text-sm text-gray-2 box-border border border-green-w50 rounded px-2.5;
 }
 select:focus, input:focus{
 	@apply outline-none border border-solid border-green-Default

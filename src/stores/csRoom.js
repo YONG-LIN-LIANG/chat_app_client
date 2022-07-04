@@ -34,7 +34,7 @@ export const useCsRoomStore = defineStore('CsRoom', () => {
 					question: '請選擇想詢問的項目',
 					questionContent: ['多益', '托福', '雅思'],
 					questionId: 1,
-					status: 0,
+					message_status: 0,
 				},
 				{
 					answer: '由系統隨機指派',
@@ -42,7 +42,7 @@ export const useCsRoomStore = defineStore('CsRoom', () => {
 					question: '請選擇服務的客服人員',
 					questionContent: ['劉傑明', '由系統隨機指派'],
 					questionId: 2,
-					status: 0,
+					message_status: 0,
 				},
 				// 人員文字訊息
 				{
@@ -51,7 +51,7 @@ export const useCsRoomStore = defineStore('CsRoom', () => {
 					csMemberId: 11,
 					message: '請問課程',
 					messageId: 3,
-					status: 2,
+					message_status: 2,
 				},
 				{
 					createdTime: '2022-05-21 15:21:33',
@@ -59,7 +59,7 @@ export const useCsRoomStore = defineStore('CsRoom', () => {
 					csMemberId: 11,
 					message: '客服人員 盧立倫 在線為您服務',
 					messageId: 3,
-					status: 1,
+					message_status: 1,
 				},
 			],
 		},
