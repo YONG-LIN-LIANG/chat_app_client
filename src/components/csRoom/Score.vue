@@ -133,7 +133,7 @@ const pageAmount = ref(10);
 // 評論共有幾頁
 const pageCount = computed(() => Math.ceil(commentsCount / pageAmount.value));
 
-const pageActive = ref(1);
+let pageActive = ref(3);
 
 let commentsPage = reactive([]);
 // 把所有評論分頁
@@ -166,7 +166,6 @@ handleCommentsPage(commentsCopy, pageAmount, pageCount);
 // 評論排序
 // 評論排序預設為 1 最新
 const pageSortSelect = ref("1");
-const pageCountSelect = ref("10");
 
 watch(pageSortSelect, (newVal) => {
   switch (newVal) {
@@ -227,6 +226,52 @@ comments.forEach((i) => {
       break;
   }
 });
+// pagination
+let pageneighbor = reactive([]);
+let newpageneighbor = []
+let j
+const pageLast = ref(10);
+const handlePageShow = (pageActive)=>{
+  if(pageActive < 3){
+  Object.assign(pageneighbor, [2,3])
+  pageneighbor.length = 2
+  }
+  else if(pageActive > pageLast.value - 2){
+    Object.assign(pageneighbor, [pageActive.value-2, pageActive.value-1])
+    pageneighbor.length = 2
+  }
+  else{
+    j = 0
+    for( let i = - 1 ; i < 2 ; i++){
+      newpageneighbor[j] = pageActive + i
+      j++
+      // pageneighbor.push(pageActive + i)
+    };
+  }
+  Object.assign(pageneighbor, newpageneighbor)
+  // console.log(pageneighbor)
+};
+handlePageShow(pageActive.value);
+
+const handleChangePage = (number) => {
+  if( number < pageLast.value){
+    pageActive.value = number
+    handlePageShow(pageActive.value)
+  };
+};
+const handleFirstPage = () => {
+  pageActive.value = 1
+  newpageneighbor =  [2 , 3]
+  Object.assign(pageneighbor, newpageneighbor)
+  pageneighbor.length = 2
+};
+const handleLastPage = () => {
+  pageActive.value = 10
+  newpageneighbor =  [pageActive.value-2, pageActive.value-1]
+  Object.assign(pageneighbor, newpageneighbor)
+  pageneighbor.length = 2
+};
+
 </script>
 <template>
   <div class="msg mt-10 sm:mt-[104px] ml-48 lg:ml-36 sm:ml-0">
@@ -384,9 +429,9 @@ comments.forEach((i) => {
                 一頁顯示
               </label>
               <select
-                v-model="pageCountSelect"
+                v-model="pageAmount"
                 class="w-full h-7"
-                name="pageCountSelect"
+                name="pageAmount"
                 id=""
               >
                 <option value="5">5筆</option>
@@ -453,7 +498,7 @@ comments.forEach((i) => {
           <div class="pagination">
             <Prev class="text-white" />
           </div>
-          <div
+          <!-- <div
             v-for="page in pageCount"
             :key="page"
             :class="[
@@ -461,9 +506,43 @@ comments.forEach((i) => {
               page === pageActive ? 'bg-green-Default' : '',
             ]"
             @click="pageActive = page"
-          >
-            {{ page }}
+          > -->
+
+          <div 
+            :class="['pagination',
+            pageActive === 1 ? 'bg-green-Default' : '',]"
+            @click="handleFirstPage">
+              1
           </div>
+          <div 
+            v-if="pageActive > 3"
+            class="ellipsis"
+          >
+              ...
+          </div>
+          <div 
+            v-for="number in pageneighbor" :key="number"
+            
+            :class="['pagination',
+            number === pageActive ? 'bg-green-Default' : '',]"
+            @click="handleChangePage(number)">
+              {{number}}
+          </div>
+          <div 
+            v-if="pageActive < pageLast - 2"
+            class="ellipsis"
+          >
+              ...
+          </div>
+          <div 
+            :class="['pagination',
+            pageActive === pageLast ? 'bg-green-Default' : '',]"
+            @click="handleLastPage">
+              {{pageLast}}
+          </div>
+          
+  
+          <!-- </div> -->
           <div class="pagination">
             <Next class="text-white" />
           </div>
@@ -490,6 +569,9 @@ comments.forEach((i) => {
   @apply bg-green-w50;
 }
 .pagination {
-  @apply w-7 h-9 mx-1 bg-green-w50 flex items-center justify-center rounded-lg hover:bg-green-Default cursor-pointer;
+  @apply w-7 h-9 mx-1 text-gray-2 text-sm bg-green-w50 flex items-center justify-center rounded-lg hover:bg-green-Default cursor-pointer;
+}
+.ellipsis{
+  @apply w-7 h-9 mx-1 text-gray-2 text-sm flex items-center justify-center ;
 }
 </style>

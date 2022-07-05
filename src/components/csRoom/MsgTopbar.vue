@@ -1,8 +1,12 @@
 <script setup>
 import { ref, defineEmits } from "vue";
+
 import SearchIcon from "@/components/svg/Search.vue";
 import UpIcon from "@/components/svg/Up.vue";
 import DownIcon from "@/components/svg/Down.vue";
+
+import { useCsRoomStore } from "@/stores/csRoom";
+const CsRoom = useCsRoomStore()
 
 const searchOpen = ref(false);
 const toggle_searchOpen = () => {
@@ -20,9 +24,11 @@ const handleToggleDialog = () => {
     <div
       class="msg_topbar h-16 px-14 lg:px-7 py-0 flex justify-between items-center box-border shadow-layer3"
     >
-      <div class="msg_name whitespace-nowrap text-lg font-medium text-gray-1">
-        林三良
+    <!-- :class="[CsRoom.userListActive ? '' : 'opacity-0' -->
+      <div  class="msg_name whitespace-nowrap text-lg font-medium text-gray-1">
+        {{CsRoom.userActive.name}}
       </div>
+     
       <div class="msg_funcgroup flex items-center justify-center">
         <div
           class="btn_search w-9 h-9 flex items-center justify-center cursor-pointer text-gray-2 bg-gray-6 hover:bg-green-w20 rounded-md mx-4 my-0 ease-in duration-300"

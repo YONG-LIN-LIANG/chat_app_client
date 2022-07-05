@@ -155,14 +155,14 @@ onMounted(() => {
   >
     <div
       v-for="item in CsRoom.userChatList"
-      :key="item.roomId"
+      :key="item.room_id"
       class="w-full flex items-center flex-col"
       data-part="0"
     >
       <div
         class="chat_date w-16 relative text-xs font-light text-center text-gray-3 mx-0 my-5"
       >
-        {{ item.beginTime.split(" ")[0].split("-").join("/") }}
+        {{ item.begin_time.split(" ")[0].split("-").join("/") }}
       </div>
       <div class="chat_start">
         <div
@@ -184,9 +184,10 @@ onMounted(() => {
       </div>
       <div
         v-for="chatItem in item.chatList"
-        :key="chatItem.createdTime"
+        :key="chatItem.created_time"
         class="w-full mx-0 my-3"
       >
+      <!-- 系統訊息 -->
         <div v-if="chatItem.status === 0" class="chat_tags_wrap">
           <div
             class="chat_tags_ques text-xs text-gray-2 text-center mx-0 my-2.5"
@@ -195,34 +196,48 @@ onMounted(() => {
           </div>
           <div class="chat_tags_opts_wrap flex justify-center">
             <div
-              v-for="questionItem in chatItem.questionContent"
+              v-show="chatItem.question_id !== 2"
+              v-for="questionItem in chatItem.question_content"
               :key="questionItem"
               :class="[
                 { 'bg-green-w50': questionItem === chatItem.answer },
-                'chat_tags_opts text-sm text-gray-2 rounded-20 m-1 border border-solid border-green-Default px-3.5 py-1.5 cursor-pointer',
+                'chat_tags_opts',
               ]"
             >
               {{ questionItem }}
             </div>
+            <div
+              v-show="chatItem.question_id === 2"
+              v-for="questionItem in chatItem.question_content"
+              :key="questionItem"
+              :class="[
+                { 'bg-green-w50': questionItem.name === chatItem.answer },
+                'chat_tags_opts',
+              ]"
+            >
+              {{ questionItem.name }}
+            </div>
           </div>
         </div>
+      <!-- 客戶訊息 -->
         <div v-if="chatItem.status === 2" class="msg_receive">
           <span class="msg_receive_text bg-gray-6">{{ chatItem.message }}</span>
           <span
             class="msg_time text-xs font-light text-gray-3 tracking-wide mx-2 my-0.5"
-            >{{ chatItem.createdTimeClock }}</span
-          >
+            >{{ CsRoom.createdTimeClock(chatItem.created_time) }}
+          </span>
         </div>
+      <!-- 客服訊息 -->
         <div v-if="chatItem.status === 1" class="msg_send justify-end">
           <span
             class="msg_time text-xs font-light text-gray-3 tracking-wide mx-2 my-0.5"
-            >{{ chatItem.createdTimeClock }}</span
+            >{{ CsRoom.createdTimeClock(chatItem.created_time) }}</span
           >
           <span class="msg_send_text bg-green-w50">{{ chatItem.message }}</span>
         </div>
       </div>
 
-      <div v-if="item.endTime" class="chat_end">
+      <div v-if="item.end_time" class="chat_end">
         <div
           class="chat_status text-sm font-medium text-green-Default text-center mx-0 my-1.5"
         >
@@ -230,7 +245,7 @@ onMounted(() => {
         </div>
         <div class="text-gray-3">
           <span class="text-xs">客服人員 : </span>
-          <span class="text-xs">{{ item.csName }}</span>
+          <span class="text-xs">{{ item.cs_name }}</span>
         </div>
       </div>
     </div>
@@ -261,5 +276,8 @@ onMounted(() => {
 .msg_receive_text,
 .msg_send_text {
   @apply text-md text-gray-1 tracking-wide rounded-md px-4 py-2;
+}
+.chat_tags_opts{
+@apply text-sm text-gray-2 rounded-20 m-1 border border-solid border-green-Default px-3.5 py-1.5 cursor-pointer
 }
 </style>

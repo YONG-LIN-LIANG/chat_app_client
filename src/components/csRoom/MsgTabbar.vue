@@ -26,6 +26,7 @@ onMounted(() => {
 	socket.emit('reqLogin', { identity: 1, cs_id: csRoom.cs.memberId })
 	socket.on('resLogin', (data) => {
 		csRoom.userList = data
+    // csRoom.formatChatListTime()
 		console.log("csRoom.userList", csRoom.userList);
 	})
 
@@ -33,6 +34,12 @@ onMounted(() => {
 		i['timeFormat'] = i.created_time.split(' ')[1].substring(0, 5)
 		// console.log('eee', i['timeFormat'])
 	})
+
+  socket.on('resReadMessage', (data) => {
+		csRoom.userChatList = data.roomList
+		console.log("csRoom.userChatList", csRoom.userChatList);
+	})
+
 })
 
 // console.log('csRoom.userList--2', csRoom)
@@ -191,10 +198,27 @@ const toggleTab = (item)=>{
           ? emit('toggleTab',0)
           : emit('toggleTab',item.id) 
 }
-const setuserListActive = (item) => {
-	csRoom.userListActive = item.member_id
-	
+
+
+// 點擊 chatList 取得 userchatList
+const handleUserChatList = (item)=>{
+  csRoom.userActive = {
+   member_id : item.member_id,
+   room_id : item.room_id,
+   socketId : item.socket_id,
+   name : item.name
+  }
+  console.log('444',csRoom.userActive)
+  socket.emit("reqReadMessage", {
+    getRoomMessage: true,
+    identity: 1,
+    clientId: item.member_id,
+    roomId: item.room_id,
+    socketId: item.socket_id,
+  });
 }
+
+
 </script>
 <template>
   <div
@@ -221,7 +245,7 @@ const setuserListActive = (item) => {
             v-for="item in csRoom.userList"
            :key="item.member_id"
             class="chat rounded px-3.5 py-2.5 shadow-underLine cursor-pointer hover:bg-green-w20 ease-out duration-200"
-            @click="setuserListActive(item)"
+            @click="handleUserChatList(item)"
             :class="[item.member_id === csRoom.userListActive ? 'active' : '']"
           >
             <div class="chat_info flex justify-between items-center mb-1.5">

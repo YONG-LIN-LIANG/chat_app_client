@@ -17,6 +17,8 @@ const inputSend = async () => {
   >
     <input
       v-model="inputValue"
+      @keyup.enter="CsRoom.handleMsgSend(inputValue) ;inputValue = '';
+        inputSend();"
       type="text"
       class="w-full h-10 send_input box-border px-2 py-0 m-2.5"
     />

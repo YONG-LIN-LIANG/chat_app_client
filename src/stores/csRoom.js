@@ -1,122 +1,114 @@
 import { defineStore } from 'pinia'
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, computed, watch } from 'vue'
 
 export const useCsRoomStore = defineStore('CsRoom', () => {
 	const cs = reactive({
 		memberId: 1,
 	})
-	const userActive = reactive({
-		roomId: 0,
-		group: '',
-		website: '',
-		name: '',
-		socketId: '',
-		memberId: 4,
-		csMemberId: 11,
-	})
+	const userActive = reactive({})
 
 	const userChatList = reactive([
 		// room
-		{
-			roomId: 34,
-			beginTime: '2022-05-21 12:21:33',
-			endTime: '2022-05-24 12:20:33',
-			group: '通路事業群',
-			website: '大碩研究所官網',
-			memberId: 4,
-			csMemberId: 11,
-			csName: '劉傑明',
-			isReadId: 3,
-			chatList: [
-				{
-					answer: '多益',
-					createdTime: '2022-05-21 12:21:33',
-					question: '請選擇想詢問的項目',
-					questionContent: ['多益', '托福', '雅思'],
-					questionId: 1,
-					message_status: 0,
-				},
-				{
-					answer: '由系統隨機指派',
-					createdTime: '2022-05-21 13:21:33',
-					question: '請選擇服務的客服人員',
-					questionContent: ['劉傑明', '由系統隨機指派'],
-					questionId: 2,
-					message_status: 0,
-				},
-				// 人員文字訊息
-				{
-					createdTime: '2022-05-21 14:21:33',
-					memberId: 4,
-					csMemberId: 11,
-					message: '請問課程',
-					messageId: 3,
-					message_status: 2,
-				},
-				{
-					createdTime: '2022-05-21 15:21:33',
-					memberId: 4,
-					csMemberId: 11,
-					message: '客服人員 盧立倫 在線為您服務',
-					messageId: 3,
-					message_status: 1,
-				},
-			],
-		},
-		{
-			roomId: 0,
-			beginTime: '2022-06-04 12:21:33',
-			endTime: '',
-			group: '通路事業群',
-			website: '大碩研究所官網',
-			memberId: 4,
-			csMemberId: 11,
-			csName: '劉傑明',
-			isReadId: 3,
-			chatList: [
-				{
-					answer: '托福',
-					createdTime: '2022-05-21 12:21:33',
-					question: '請選擇想詢問的項目',
-					questionContent: ['多益', '托福', '雅思'],
-					questionId: 1,
-					status: 0,
-				},
-				{
-					answer: '劉傑明',
-					createdTime: '2022-05-21 13:21:33',
-					question: '請選擇服務的客服人員',
-					questionContent: ['劉傑明', '由系統隨機指派'],
-					questionId: 2,
-					status: 0,
-				},
-				// 人員文字訊息
-				{
-					createdTime: '2022-05-21 14:21:33',
-					memberId: 4,
-					csMemberId: 11,
-					message: '請問課程',
-					messageId: 3,
-					status: 2,
-				},
-				{
-					createdTime: '2022-05-21 15:21:33',
-					memberId: 4,
-					csMemberId: 11,
-					message: '客服人員 盧立倫 在線為您服務',
-					messageId: 3,
-					status: 1,
-				},
-				{
-					createdTime: '2022-05-21 15:23:33',
-					memberId: 4,
-					csMemberId: 11,
-					message: '請問你有什麼問題',
-					messageId: 3,
-					status: 1,
-				},
-			],
-		},
+		// {
+		// 	roomId: 34,
+		// 	beginTime: '2022-05-21 12:21:33',
+		// 	endTime: '2022-05-24 12:20:33',
+		// 	group: '通路事業群',
+		// 	website: '大碩研究所官網',
+		// 	memberId: 4,
+		// 	csMemberId: 11,
+		// 	csName: '劉傑明',
+		// 	isReadId: 3,
+		// 	chatList: [
+		// 		{
+		// 			answer: '多益',
+		// 			createdTime: '2022-05-21 12:21:33',
+		// 			question: '請選擇想詢問的項目',
+		// 			questionContent: ['多益', '托福', '雅思'],
+		// 			questionId: 1,
+		// 			message_status: 0,
+		// 		},
+		// 		{
+		// 			answer: '由系統隨機指派',
+		// 			createdTime: '2022-05-21 13:21:33',
+		// 			question: '請選擇服務的客服人員',
+		// 			questionContent: ['劉傑明', '由系統隨機指派'],
+		// 			questionId: 2,
+		// 			message_status: 0,
+		// 		},
+		// 		// 人員文字訊息
+		// 		{
+		// 			createdTime: '2022-05-21 14:21:33',
+		// 			memberId: 4,
+		// 			csMemberId: 11,
+		// 			message: '請問課程',
+		// 			messageId: 3,
+		// 			message_status: 2,
+		// 		},
+		// 		{
+		// 			createdTime: '2022-05-21 15:21:33',
+		// 			memberId: 4,
+		// 			csMemberId: 11,
+		// 			message: '客服人員 盧立倫 在線為您服務',
+		// 			messageId: 3,
+		// 			message_status: 1,
+		// 		},
+		// 	],
+		// },
+		// {
+		// 	roomId: 0,
+		// 	beginTime: '2022-06-04 12:21:33',
+		// 	endTime: '',
+		// 	group: '通路事業群',
+		// 	website: '大碩研究所官網',
+		// 	memberId: 4,
+		// 	csMemberId: 11,
+		// 	csName: '劉傑明',
+		// 	isReadId: 3,
+		// 	chatList: [
+		// 		{
+		// 			answer: '托福',
+		// 			createdTime: '2022-05-21 12:21:33',
+		// 			question: '請選擇想詢問的項目',
+		// 			questionContent: ['多益', '托福', '雅思'],
+		// 			questionId: 1,
+		// 			status: 0,
+		// 		},
+		// 		{
+		// 			answer: '劉傑明',
+		// 			createdTime: '2022-05-21 13:21:33',
+		// 			question: '請選擇服務的客服人員',
+		// 			questionContent: ['劉傑明', '由系統隨機指派'],
+		// 			questionId: 2,
+		// 			status: 0,
+		// 		},
+		// 		// 人員文字訊息
+		// 		{
+		// 			createdTime: '2022-05-21 14:21:33',
+		// 			memberId: 4,
+		// 			csMemberId: 11,
+		// 			message: '請問課程',
+		// 			messageId: 3,
+		// 			status: 2,
+		// 		},
+		// 		{
+		// 			createdTime: '2022-05-21 15:21:33',
+		// 			memberId: 4,
+		// 			csMemberId: 11,
+		// 			message: '客服人員 盧立倫 在線為您服務',
+		// 			messageId: 3,
+		// 			status: 1,
+		// 		},
+		// 		{
+		// 			createdTime: '2022-05-21 15:23:33',
+		// 			memberId: 4,
+		// 			csMemberId: 11,
+		// 			message: '請問你有什麼問題',
+		// 			messageId: 3,
+		// 			status: 1,
+		// 		},
+		// 	],
+		// },
 	])
 	let userListActive = ref(null)
 	const userList = reactive([])
@@ -174,6 +166,11 @@ export const useCsRoomStore = defineStore('CsRoom', () => {
 		})
 	}
 	formatChatListTime()
+
+	watch(() => userChatList, () => {
+		formatChatListTime()
+	})
+
 	const createdTimeClock = (created_time) => {
 		return created_time.split(' ')[1].substring(0, 5)
 	}
