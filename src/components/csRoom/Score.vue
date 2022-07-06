@@ -266,10 +266,25 @@ const handleFirstPage = () => {
   pageneighbor.length = 2
 };
 const handleLastPage = () => {
-  pageActive.value = 10
-  newpageneighbor =  [pageActive.value-2, pageActive.value-1]
+  pageActive.value = pageLast.value
+  newpageneighbor =  [pageLast.value-2, pageLast.value-1]
   Object.assign(pageneighbor, newpageneighbor)
   pageneighbor.length = 2
+};
+
+const handlePrevPage = () => {
+  if(pageActive.value === 2){
+    handleFirstPage()
+  }else if(pageActive.value !== 1){
+    handleChangePage(pageActive.value - 1)
+  }
+};
+const handleNextPage = () => {
+  if(pageActive.value === pageLast.value - 1){
+    handleLastPage()
+  }else if(pageActive.value !== pageLast.value){
+    handleChangePage(pageActive.value + 1)
+  }
 };
 
 </script>
@@ -492,22 +507,13 @@ const handleLastPage = () => {
           </div>
         </div>
         <div class="pagination_wrap my-10 flex justify-center">
-          <div class="pagination">
+          <div @click="handleFirstPage" :class="['pagination', pageActive === 1 ? 'bg-gray-5 hover:bg-gray-5' : '']">
             <PageStart class="text-white" />
           </div>
-          <div class="pagination">
+          <div @click="handlePrevPage" :class="['pagination', pageActive === 1 ? 'bg-gray-5 hover:bg-gray-5' : '']" >
             <Prev class="text-white" />
           </div>
-          <!-- <div
-            v-for="page in pageCount"
-            :key="page"
-            :class="[
-              'pagination text-gray-2 text-sm',
-              page === pageActive ? 'bg-green-Default' : '',
-            ]"
-            @click="pageActive = page"
-          > -->
-
+  
           <div 
             :class="['pagination',
             pageActive === 1 ? 'bg-green-Default' : '',]"
@@ -541,12 +547,11 @@ const handleLastPage = () => {
               {{pageLast}}
           </div>
           
-  
-          <!-- </div> -->
-          <div class="pagination">
+ 
+          <div @click="handleNextPage" :class="['pagination', pageActive === pageLast ? 'bg-gray-5 hover:bg-gray-5' : '']">
             <Next class="text-white" />
           </div>
-          <div class="pagination">
+          <div @click="handleLastPage" :class="['pagination', pageActive === pageLast ? 'bg-gray-5 hover:bg-gray-5' : '']">
             <PageEnd class="text-white" />
           </div>
         </div>

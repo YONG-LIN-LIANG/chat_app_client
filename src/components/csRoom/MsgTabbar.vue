@@ -37,7 +37,10 @@ onMounted(() => {
 
   socket.on('resReadMessage', (data) => {
 		csRoom.userChatList = data.roomList
-		console.log("csRoom.userChatList", csRoom.userChatList);
+	})
+
+   socket.on('resUpdateSocketId', (data) => {
+		console.log("data",data);
 	})
 
 })

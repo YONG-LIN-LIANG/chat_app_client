@@ -24,7 +24,6 @@ const handleToggleDialog = () => {
     <div
       class="msg_topbar h-16 px-14 lg:px-7 py-0 flex justify-between items-center box-border shadow-layer3"
     >
-    <!-- :class="[CsRoom.userListActive ? '' : 'opacity-0' -->
       <div  class="msg_name whitespace-nowrap text-lg font-medium text-gray-1">
         {{CsRoom.userActive.name}}
       </div>

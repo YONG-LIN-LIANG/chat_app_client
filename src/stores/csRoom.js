@@ -5,7 +5,7 @@ export const useCsRoomStore = defineStore('CsRoom', () => {
 	const cs = reactive({
 		memberId: 1,
 	})
-	const userActive = reactive({})
+	const userActive = reactive()
 
 	const userChatList = reactive([
 		// room
@@ -166,10 +166,6 @@ export const useCsRoomStore = defineStore('CsRoom', () => {
 		})
 	}
 	formatChatListTime()
-
-	watch(() => userChatList, () => {
-		formatChatListTime()
-	})
 
 	const createdTimeClock = (created_time) => {
 		return created_time.split(' ')[1].substring(0, 5)
