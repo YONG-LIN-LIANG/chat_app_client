@@ -13,12 +13,12 @@ const menu = reactive({
     {
       id: 0,
       name: "訊息",
-      router: "/CsRoom/msg",
+      router: "/csRoom/msg",
     },
     {
       id: 1,
       name: "排行榜",
-      router: "/CsRoom/ranking",
+      router: "/csRoom/ranking",
     },
     {
       id: 2,
@@ -30,24 +30,24 @@ const menu = reactive({
 const route = useRoute();
 const routePath = computed(() => route.path);
 onMounted(() => {
-  if (routePath.value === "/CsRoom/msg") {
+  if (routePath.value === "/csRoom/msg") {
     menu.active = 0;
-  } else if (routePath.value === "/CsRoom/ranking") {
+  } else if (routePath.value === "/csRoom/ranking") {
     menu.active = 1;
   } else if (routePath.value === "/Login") {
     menu.active = 2;
-  } else if (routePath.value === "/CsRoom/score") {
+  } else if (routePath.value === "/csRoom/score") {
     menu.active = 3;
   }
 });
 onBeforeRouteUpdate((to) => {
-  if (to.path === "/CsRoom/msg") {
+  if (to.path === "/csRoom/msg") {
     menu.active = 0;
-  } else if (to.path === "/CsRoom/ranking") {
+  } else if (to.path === "/csRoom/ranking") {
     menu.active = 1;
   } else if (to.path === "/Login") {
     menu.active = 2;
-  } else if (to.path === "/CsRoom/score") {
+  } else if (to.path === "/csRoom/score") {
     menu.active = 3;
   }
 });
@@ -58,13 +58,13 @@ onBeforeRouteUpdate((to) => {
 //   () => route.path,
 //   (to) => {
 //     console.log("to", to, route.path);
-//     if (to.path === "/CsRoom/msg") {
+//     if (to.path === "/csRoom/msg") {
 //       menu.active = 0;
-//     } else if (to.path === "/CsRoom/ranking") {
+//     } else if (to.path === "/csRoom/ranking") {
 //       menu.active = 1;
 //     } else if (to.path === "/Login") {
 //       menu.active = 2;
-//     } else if (to.path === "/CsRoom/score") {
+//     } else if (to.path === "/csRoom/score") {
 //       menu.active = 3;
 //     }
 //   }
@@ -74,29 +74,29 @@ onBeforeRouteUpdate((to) => {
 // watch: {
 //     $route(to, from) {
 //       console.log("to", to.path);
-//       if (to.path === "/CsRoom/msg") {
+//       if (to.path === "/csRoom/msg") {
 //         this.menu.active = 0;
 //       }
-//       else if(to.path === "/CsRoom/Ranking") {
+//       else if(to.path === "/csRoom/Ranking") {
 //         this.menu.active = 1;
 //       }
 //       else if(to.path === "/Login") {
 //         this.menu.active = 2;
 //       }
-//       else if(to.path === "/CsRoom/score") {
+//       else if(to.path === "/csRoom/score") {
 //         this.menu.active = 3;
 //       }
 //     },
 //   },
 
 // const test = () => {
-//   if (window.location.href.indexOf("/CsRoom/msg") > -1) {
+//   if (window.location.href.indexOf("/csRoom/msg") > -1) {
 //     menu.active = 0;
-//   } else if (window.location.href.indexOf("/CsRoom/ranking") > -1) {
+//   } else if (window.location.href.indexOf("/csRoom/ranking") > -1) {
 //     menu.active = 1;
 //   } else if (window.location.href.indexOf("/Login") > -1) {
 //     menu.active = 2;
-//   } else if (window.location.href.indexOf("/CsRoom/score") > -1) {
+//   } else if (window.location.href.indexOf("/csRoom/score") > -1) {
 //     menu.active = 3;
 //   }
 // };
@@ -116,12 +116,12 @@ onBeforeRouteUpdate((to) => {
 //         {
 //           id: 0,
 //           name: "訊息",
-//           router: "/CsRoom/msg",
+//           router: "/csRoom/msg",
 //         },
 //         {
 //           id: 1,
 //           name: "排行榜",
-//           router: "/CsRoom/ranking",
+//           router: "/csRoom/ranking",
 //         },
 //         {
 //           id: 2,
@@ -131,13 +131,13 @@ onBeforeRouteUpdate((to) => {
 //       ],
 //     });
 //     const test = () => {
-//       if (window.location.href.indexOf("/CsRoom/msg") > -1) {
+//       if (window.location.href.indexOf("/csRoom/msg") > -1) {
 //         menu.active = 0;
-//       } else if (window.location.href.indexOf("/CsRoom/ranking") > -1) {
+//       } else if (window.location.href.indexOf("/csRoom/ranking") > -1) {
 //         menu.active = 1;
 //       } else if (window.location.href.indexOf("/Login") > -1) {
 //         menu.active = 2;
-//       } else if (window.location.href.indexOf("/CsRoom/score") > -1) {
+//       } else if (window.location.href.indexOf("/csRoom/score") > -1) {
 //         menu.active = 3;
 //       }
 //     };
@@ -147,16 +147,16 @@ onBeforeRouteUpdate((to) => {
 //   watch: {
 //     $route(to, from) {
 //       console.log("to", to.path);
-//       if (to.path === "/CsRoom/msg") {
+//       if (to.path === "/csRoom/msg") {
 //         this.menu.active = 0;
 //       }
-//       else if(to.path === "/CsRoom/Ranking") {
+//       else if(to.path === "/csRoom/Ranking") {
 //         this.menu.active = 1;
 //       }
 //       else if(to.path === "/Login") {
 //         this.menu.active = 2;
 //       }
-//       else if(to.path === "/CsRoom/score") {
+//       else if(to.path === "/csRoom/score") {
 //         this.menu.active = 3;
 //       }
 //     },
@@ -200,7 +200,7 @@ onBeforeRouteUpdate((to) => {
       >
         <span class="sidabar_user_name text-sm text-gray-2">盧立倫</span>
         <router-link
-          to="/CsRoom/score"
+          to="/csRoom/score"
           :class="[
             'sidabar_user_score',
             menu.active === 3 ? 'bg-green-w50 ' : 'bg-white',
@@ -247,7 +247,7 @@ onBeforeRouteUpdate((to) => {
           >盧立倫</span
         >
         <router-link
-          to="/CsRoom/score"
+          to="/csRoom/score"
           :class="[
             'sidabar_user_score',
             menu.active === 3 ? 'bg-green-w50 ' : 'bg-white',

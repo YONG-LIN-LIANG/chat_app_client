@@ -9,10 +9,10 @@ import TriangleIcon from '@/components/svg/Triangle.vue'
 import TabBtn from '@/components/csRoom/TabBtn.vue'
 import slideUpDown from 'vue3-slide-up-down'
 import { useSocketStore } from '@/stores/socket'
-import { useCsRoomStore } from '@/stores/CsRoom'
+import { usecsRoomStore } from '@/stores/csRoom'
 
 const socket = useSocketStore().socket
-const csRoom = useCsRoomStore()
+const csRoom = usecsRoomStore()
 
 const emit = defineEmits(["toggleTab"]);
 
@@ -32,16 +32,23 @@ onMounted(() => {
 
 	csRoom.userList.forEach((i) => {
 		i['timeFormat'] = i.created_time.split(' ')[1].substring(0, 5)
-		// console.log('eee', i['timeFormat'])
 	})
 
   socket.on('resReadMessage', (data) => {
-		csRoom.userChatList = data.roomList
+		// csRoom.userChatList = data.roomList
+    Object.assign(csRoom.userChatList, data.roomList)
+    console.log('csRoom.userChatList',csRoom.userChatList)
 	})
-
-   socket.on('resUpdateSocketId', (data) => {
+  // 客戶重整 更新socket_id
+  socket.on('resUpdateSocketId', (data) => {
 		console.log("data",data);
-	})
+    // console.log('userList',csRoom.userList)
+    let findUser = csRoom.userList.find((i) => data.member_id === i.memberId)
+    if(findUser !== undefined){
+      findUser.socket_id = data.socketId
+    }
+    console.log('eee',csRoom.userList)
+  })
 
 })
 
@@ -205,13 +212,23 @@ const toggleTab = (item)=>{
 
 // 點擊 chatList 取得 userchatList
 const handleUserChatList = (item)=>{
+  console.log('csRoom.userList',csRoom.userList)
+  // let test = {
+  //   member_id : item.member_id,
+  //  room_id : item.room_id,
+  //  socketId : item.socket_id,
+  //  name : item.name
+  // }
+  // console.log('test',test)
+  // Object.assign(csRoom.userActive, test)
+
   csRoom.userActive = {
    member_id : item.member_id,
    room_id : item.room_id,
    socketId : item.socket_id,
    name : item.name
   }
-  console.log('444',csRoom.userActive)
+  console.log('csRoom.userActive',csRoom.userActive)
   socket.emit("reqReadMessage", {
     getRoomMessage: true,
     identity: 1,
@@ -219,7 +236,7 @@ const handleUserChatList = (item)=>{
     roomId: item.room_id,
     socketId: item.socket_id,
   });
-}
+};
 
 
 </script>
@@ -249,7 +266,7 @@ const handleUserChatList = (item)=>{
            :key="item.member_id"
             class="chat rounded px-3.5 py-2.5 shadow-underLine cursor-pointer hover:bg-green-w20 ease-out duration-200"
             @click="handleUserChatList(item)"
-            :class="[item.member_id === csRoom.userListActive ? 'active' : '']"
+            :class="[item.member_id === csRoom.userActive?.member_id ? 'active' : '']"
           >
             <div class="chat_info flex justify-between items-center mb-1.5">
               <div class="chat_name ">{{ item.name }}</div>

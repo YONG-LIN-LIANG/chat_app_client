@@ -6,8 +6,8 @@ import MsgSend from "@/components/csRoom/MsgSend.vue";
 import MsgTabbar from "@/components/csRoom/MsgTabbar.vue";
 import LeaveModule from "@/components/csRoom/LeaveModule.vue";
 
-import { useCsRoomStore } from "@/stores/csRoom";
-const CsRoom = useCsRoomStore()
+import { usecsRoomStore } from "@/stores/csRoom";
+const csRoom = usecsRoomStore()
 
 const chatEnd_closed = ref(true);
 const handle_chatEnd_closed = () => {
@@ -33,9 +33,9 @@ const handletoggleTab = (activeNum)=>{
       <div
         :class="['msg_chatBox w-full', tabList.active === 0 ? '' : 'lg:hidden']"
       >
-        <MsgTopbar v-if="CsRoom.userActive" @onToggle="handle_chatEnd_closed" />
+        <MsgTopbar v-if="csRoom.userActive" @onToggle="handle_chatEnd_closed" />
         <MsgChat />
-        <MsgSend v-if="CsRoom.userActive"/>
+        <MsgSend v-if="csRoom.userActive"/>
       </div>
       <MsgTabbar :tabList="tabList" @toggleTab="handletoggleTab" />
       <LeaveModule

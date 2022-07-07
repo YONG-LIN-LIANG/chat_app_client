@@ -5,8 +5,8 @@ import SearchIcon from "@/components/svg/Search.vue";
 import UpIcon from "@/components/svg/Up.vue";
 import DownIcon from "@/components/svg/Down.vue";
 
-import { useCsRoomStore } from "@/stores/csRoom";
-const CsRoom = useCsRoomStore()
+import { usecsRoomStore } from "@/stores/csRoom";
+const csRoom = usecsRoomStore()
 
 const searchOpen = ref(false);
 const toggle_searchOpen = () => {
@@ -24,8 +24,8 @@ const handleToggleDialog = () => {
     <div
       class="msg_topbar h-16 px-14 lg:px-7 py-0 flex justify-between items-center box-border shadow-layer3"
     >
-      <div  class="msg_name whitespace-nowrap text-lg font-medium text-gray-1">
-        {{CsRoom.userActive.name}}
+      <div  class="msg_name line-clamp-1 text-clip text-ellipsis text-lg font-medium text-gray-1">
+        {{csRoom.userActive.name}}
       </div>
      
       <div class="msg_funcgroup flex items-center justify-center">
@@ -110,5 +110,8 @@ const handleToggleDialog = () => {
 
 .input_search:focus {
   @apply border border-solid border-green-Default;
+}
+.msg_name{
+  overflow-wrap: anywhere;
 }
 </style>

@@ -2,7 +2,7 @@
 import Sidebar from "@/components/csRoom/Sidebar.vue";
 
 export default {
-  name: "CsRoom",
+  name: "csRoom",
   components: {
     Sidebar,
   },

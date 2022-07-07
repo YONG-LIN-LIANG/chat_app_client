@@ -1,14 +1,14 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { useCsRoomStore } from "@/stores/csRoom";
+import { usecsRoomStore } from "@/stores/csRoom";
 
-const CsRoom = useCsRoomStore();
+const csRoom = usecsRoomStore();
 
 const chatSection = ref(null);
 
 onMounted(() => {
-  CsRoom.chatSectionHeight = chatSection.value.clientHeight;
-  CsRoom.chatSectionDom = chatSection.value;
+  csRoom.chatSectionHeight = chatSection.value.clientHeight;
+  csRoom.chatSectionDom = chatSection.value;
 });
 
 // const SourceList = reactive({
@@ -154,7 +154,7 @@ onMounted(() => {
     class="chat_section px-10 lg:px-7 py-7 flex items-center flex-col overflow-auto box-border"
   >
     <div
-      v-for="item in CsRoom.userChatList"
+      v-for="item in csRoom.userChatList"
       :key="item.room_id"
       class="w-full flex items-center flex-col"
       data-part="0"
@@ -224,14 +224,14 @@ onMounted(() => {
           <span class="msg_receive_text bg-gray-6">{{ chatItem.message }}</span>
           <span
             class="msg_time text-xs font-light text-gray-3 tracking-wide mx-2 my-0.5"
-            >{{ CsRoom.createdTimeClock(chatItem.created_time) }}
+            >{{ csRoom.createdTimeClock(chatItem.created_time) }}
           </span>
         </div>
       <!-- 客服訊息 -->
         <div v-if="chatItem.status === 1" class="msg_send justify-end">
           <span
             class="msg_time text-xs font-light text-gray-3 tracking-wide mx-2 my-0.5"
-            >{{ CsRoom.createdTimeClock(chatItem.created_time) }}</span
+            >{{ csRoom.createdTimeClock(chatItem.created_time) }}</span
           >
           <span class="msg_send_text bg-green-w50">{{ chatItem.message }}</span>
         </div>

@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import CsLogin from '@/views/CsLogin.vue'
-import CsRoom from '@/views/CsRoom.vue'
+import csRoom from '@/views/csRoom.vue'
 import ClientRoom from '@/views/ClientRoom.vue'
 import { MagicString } from 'vue/compiler-sfc'
 import Msg from '@/components/csRoom/Msg.vue'
@@ -18,7 +18,7 @@ const router = createRouter({
 		{
 			path: '/csRoom',
 			name: 'csRoom',
-			component: CsRoom,
+			component: csRoom,
 			children: [
 				{
 					path: 'msg',
