@@ -129,6 +129,7 @@ import { reactive } from "@vue/reactivity";
 import { ref, computed, onMounted, onBeforeUnmount } from "vue";
 import { useClientStore } from "@/stores/client";
 import { useSocketStore } from "@/stores/socket";
+import { handleFormatRoomListData } from "@/function/index";
 const clientStore = useClientStore();
 const socket = useSocketStore().socket;
 const chatWindow = ref(null);
@@ -243,41 +244,42 @@ onMounted(() => {
       roomId: user.room_id,
       socketId: user.socket_id,
     };
-    roomInfo.chat = chat.map((i) => {
-      const newChatList = i.chatList.map((msg) => {
-        if (msg.status === 0) {
-          return {
-            answer: msg.answer,
-            createdTime: msg.created_time,
-            question: msg.question,
-            questionContent: msg.question_content,
-            questionId: msg.question_id,
-            status: msg.status,
-          };
-        } else if (msg.status === 1 || msg.status === 2) {
-          return {
-            status: msg.status,
-            messageId: msg.message_id,
-            memberId: msg.member_id,
-            name: msg.name,
-            message: msg.message,
-            createdTime: msg.created_time,
-          };
-        }
-      });
-      const newRoomObject = {
-        beginTime: i.begin_time,
-        csName: i.cs_name,
-        csMemberId: i.cs_member_id,
-        endTime: i.end_time,
-        group: i.group,
-        isReadId: i.is_read_id,
-        roomId: i.room_id,
-        website: i.website,
-        chatList: newChatList,
-      };
-      return newRoomObject;
-    });
+    roomInfo.chat = handleFormatRoomListData(chat);
+    // roomInfo.chat = chat.map((i) => {
+    //   const newChatList = i.chatList.map((msg) => {
+    //     if (msg.status === 0) {
+    //       return {
+    //         answer: msg.answer,
+    //         createdTime: msg.created_time,
+    //         question: msg.question,
+    //         questionContent: msg.question_content,
+    //         questionId: msg.question_id,
+    //         status: msg.status,
+    //       };
+    //     } else if (msg.status === 1 || msg.status === 2) {
+    //       return {
+    //         status: msg.status,
+    //         messageId: msg.message_id,
+    //         memberId: msg.member_id,
+    //         name: msg.name,
+    //         message: msg.message,
+    //         createdTime: msg.created_time,
+    //       };
+    //     }
+    //   });
+    //   const newRoomObject = {
+    //     beginTime: i.begin_time,
+    //     csName: i.cs_name,
+    //     csMemberId: i.cs_member_id,
+    //     endTime: i.end_time,
+    //     group: i.group,
+    //     isReadId: i.is_read_id,
+    //     roomId: i.room_id,
+    //     website: i.website,
+    //     chatList: newChatList,
+    //   };
+    //   return newRoomObject;
+    // });
     roomInfo.cs = {
       ...roomInfo.cs,
       ...cs,
@@ -295,7 +297,7 @@ onMounted(() => {
     console.log("roomInfoo", roomInfo);
   });
   // 接收傳送訊息回應時事件
-  socket.on("resSendMessage", (data) => {
+  socket.on("resSendMessage", async (data) => {
     const { identity, messageCreatedTime } = data;
     console.log("xxxxxxxx", data);
     if (identity === 0) {
@@ -331,13 +333,27 @@ onMounted(() => {
       } else {
         // 提示系統異常
       }
-    } else if (identity === 1 || identity === 2) {
+    } else if (identity === 2) {
       const { messageId } = data;
       // 用messageId找到那則訊息
       roomInfo.chat[roomInfo.chat.length - 1].chatList.find(
         (i) => i.messageId === messageId
       ).createdTime = messageCreatedTime;
+    } else if (identity === 1) {
+      const { message } = data;
+      console.log("check");
+      roomInfo.chat[roomInfo.chat.length - 1].chatList.push(message);
+      console.log("test", roomInfo.chat[roomInfo.chat.length - 1].chatList);
+      await handleScrollToBottom();
     }
+  });
+  socket.on("resReadMessage", (data) => {
+    console.log("readId", data);
+  });
+  socket.on("resUpdateSocketId", (data) => {
+    console.log("new cs socket id", data);
+    roomInfo.cs.socketId = data;
+    console.log("update roomInfo", roomInfo);
   });
   window.addEventListener("message", handleMessage);
 });

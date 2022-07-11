@@ -87,7 +87,7 @@
             class="message w-full flex items-end mr-7"
           >
             <span
-              class="text-md text-gray-1 bg-gray-6 tracking-wide rounded-md px-4 py-2"
+              class="max-w-56 text-md text-gray-1 bg-gray-6 tracking-wide break-words rounded-md px-4 py-2"
               >{{ item.message }}</span
             >
             <span
@@ -106,7 +106,7 @@
               >{{ formatTime(item.createdTime) }}</span
             >
             <span
-              class="text-md text-gray-1 bg-green-w50 tracking-wide rounded-md px-4 py-2"
+              class="max-w-56 text-md text-gray-1 bg-green-w50 tracking-wide break-words rounded-md px-4 py-2"
               >{{ item.message }}</span
             >
           </div>
