@@ -277,6 +277,11 @@ onMounted(() => {
 .msg_send_text {
   @apply text-md text-gray-1 tracking-wide rounded-md px-4 py-2;
 }
+.msg_receive_text,
+.msg_send_text {
+  word-break: break-word;
+}
+
 .chat_tags_opts{
 @apply text-sm text-gray-2 rounded-20 m-1 border border-solid border-green-Default px-3.5 py-1.5 cursor-pointer
 }

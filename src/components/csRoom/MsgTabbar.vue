@@ -25,9 +25,12 @@ const props = defineProps({
 onMounted(() => {
 	socket.emit('reqLogin', { identity: 1, cs_id: csRoom.cs.memberId })
 	socket.on('resLogin', (data) => {
-		csRoom.userList = data
-    // csRoom.formatChatListTime()
-		console.log("csRoom.userList", csRoom.userList);
+    // console.log('resLogin',data)
+    if(data){
+      csRoom.userList = data
+      // csRoom.formatChatListTime()
+      // console.log("csRoom.userList", csRoom.userList);
+    }
 	})
 
 	csRoom.userList.forEach((i) => {
@@ -35,25 +38,91 @@ onMounted(() => {
 	})
 
   socket.on('resReadMessage', (data) => {
-		// csRoom.userChatList = data.roomList
     Object.assign(csRoom.userChatList, data.roomList)
-    console.log('csRoom.userChatList',csRoom.userChatList)
+    // console.log('resReadMessage',data)
+    // 更新userList find userList.member_id = userActive.member_id 的 unread = 0
+    let findUserClick = csRoom.userList.find((i) => i.member_id === csRoom.userActive.member_id)
+    // console.log('findUserClick',findUserClick)
+    findUserClick.unread = data.unread
+    // console.log('csRoom.userList',csRoom.userList)
+   
 	})
   // 客戶重整 更新socket_id
   socket.on('resUpdateSocketId', (data) => {
-		console.log("data",data);
     // console.log('userList',csRoom.userList)
     let findUser = csRoom.userList.find((i) => data.member_id === i.memberId)
     if(findUser !== undefined){
       findUser.socket_id = data.socketId
+      csRoom.userActive.socket_id = data.socketId
     }
-    console.log('eee',csRoom.userList)
+
+    // console.log('eee',csRoom.userList)
+  })
+
+  // 訊息送出/收到新訊息 後更新userList 
+  socket.on('resSendMessage', async (data) => {
+    // console.log("data",data);
+    // identity = 1 :客服訊息 ; 2 : 客戶訊息
+    const { identity, messageCreatedTime, message, messageId } = data;
+  // 送出訊息
+    if (identity === 1) {
+      // 更新userChatList 最後一個room的最後一則訊息的created_time
+      let findUserMessage = csRoom.userChatList[csRoom.userChatList.length - 1].chatList.find((i) => i.message_id === messageId)
+      findUserMessage.created_time = messageCreatedTime;
+      // 更新userActive.message_id
+      csRoom.userActive.message_id = messageId;
+      // 更新 userList.member_id = userActive.member_id 的 message.message_id
+      let findUser = csRoom.userList.find((i) => i.member_id === csRoom.userActive.member_id)
+      findUser.message = message
+      findUser.message_id = messageId
+      findUser.created_time = messageCreatedTime
+      findUser.message_status = 1
+  // 接收訊息
+   } else if (identity === 2) {
+      // 更新對應的 userList 
+      // csRoom.userChatList[userChatList.length - 1].chatList.push(message);
+      let findUserGet = csRoom.userList.find((i) => i.member_id === message.memberId)
+      // console.log('findUserGet',findUserGet)
+      findUserGet.message = message.message
+      findUserGet.message_id = message.messageId
+      findUserGet.created_time = message.createdTime
+      findUserGet.message_status = 2
+      // 若非目前所在的聊天室，userList.unread更新
+      if(message.memberId !== csRoom.userActive?.member_id){
+        findUserGet.unread = data.unread
+      }
+
+      // 更新 userActive
+      if(findUserGet.member_id === csRoom.userActive.member_id){
+        csRoom.userActive.message = message.message
+        csRoom.userActive.message = message.messageId
+        let findUserMessageGet = csRoom.userChatList[csRoom.userChatList.length - 1].chatList
+      // 更新聊天室內容
+        let messageFormat = {
+          created_time: message.createdTime,
+          member_id: message.memberId,
+          message: message.message,
+          message_id: message.messageId,
+          name: message.name,
+          status: message.status,
+        }
+        findUserMessageGet.push(messageFormat)
+        // console.log('findUserMessageGet',findUserMessageGet)
+      }
+    }
+
+    csRoom.chatSectionDom.scrollTop = await csRoom.chatSectionDom.scrollHeight;
+
+  })
+
+  // 接收聊天配對
+  socket.on('resPair',(data) => {
+    // console.log('resPair',data)
+    csRoom.userList.unshift(data)
   })
 
 })
 
-// console.log('csRoom.userList--2', csRoom)
-// console.log('socket', socket)
 const chatList = reactive({
 	active: 0,
 	list: [
@@ -211,7 +280,7 @@ const toggleTab = (item)=>{
 
 
 // 點擊 chatList 取得 userchatList
-const handleUserChatList = (item)=>{
+const handleUserChatList = async (item)=>{
   console.log('csRoom.userList',csRoom.userList)
   // let test = {
   //   member_id : item.member_id,
@@ -222,13 +291,25 @@ const handleUserChatList = (item)=>{
   // console.log('test',test)
   // Object.assign(csRoom.userActive, test)
 
-  csRoom.userActive = {
+  // csRoom.userActive = {
+  //  member_id : item.member_id,
+  //  room_id : item.room_id,
+  //  socket_id : item.socket_id,
+  //  name : item.name,
+  //  message : item.message,
+  //  message_id : item.message_id,
+  // }
+  let setUserActive = {
    member_id : item.member_id,
    room_id : item.room_id,
-   socketId : item.socket_id,
-   name : item.name
+   socket_id : item.socket_id,
+   name : item.name,
+   message : item.message,
+   message_id : item.message_id,
   }
-  console.log('csRoom.userActive',csRoom.userActive)
+  Object.assign(csRoom.userActive, setUserActive)
+
+  console.log('csRoom.userActive.length',csRoom.userActive.length)
   socket.emit("reqReadMessage", {
     getRoomMessage: true,
     identity: 1,
@@ -236,6 +317,7 @@ const handleUserChatList = (item)=>{
     roomId: item.room_id,
     socketId: item.socket_id,
   });
+  csRoom.chatSectionDom.scrollTop = await csRoom.chatSectionDom.scrollHeight;
 };
 
 
@@ -260,7 +342,8 @@ const handleUserChatList = (item)=>{
           <ChatIcon class="text-green-b50" />
           <span class="tabbar_title text-green-b70 mx-2.5 my-0">聊天列表</span>
         </div>
-        <div class="chat_list w-full rounded mx-0 my-5">
+        <div v-if="!csRoom.userList.length" class="chat_list_empty text-gray-3 py-7 text-sm">目前尚無聊天室</div>
+        <div v-if="csRoom.userList.length" class="chat_list w-full rounded mx-0 my-5">
           <div
             v-for="item in csRoom.userList"
            :key="item.member_id"
@@ -283,7 +366,7 @@ const handleUserChatList = (item)=>{
                   class="chat_tags_opts selected inline-block text-sm text-gray-2 rounded-20 bg-green-w20 px-3.5 py-1.5 ml-1 border border-solid border-green-Default"
                   >{{ item.answer }}</span
                 >
-                <div v-show="item.message_status !== 0" class="chat_list_msg">{{
+                <div v-show="item.message_status !== 0" class="chat_list_msg text-ellipsis overflow-hidden line-clamp-1">{{
                   item.message 
                 }}</div>
               </div>

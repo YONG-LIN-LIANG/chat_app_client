@@ -24,7 +24,7 @@ const tabList = reactive({
 });
 const handletoggleTab = (activeNum)=>{
   tabList.active = activeNum
-}
+};
 </script>
 <template>
   <div class="msg ml-48 lg:ml-36 sm:ml-0">
@@ -33,9 +33,9 @@ const handletoggleTab = (activeNum)=>{
       <div
         :class="['msg_chatBox w-full', tabList.active === 0 ? '' : 'lg:hidden']"
       >
-        <MsgTopbar v-if="csRoom.userActive" @onToggle="handle_chatEnd_closed" />
+        <MsgTopbar v-if="csRoom.userActive.member_id" @onToggle="handle_chatEnd_closed" />
         <MsgChat />
-        <MsgSend v-if="csRoom.userActive"/>
+        <MsgSend v-if="csRoom.userActive.member_id"/>
       </div>
       <MsgTabbar :tabList="tabList" @toggleTab="handletoggleTab" />
       <LeaveModule
