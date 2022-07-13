@@ -5,6 +5,7 @@ import SearchIcon from '@/components/svg/Search.vue'
 import ListIcon from '@/components/svg/List.vue'
 import MemberIcon from '@/components/svg/Member.vue'
 import ReturnIcon from '@/components/svg/Return.vue'
+import CrossIcon from '@/components/svg/Cross.vue'
 import TriangleIcon from '@/components/svg/Triangle.vue'
 import TabBtn from '@/components/csRoom/TabBtn.vue'
 import slideUpDown from 'vue3-slide-up-down'
@@ -29,7 +30,7 @@ onMounted(() => {
     if(data){
       csRoom.userList = data
       // csRoom.formatChatListTime()
-      // console.log("csRoom.userList", csRoom.userList);
+      console.log("csRoom.userList", csRoom.userList);
     }
 	})
 
@@ -320,7 +321,14 @@ const handleUserChatList = async (item)=>{
   csRoom.chatSectionDom.scrollTop = await csRoom.chatSectionDom.scrollHeight;
 };
 
+const handleCloseInform = (leaveItem) => {
+  let closeIndex = csRoom.leaveClient.indexOf(leaveItem)
+    if(closeIndex !== -1){
+      csRoom.leaveClient.splice(closeIndex, 1)
+    }
+    console.log('csRoom.leaveClient',csRoom.leaveClient)
 
+};
 </script>
 <template>
   <div
@@ -584,9 +592,31 @@ const handleUserChatList = async (item)=>{
     />
   </ul>
 
+  <!-- 客戶端離開聊天室 提示 -->
+  <div v-show="csRoom.leaveClient !== []" class="inform_section fixed top-11 right-16">
+    <transition-group name="informList" >
+      <div v-for="leaveItem in csRoom.leaveClient" :key="leaveItem" class="inform_window w-66 h-8 px-4 py-3 mb-0.5 flex justify-between items-center bg-white opacity-90 shadow-layer1 rounded transition ease-in-out duration-300">
+        <div class="text-sm text-gray-2 flex items-center">
+          <span class="client_name max-w-29 mr-1 overflow-hidden whitespace-nowrap">{{leaveItem}}</span>
+          <span class="text-gray-3"> 已離開聊天室</span>
+        </div>
+        <CrossIcon @click="handleCloseInform(leaveItem)" class="cursor-pointer"/>
+      </div>
+    </transition-group>
+  </div>
 </template>
 
 <style scoped>
+
+.informList-leave-active, .informList-enter-active{
+  transition: .3s;
+}
+.informList-enter-from,.informList-leave-to {
+  opacity: 0;
+}
+
+
+
 .tabbar_func_open {
 	@apply opacity-100 w-full max-w-66 xs:max-w-full transition-all duration-300 lg:max-w-[calc(100%-64px)];
 }

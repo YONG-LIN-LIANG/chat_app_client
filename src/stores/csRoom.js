@@ -78,6 +78,9 @@ export const usecsRoomStore = defineStore('csRoom', () => {
 
 	const chatSectionDom = ref()
 
+	//客戶端離開聊天室 提示
+	let leaveClient = reactive(['陳莉莉dddddrrrrrrrrrddd','李源源'])
+
 	return {
 		cs,
 		userActive,
@@ -86,5 +89,6 @@ export const usecsRoomStore = defineStore('csRoom', () => {
 		currentTimeFormat,
 		chatSectionDom,
 		createdTimeClock,
+		leaveClient,
 	}
 })

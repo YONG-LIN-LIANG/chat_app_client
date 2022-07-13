@@ -200,7 +200,7 @@ let ratingCount = reactive([
   { star: 2, count: 0 },
   { star: 1, count: 0 },
 ]);
-const ratingCountFilter = ref(5);
+const ratingCountFilter = ref(null);
 const searchFilter = ref(true);
 
 const handleToggleSearch = () => {
@@ -226,6 +226,23 @@ comments.forEach((i) => {
       break;
   }
 });
+// 計算個人評分平均
+let rateTotal = ref(0)
+let rateAmount = ref(0)
+let rateAverage = ref(0)
+
+const calRateAverage = () => {
+  ratingCount.forEach((i) => {
+      rateTotal.value += i.star * i.count
+      rateAmount.value += i.count
+  })
+  rateAverage.value = rateTotal.value / rateAmount.value
+}
+calRateAverage()
+const rateAverageFormat = ref(rateAverage.value.toFixed(1))
+const rateAverageFloor = ref(Math.floor(rateAverage.value))
+
+
 // pagination
 let pageneighbor = reactive([]);
 let newpageneighbor = []
@@ -297,13 +314,9 @@ const handleNextPage = () => {
       <div class="ranking_name w-20 font-semibold">盧立倫</div>
       <div class="ranking_star_wrap flex items-center mr-5">
         <div class="ranking_star flex text-green-Default mr-2.5">
-          <StarIcon class="mr-1" />
-          <StarIcon class="mr-1" />
-          <StarIcon class="mr-1" />
-          <StarIcon class="mr-1" />
-          <StarIcon class="mr-1 flex items-center text-gray-6" />
+          <StarIcon v-for="i in 5" :key="i" :class="['mr-1', i > rateAverageFloor ? 'flex items-center text-gray-6' : '']" />
         </div>
-        <div class="ranking_average text-green-Default mr-1">5.0</div>
+        <div class="ranking_average text-green-Default mr-1">{{rateAverageFormat}}</div>
       </div>
       <div class="ranking_amount whitespace-nowrap text-sm text-gray-3">
         {{ commentsCount }} 則
@@ -435,7 +448,7 @@ const handleNextPage = () => {
           <div class="comment_count text-gray-2 text-sm flex items-center">
             <span>共</span>
             <span class="mx-1">{{ commentsCount }}</span>
-            <span>筆評論</span>
+            <span>筆</span>
             <div class="flex items-center ml-4">
               <label
                 for=""
