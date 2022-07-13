@@ -1,14 +1,15 @@
 <script setup>
 import { defineEmits } from "vue";
-const emit = defineEmits(["on-toggle"]);
+const emit = defineEmits(["onToggle"]);
 const handleToggleDialog = () => {
   emit("on-toggle");
 };
-// const props = defineProps({
-//   chatEnd_closed: {
-//     type: Boolean,
-//   },
-// });
+defineProps({
+  chatEnd_closed: {
+    type: Boolean,
+  },
+});
+
 </script>
 
 <template>
@@ -22,21 +23,21 @@ const handleToggleDialog = () => {
   >
     <div
       class="bg_black bg-gray-2 w-full h-full opacity-20"
-      @click="handleToggleDialog"
+      @click="emit('onToggle')"
     ></div>
-    <div
-      class="module_window w-100 flex flex-col items-center px-10 py-7 bg-white absolute top-1/2 left-1/2 translate-y-1/2Re translate-x-[-35%] sm:translate-x-1/2Re rounded-md"
-    >
+
+    <div class="module_window">
+
       <div>要結束對話嗎?</div>
       <div class="py-3 text-xs text-gray-4 text-center">
         <p>對話結束後聊天室將被關閉，</p>
         <p>直到同個使用者再度傳送客服訊息。</p>
       </div>
       <div class="btn_wrap flex justify-center sm:flex-col">
-        <div class="btn_secondary-orange m-2" @click="handleToggleDialog">
+        <div class="btn_secondary-orange m-2" @click="emit('onToggle')">
           返回對話
         </div>
-        <div class="btn_primary--orange m-2" @click="handleToggleDialog">
+        <div class="btn_primary--orange m-2" @click="emit('onToggle')">
           結束對話
         </div>
       </div>
@@ -44,4 +45,8 @@ const handleToggleDialog = () => {
   </div>
 </template>
 
-<style></style>
+<style>
+.module_window {
+  @apply w-100 flex flex-col items-center px-10 py-7 bg-white absolute top-1/2 left-1/2 translate-y-1/2Re translate-x-[-35%] sm:translate-x-1/2Re rounded-md;
+}
+</style>

@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+
   purge: ["./index.html", "./src/**/*.{vue,js,ts,jsx,tsx}"],
   darkMode: false, // or 'media' or 'class'
   theme: {
@@ -52,6 +53,7 @@ module.exports = {
         "1/2Re": "-50%",
       },
       width: {
+        4.5: "18px",
         7.5: "30px",
         35: "140px",
         62: "248px",
@@ -61,6 +63,7 @@ module.exports = {
       },
       minWidth: {
         3: "12px",
+        4.5: "18px",
         14: "56px",
         16: "64px",
         48: "192px",
@@ -68,8 +71,10 @@ module.exports = {
       },
       maxWidth: {
         66: "264px",
+        29: "116px",
       },
       height: {
+        4.5: "18px",
         7.5: "30px",
         15: "60px",
         105: "420px",
@@ -118,5 +123,8 @@ module.exports = {
   variants: {
     extend: {},
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/line-clamp'),
+  ],
 };
+

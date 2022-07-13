@@ -4,7 +4,7 @@ import ChatIcon from "@/components/svg/Chat.vue";
 import SearchIcon from "@/components/svg/Search.vue";
 import ListIcon from "@/components/svg/List.vue";
 
-const props = defineProps({
+defineProps({
   info: Object,
   tabList: Object,
 });

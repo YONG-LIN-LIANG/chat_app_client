@@ -133,7 +133,7 @@ const pageAmount = ref(10);
 // 評論共有幾頁
 const pageCount = computed(() => Math.ceil(commentsCount / pageAmount.value));
 
-const pageActive = ref(1);
+let pageActive = ref(3);
 
 let commentsPage = reactive([]);
 // 把所有評論分頁
@@ -162,29 +162,27 @@ const handleCommentsPage = (comments, pageAmount, pageCount) => {
   Object.assign(commentsPage, newcommentsPage);
 };
 handleCommentsPage(commentsCopy, pageAmount, pageCount);
-console.log("commentsCopy-1", commentsCopy);
+
 // 評論排序
 // 評論排序預設為 1 最新
 const pageSortSelect = ref("1");
-const pageCountSelect = ref("10");
 
 watch(pageSortSelect, (newVal) => {
   switch (newVal) {
     case "1":
       comments.sort((a, b) => b.timeCode - a.timeCode);
       handleCommentsPage(comments, pageAmount, pageCount);
-      console.log("commentsPage-2", commentsPage);
+
       break;
     case "2":
       comments.sort((a, b) => b.rating - a.rating);
       handleCommentsPage(comments, pageAmount, pageCount);
-      console.log("commentsPage-2", commentsPage);
 
       break;
     case "3":
       comments.sort((a, b) => a.rating - b.rating);
       handleCommentsPage(comments, pageAmount, pageCount);
-      console.log("commentsPage-2", commentsPage);
+
       break;
   }
 });
@@ -202,7 +200,7 @@ let ratingCount = reactive([
   { star: 2, count: 0 },
   { star: 1, count: 0 },
 ]);
-const ratingCountFilter = ref(5);
+const ratingCountFilter = ref(null);
 const searchFilter = ref(true);
 
 const handleToggleSearch = () => {
@@ -228,6 +226,84 @@ comments.forEach((i) => {
       break;
   }
 });
+// 計算個人評分平均
+let rateTotal = ref(0)
+let rateAmount = ref(0)
+let rateAverage = ref(0)
+
+const calRateAverage = () => {
+  ratingCount.forEach((i) => {
+      rateTotal.value += i.star * i.count
+      rateAmount.value += i.count
+  })
+  rateAverage.value = rateTotal.value / rateAmount.value
+}
+calRateAverage()
+const rateAverageFormat = ref(rateAverage.value.toFixed(1))
+const rateAverageFloor = ref(Math.floor(rateAverage.value))
+
+
+// pagination
+let pageneighbor = reactive([]);
+let newpageneighbor = []
+let j
+const pageLast = ref(10);
+const handlePageShow = (pageActive)=>{
+  if(pageActive < 3){
+  Object.assign(pageneighbor, [2,3])
+  pageneighbor.length = 2
+  }
+  else if(pageActive > pageLast.value - 2){
+    Object.assign(pageneighbor, [pageActive.value-2, pageActive.value-1])
+    pageneighbor.length = 2
+  }
+  else{
+    j = 0
+    for( let i = - 1 ; i < 2 ; i++){
+      newpageneighbor[j] = pageActive + i
+      j++
+      // pageneighbor.push(pageActive + i)
+    };
+  }
+  Object.assign(pageneighbor, newpageneighbor)
+  // console.log(pageneighbor)
+};
+handlePageShow(pageActive.value);
+
+const handleChangePage = (number) => {
+  if( number < pageLast.value){
+    pageActive.value = number
+    handlePageShow(pageActive.value)
+  };
+};
+const handleFirstPage = () => {
+  pageActive.value = 1
+  newpageneighbor =  [2 , 3]
+  Object.assign(pageneighbor, newpageneighbor)
+  pageneighbor.length = 2
+};
+const handleLastPage = () => {
+  pageActive.value = pageLast.value
+  newpageneighbor =  [pageLast.value-2, pageLast.value-1]
+  Object.assign(pageneighbor, newpageneighbor)
+  pageneighbor.length = 2
+};
+
+const handlePrevPage = () => {
+  if(pageActive.value === 2){
+    handleFirstPage()
+  }else if(pageActive.value !== 1){
+    handleChangePage(pageActive.value - 1)
+  }
+};
+const handleNextPage = () => {
+  if(pageActive.value === pageLast.value - 1){
+    handleLastPage()
+  }else if(pageActive.value !== pageLast.value){
+    handleChangePage(pageActive.value + 1)
+  }
+};
+
 </script>
 <template>
   <div class="msg mt-10 sm:mt-[104px] ml-48 lg:ml-36 sm:ml-0">
@@ -238,13 +314,9 @@ comments.forEach((i) => {
       <div class="ranking_name w-20 font-semibold">盧立倫</div>
       <div class="ranking_star_wrap flex items-center mr-5">
         <div class="ranking_star flex text-green-Default mr-2.5">
-          <StarIcon class="mr-1" />
-          <StarIcon class="mr-1" />
-          <StarIcon class="mr-1" />
-          <StarIcon class="mr-1" />
-          <StarIcon class="mr-1 flex items-center text-gray-6" />
+          <StarIcon v-for="i in 5" :key="i" :class="['mr-1', i > rateAverageFloor ? 'flex items-center text-gray-6' : '']" />
         </div>
-        <div class="ranking_average text-green-Default mr-1">5.0</div>
+        <div class="ranking_average text-green-Default mr-1">{{rateAverageFormat}}</div>
       </div>
       <div class="ranking_amount whitespace-nowrap text-sm text-gray-3">
         {{ commentsCount }} 則
@@ -376,7 +448,7 @@ comments.forEach((i) => {
           <div class="comment_count text-gray-2 text-sm flex items-center">
             <span>共</span>
             <span class="mx-1">{{ commentsCount }}</span>
-            <span>筆評論</span>
+            <span>筆</span>
             <div class="flex items-center ml-4">
               <label
                 for=""
@@ -385,9 +457,9 @@ comments.forEach((i) => {
                 一頁顯示
               </label>
               <select
-                v-model="pageCountSelect"
+                v-model="pageAmount"
                 class="w-full h-7"
-                name="pageCountSelect"
+                name="pageAmount"
                 id=""
               >
                 <option value="5">5筆</option>
@@ -448,27 +520,51 @@ comments.forEach((i) => {
           </div>
         </div>
         <div class="pagination_wrap my-10 flex justify-center">
-          <div class="pagination">
+          <div @click="handleFirstPage" :class="['pagination', pageActive === 1 ? 'bg-gray-5 hover:bg-gray-5' : '']">
             <PageStart class="text-white" />
           </div>
-          <div class="pagination">
+          <div @click="handlePrevPage" :class="['pagination', pageActive === 1 ? 'bg-gray-5 hover:bg-gray-5' : '']" >
             <Prev class="text-white" />
           </div>
-          <div
-            v-for="page in pageCount"
-            :key="page"
-            :class="[
-              'pagination text-gray-2 text-sm',
-              page === pageActive ? 'bg-green-Default' : '',
-            ]"
-            @click="pageActive = page"
-          >
-            {{ page }}
+  
+          <div 
+            :class="['pagination',
+            pageActive === 1 ? 'bg-green-Default' : '',]"
+            @click="handleFirstPage">
+              1
           </div>
-          <div class="pagination">
+          <div 
+            v-if="pageActive > 3"
+            class="ellipsis"
+          >
+              ...
+          </div>
+          <div 
+            v-for="number in pageneighbor" :key="number"
+            
+            :class="['pagination',
+            number === pageActive ? 'bg-green-Default' : '',]"
+            @click="handleChangePage(number)">
+              {{number}}
+          </div>
+          <div 
+            v-if="pageActive < pageLast - 2"
+            class="ellipsis"
+          >
+              ...
+          </div>
+          <div 
+            :class="['pagination',
+            pageActive === pageLast ? 'bg-green-Default' : '',]"
+            @click="handleLastPage">
+              {{pageLast}}
+          </div>
+          
+ 
+          <div @click="handleNextPage" :class="['pagination', pageActive === pageLast ? 'bg-gray-5 hover:bg-gray-5' : '']">
             <Next class="text-white" />
           </div>
-          <div class="pagination">
+          <div @click="handleLastPage" :class="['pagination', pageActive === pageLast ? 'bg-gray-5 hover:bg-gray-5' : '']">
             <PageEnd class="text-white" />
           </div>
         </div>
@@ -491,6 +587,9 @@ comments.forEach((i) => {
   @apply bg-green-w50;
 }
 .pagination {
-  @apply w-7 h-9 mx-1 bg-green-w50 flex items-center justify-center rounded-lg hover:bg-green-Default cursor-pointer;
+  @apply w-7 h-9 mx-1 text-gray-2 text-sm bg-green-w50 flex items-center justify-center rounded-lg hover:bg-green-Default cursor-pointer;
+}
+.ellipsis{
+  @apply w-7 h-9 mx-1 text-gray-2 text-sm flex items-center justify-center ;
 }
 </style>

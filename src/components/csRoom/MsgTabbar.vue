@@ -1,167 +1,334 @@
 <script setup>
-import { reactive, defineProps } from "vue";
-import ChatIcon from "@/components/svg/Chat.vue";
-import SearchIcon from "@/components/svg/Search.vue";
-import ListIcon from "@/components/svg/List.vue";
-import MemberIcon from "@/components/svg/Member.vue";
-import ReturnIcon from "@/components/svg/Return.vue";
-import TriangleIcon from "@/components/svg/Triangle.vue";
-import TabBtn from "@/components/csRoom/TabBtn.vue";
-import slideUpDown from "vue3-slide-up-down";
+import { reactive, defineProps, onMounted } from 'vue'
+import ChatIcon from '@/components/svg/Chat.vue'
+import SearchIcon from '@/components/svg/Search.vue'
+import ListIcon from '@/components/svg/List.vue'
+import MemberIcon from '@/components/svg/Member.vue'
+import ReturnIcon from '@/components/svg/Return.vue'
+import CrossIcon from '@/components/svg/Cross.vue'
+import TriangleIcon from '@/components/svg/Triangle.vue'
+import TabBtn from '@/components/csRoom/TabBtn.vue'
+import slideUpDown from 'vue3-slide-up-down'
+import { useSocketStore } from '@/stores/socket'
+import { usecsRoomStore } from '@/stores/csRoom'
+
+const socket = useSocketStore().socket
+const csRoom = usecsRoomStore()
+
+const emit = defineEmits(["toggleTab"]);
+
+const props = defineProps({
+	tabList: {
+		type: Object,
+	},
+})
+// const csId = csRoom.cs
+onMounted(() => {
+	socket.emit('reqLogin', { identity: 1, cs_id: csRoom.cs.memberId })
+	socket.on('resLogin', (data) => {
+    // console.log('resLogin',data)
+    if(data){
+      csRoom.userList = data
+      // csRoom.formatChatListTime()
+      console.log("csRoom.userList", csRoom.userList);
+    }
+	})
+
+	csRoom.userList.forEach((i) => {
+		i['timeFormat'] = i.created_time.split(' ')[1].substring(0, 5)
+	})
+
+  socket.on('resReadMessage', (data) => {
+    Object.assign(csRoom.userChatList, data.roomList)
+    // console.log('resReadMessage',data)
+    // 更新userList find userList.member_id = userActive.member_id 的 unread = 0
+    let findUserClick = csRoom.userList.find((i) => i.member_id === csRoom.userActive.member_id)
+    // console.log('findUserClick',findUserClick)
+    findUserClick.unread = data.unread
+    // console.log('csRoom.userList',csRoom.userList)
+   
+	})
+  // 客戶重整 更新socket_id
+  socket.on('resUpdateSocketId', (data) => {
+    // console.log('userList',csRoom.userList)
+    let findUser = csRoom.userList.find((i) => data.member_id === i.memberId)
+    if(findUser !== undefined){
+      findUser.socket_id = data.socketId
+      csRoom.userActive.socket_id = data.socketId
+    }
+
+    // console.log('eee',csRoom.userList)
+  })
+
+  // 訊息送出/收到新訊息 後更新userList 
+  socket.on('resSendMessage', async (data) => {
+    // console.log("data",data);
+    // identity = 1 :客服訊息 ; 2 : 客戶訊息
+    const { identity, messageCreatedTime, message, messageId } = data;
+  // 送出訊息
+    if (identity === 1) {
+      // 更新userChatList 最後一個room的最後一則訊息的created_time
+      let findUserMessage = csRoom.userChatList[csRoom.userChatList.length - 1].chatList.find((i) => i.message_id === messageId)
+      findUserMessage.created_time = messageCreatedTime;
+      // 更新userActive.message_id
+      csRoom.userActive.message_id = messageId;
+      // 更新 userList.member_id = userActive.member_id 的 message.message_id
+      let findUser = csRoom.userList.find((i) => i.member_id === csRoom.userActive.member_id)
+      findUser.message = message
+      findUser.message_id = messageId
+      findUser.created_time = messageCreatedTime
+      findUser.message_status = 1
+  // 接收訊息
+   } else if (identity === 2) {
+      // 更新對應的 userList 
+      // csRoom.userChatList[userChatList.length - 1].chatList.push(message);
+      let findUserGet = csRoom.userList.find((i) => i.member_id === message.memberId)
+      // console.log('findUserGet',findUserGet)
+      findUserGet.message = message.message
+      findUserGet.message_id = message.messageId
+      findUserGet.created_time = message.createdTime
+      findUserGet.message_status = 2
+      // 若非目前所在的聊天室，userList.unread更新
+      if(message.memberId !== csRoom.userActive?.member_id){
+        findUserGet.unread = data.unread
+      }
+
+      // 更新 userActive
+      if(findUserGet.member_id === csRoom.userActive.member_id){
+        csRoom.userActive.message = message.message
+        csRoom.userActive.message = message.messageId
+        let findUserMessageGet = csRoom.userChatList[csRoom.userChatList.length - 1].chatList
+      // 更新聊天室內容
+        let messageFormat = {
+          created_time: message.createdTime,
+          member_id: message.memberId,
+          message: message.message,
+          message_id: message.messageId,
+          name: message.name,
+          status: message.status,
+        }
+        findUserMessageGet.push(messageFormat)
+        // console.log('findUserMessageGet',findUserMessageGet)
+      }
+    }
+
+    csRoom.chatSectionDom.scrollTop = await csRoom.chatSectionDom.scrollHeight;
+
+  })
+
+  // 接收聊天配對
+  socket.on('resPair',(data) => {
+    // console.log('resPair',data)
+    csRoom.userList.unshift(data)
+  })
+
+})
 
 const chatList = reactive({
-  active: 0,
-  list: [
-    {
-      id: 1,
-      customer: "伊藤馬林",
-      unread: 4,
-      time: "12:21",
-      type: "text",
-      lastTag: "",
-      lastMsg: {
-        msg: "聽說你們補習班很厲害",
-        from: "customer",
-      },
-    },
-    {
-      id: 2,
-      customer: "吳大揆",
-      unread: 11,
-      time: "12:10",
-      type: "tag",
-      lastTag: "托福",
-      lastMsg: {
-        msg: "",
-        from: "",
-      },
-    },
-    {
-      id: 3,
-      customer: "林三良",
-      unread: 2,
-      time: "11:59",
-      type: "text",
-      lastTag: "托福",
-      lastMsg: {
-        msg: "安安你好請問",
-        from: "service",
-      },
-    },
-  ],
-});
+	active: 0,
+	list: [
+		{
+			id: 1,
+			customer: '伊藤馬林',
+			unread: 4,
+			time: '12:21',
+			type: 'text',
+			lastTag: '',
+			lastMsg: {
+				msg: '聽說你們補習班很厲害',
+				from: 'customer',
+			},
+		},
+		{
+			id: 2,
+			customer: '吳大揆',
+			unread: 11,
+			time: '12:10',
+			type: 'tag',
+			lastTag: '托福',
+			lastMsg: {
+				msg: '',
+				from: '',
+			},
+		},
+		{
+			id: 3,
+			customer: '林三良',
+			unread: 2,
+			time: '11:59',
+			type: 'text',
+			lastTag: '托福',
+			lastMsg: {
+				msg: '安安你好請問',
+				from: 'service',
+			},
+		},
+	],
+})
 const category = reactive({
-  groupActive: [0],
-  webActive: 1,
-  group: [
-    {
-      id: 1,
-      open: false,
-      name: "通路事業群",
-      list: [
-        {
-          webId: 1,
-          webName: "數位學堂官網",
-          unread: "5",
-        },
-        {
-          webId: 2,
-          webName: "大碩研究所官網",
-          unread: "5",
-        },
-        {
-          webId: 3,
-          webName: "龍門轉學考官網",
-          unread: "",
-        },
-        {
-          webId: 4,
-          webName: "百官官網",
-          unread: "5",
-        },
-      ],
-    },
-    {
-      id: 2,
-      open: false,
-      name: "美語事業群",
-      list: [
-        {
-          webId: 5,
-          webName: "洋碩官網",
-          unread: "4",
-        },
-        {
-          webId: 6,
-          webName: "放洋留遊學官網 ",
-          unread: "12",
-        },
-        {
-          webId: 7,
-          webName: "約課系統",
-          unread: "5",
-        },
-        {
-          webId: 8,
-          webName: "線上購課與學習系統",
-          unread: "",
-        },
-      ],
-    },
-    {
-      id: 3,
-      open: false,
-      name: "學習顧問事業群",
-      list: [
-        {
-          webId: 9,
-          webName: "甄戰官網",
-          unread: "",
-        },
-        {
-          webId: 10,
-          webName: "落點分析平台 ",
-          unread: "1",
-        },
-        {
-          webId: 11,
-          webName: "18學群",
-          unread: "2",
-        },
-        {
-          webId: 12,
-          webName: "素養命題線上測驗",
-          unread: "",
-        },
-        {
-          webId: 13,
-          webName: "學習歷程",
-          unread: "3",
-        },
-        {
-          webId: 14,
-          webName: "線上家教",
-          unread: "",
-        },
-      ],
-    },
-  ],
-});
+	groupActive: [0],
+	webActive: 1,
+	group: [
+		{
+			id: 1,
+			open: false,
+			name: '通路事業群',
+			list: [
+				{
+					webId: 1,
+					webName: '數位學堂官網',
+					unread: '5',
+				},
+				{
+					webId: 2,
+					webName: '大碩研究所官網',
+					unread: '5',
+				},
+				{
+					webId: 3,
+					webName: '龍門轉學考官網',
+					unread: '',
+				},
+				{
+					webId: 4,
+					webName: '百官官網',
+					unread: '5',
+				},
+			],
+		},
+		{
+			id: 2,
+			open: false,
+			name: '美語事業群',
+			list: [
+				{
+					webId: 5,
+					webName: '洋碩官網',
+					unread: '4',
+				},
+				{
+					webId: 6,
+					webName: '放洋留遊學官網 ',
+					unread: '12',
+				},
+				{
+					webId: 7,
+					webName: '約課系統',
+					unread: '5',
+				},
+				{
+					webId: 8,
+					webName: '線上購課與學習系統',
+					unread: '',
+				},
+			],
+		},
+		{
+			id: 3,
+			open: false,
+			name: '學習顧問事業群',
+			list: [
+				{
+					webId: 9,
+					webName: '甄戰官網',
+					unread: '',
+				},
+				{
+					webId: 10,
+					webName: '落點分析平台 ',
+					unread: '1',
+				},
+				{
+					webId: 11,
+					webName: '18學群',
+					unread: '2',
+				},
+				{
+					webId: 12,
+					webName: '素養命題線上測驗',
+					unread: '',
+				},
+				{
+					webId: 13,
+					webName: '學習歷程',
+					unread: '3',
+				},
+				{
+					webId: 14,
+					webName: '線上家教',
+					unread: '',
+				},
+			],
+		},
+	],
+})
 const handleGroup = function (item) {
-  if (!category.groupActive.includes(item.id)) {
-    category.groupActive.push(item.id);
-    item.open = true;
-  } else {
-    category.groupActive.splice(category.groupActive.indexOf(item.id), 1);
-    item.open = false;
+	if (!category.groupActive.includes(item.id)) {
+		category.groupActive.push(item.id)
+		item.open = true
+	} else {
+		category.groupActive.splice(category.groupActive.indexOf(item.id), 1)
+		item.open = false
+	}
+}
+
+
+const toggleTab = (item)=>{
+	item.id === props.tabList.active
+          ? emit('toggleTab',0)
+          : emit('toggleTab',item.id) 
+}
+
+
+// 點擊 chatList 取得 userchatList
+const handleUserChatList = async (item)=>{
+  console.log('csRoom.userList',csRoom.userList)
+  // let test = {
+  //   member_id : item.member_id,
+  //  room_id : item.room_id,
+  //  socketId : item.socket_id,
+  //  name : item.name
+  // }
+  // console.log('test',test)
+  // Object.assign(csRoom.userActive, test)
+
+  // csRoom.userActive = {
+  //  member_id : item.member_id,
+  //  room_id : item.room_id,
+  //  socket_id : item.socket_id,
+  //  name : item.name,
+  //  message : item.message,
+  //  message_id : item.message_id,
+  // }
+  let setUserActive = {
+   member_id : item.member_id,
+   room_id : item.room_id,
+   socket_id : item.socket_id,
+   name : item.name,
+   message : item.message,
+   message_id : item.message_id,
   }
+  Object.assign(csRoom.userActive, setUserActive)
+
+  console.log('csRoom.userActive.length',csRoom.userActive.length)
+  socket.emit("reqReadMessage", {
+    getRoomMessage: true,
+    identity: 1,
+    clientId: item.member_id,
+    roomId: item.room_id,
+    socketId: item.socket_id,
+  });
+  csRoom.chatSectionDom.scrollTop = await csRoom.chatSectionDom.scrollHeight;
 };
-const props = defineProps({
-  tabList: {
-    type: Object,
-  },
-});
-console.log(props);
+
+const handleCloseInform = (leaveItem) => {
+  let closeIndex = csRoom.leaveClient.indexOf(leaveItem)
+    if(closeIndex !== -1){
+      csRoom.leaveClient.splice(closeIndex, 1)
+    }
+    console.log('csRoom.leaveClient',csRoom.leaveClient)
+
+};
 </script>
 <template>
   <div
@@ -183,35 +350,36 @@ console.log(props);
           <ChatIcon class="text-green-b50" />
           <span class="tabbar_title text-green-b70 mx-2.5 my-0">聊天列表</span>
         </div>
-        <div class="chat_list w-full rounded mx-0 my-5">
+        <div v-if="!csRoom.userList.length" class="chat_list_empty text-gray-3 py-7 text-sm">目前尚無聊天室</div>
+        <div v-if="csRoom.userList.length" class="chat_list w-full rounded mx-0 my-5">
           <div
-            v-for="item in chatList.list"
-            :key="item.id"
+            v-for="item in csRoom.userList"
+           :key="item.member_id"
             class="chat rounded px-3.5 py-2.5 shadow-underLine cursor-pointer hover:bg-green-w20 ease-out duration-200"
-            @click="chatList.active = item.id"
-            :class="{ active: item.id === chatList.active }"
+            @click="handleUserChatList(item)"
+            :class="[item.member_id === csRoom.userActive?.member_id ? 'active' : '']"
           >
             <div class="chat_info flex justify-between items-center mb-1.5">
-              <div class="chat_name text-gray-2">{{ item.customer }}</div>
-              <div class="unread text-xs font-light">{{ item.unread }}</div>
+              <div class="chat_name ">{{ item.name }}</div>
+              <div v-if="item.unread" class="unread text-xs font-light">{{ item.unread }}</div>
             </div>
             <div class="chat_msg flex items-center justify-between">
-              <div class="chat_tag flex items-center">
+              <div class="chat_tag w-3/4 flex items-center">
                 <ReturnIcon
-                  v-show="item.lastMsg.from === 'service'"
+                  v-show="item.message_status === 1"
                   class="min-w-3 text-green-Default mr-1.5"
                 />
                 <span
-                  v-show="item.type === 'tag'"
+                  v-show="item.message_status === 0"
                   class="chat_tags_opts selected inline-block text-sm text-gray-2 rounded-20 bg-green-w20 px-3.5 py-1.5 ml-1 border border-solid border-green-Default"
-                  >{{ item.lastTag }}</span
+                  >{{ item.answer }}</span
                 >
-                <span v-show="item.type === 'text'" class="text-gray-2">{{
-                  item.lastMsg.msg
-                }}</span>
+                <div v-show="item.message_status !== 0" class="chat_list_msg text-ellipsis overflow-hidden line-clamp-1">{{
+                  item.message 
+                }}</div>
               </div>
               <div class="chat_time text-xs flex items-end h-full text-gray-3">
-                {{ item.time }}
+               {{ csRoom.createdTimeClock(item.created_time) }}
               </div>
             </div>
           </div>
@@ -420,40 +588,70 @@ console.log(props);
       :key="item.id"
       :tabList="tabList"
       :info="item"
+	  @click="toggleTab(item)"
     />
   </ul>
+
+  <!-- 客戶端離開聊天室 提示 -->
+  <div v-show="csRoom.leaveClient !== []" class="inform_section fixed top-11 right-16">
+    <transition-group name="informList" >
+      <div v-for="leaveItem in csRoom.leaveClient" :key="leaveItem" class="inform_window w-66 h-8 px-4 py-3 mb-0.5 flex justify-between items-center bg-white opacity-90 shadow-layer1 rounded transition ease-in-out duration-300">
+        <div class="text-sm text-gray-2 flex items-center">
+          <span class="client_name max-w-29 mr-1 overflow-hidden whitespace-nowrap">{{leaveItem}}</span>
+          <span class="text-gray-3"> 已離開聊天室</span>
+        </div>
+        <CrossIcon @click="handleCloseInform(leaveItem)" class="cursor-pointer"/>
+      </div>
+    </transition-group>
+  </div>
 </template>
 
 <style scoped>
+
+.informList-leave-active, .informList-enter-active{
+  transition: .3s;
+}
+.informList-enter-from,.informList-leave-to {
+  opacity: 0;
+}
+
+
+
 .tabbar_func_open {
-  @apply opacity-100 w-full max-w-66 transition-all duration-500 lg:max-w-full;
+	@apply opacity-100 w-full max-w-66 xs:max-w-full transition-all duration-300 lg:max-w-[calc(100%-64px)];
 }
 .tabbar_func_closed {
-  @apply max-w-0;
+	@apply max-w-0;
 }
 
 .btn_tab:hover {
-  @apply border border-solid border-green-Default;
+	@apply border border-solid border-green-Default;
 }
 /* min-w-66 */
 .tabbar_func {
-  @apply h-[calc(100vh-40px)] sm:h-[calc(100vh-104px)] lg:w-full overflow-x-hidden overflow-y-auto shadow-layer3;
+	@apply h-[calc(100vh-40px)] sm:h-[calc(100vh-104px)] lg:w-full overflow-x-hidden overflow-y-auto shadow-layer3;
 }
 .tabbar_func_content {
-  @apply min-w-66 px-10 lg:px-40 md:px-20 sm:px-10 py-7 flex flex-col items-center shadow-underLine;
+	@apply min-w-66 px-10 lg:px-40 md:px-20 sm:px-10 py-7 flex flex-col items-center shadow-underLine;
 }
 /* 分類 */
 .cate_website.active {
-  @apply bg-green-w50 rounded-[5rem];
+	@apply bg-green-w50 rounded-[5rem];
 }
 .chat.active {
-  @apply bg-green-w20;
+	@apply bg-green-w20;
 }
 
 .chat_tags_opts.selected {
-  @apply bg-green-w50;
+	@apply bg-green-w50;
 }
 .tabbar_section--xs {
-  @apply xs:w-full xs:h-14 xs:fixed xs:bottom-0 xs:left-0 xs:flex-row xs:justify-between xs:px-12;
+	@apply xs:w-full xs:h-14 xs:fixed xs:bottom-0 xs:left-0 xs:flex-row xs:justify-between xs:px-12;
+}
+.chat_name {
+	@apply w-3/4 text-gray-2 overflow-hidden whitespace-normal text-ellipsis;
+}
+.chat_list_msg{
+	@apply w-3/4 text-lg text-gray-2 overflow-hidden whitespace-normal text-ellipsis
 }
 </style>
