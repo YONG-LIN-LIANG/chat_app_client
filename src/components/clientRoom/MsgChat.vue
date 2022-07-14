@@ -1,5 +1,10 @@
 <template>
-  <div class="flex items-center flex-col px-5 py-5 box-border">
+  <div
+    :class="[
+      'flex items-center flex-col px-5 box-border',
+      props.messageInfo.endTime ? '' : 'pb-5',
+    ]"
+  >
     <div class="w-full flex items-center flex-col">
       <!-- messageInfo.chatList[0].created_time -->
       <div

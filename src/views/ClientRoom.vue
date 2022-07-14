@@ -90,10 +90,20 @@
       <!-- 結束聊天燈箱 -->
       <CloseRoomDialog
         :class="[
-          'endDialog absolute left-0 top-12 right-0 w-full',
+          'endDialog absolute left-0 top-12 right-0 bottom-0 w-full',
           dialog.name === 'end' && dialog.isOpen ? 'endDialog-active' : '',
         ]"
+        :csName="csName"
         @onCloseDialog="handleCloseDialog"
+      />
+      <AfterCloseRating
+        :class="[
+          'endDialog absolute left-0 top-12 right-0 w-full',
+          dialog.name === 'afterCloseRating' && dialog.isOpen
+            ? 'endDialog-active'
+            : '',
+        ]"
+        @onRatingRoom="handleCloseRating"
       />
     </div>
   </section>
@@ -124,7 +134,8 @@ import CrossIcon from "@/components/svg/Cross.vue";
 import MsgChat from "@/components/clientRoom/MsgChat.vue";
 import MsgSend from "@/components/clientRoom/MsgSend.vue";
 import CsAvatar from "@/components/svg/CsAvatar.vue";
-// import CloseRoomDialog from "@/components/clientRoom/CloseRoomDialog";
+import CloseRoomDialog from "@/components/clientRoom/CloseRoomDialog.vue";
+import AfterCloseRating from "@/components/clientRoom/AfterCloseRatingDialog.vue";
 import { reactive } from "@vue/reactivity";
 import { ref, computed, onMounted, onBeforeUnmount } from "vue";
 import { useClientStore } from "@/stores/client";
@@ -157,6 +168,9 @@ const roomInfo = reactive({
   // {status:1, messageId:1, csName:, message:, createdTime}
   // 送出時先推送訊息，推送成功時返回系統時間及messageId並塞回原本的訊息
 });
+const roomId = computed(() => roomInfo.user.roomId);
+const csSocketId = computed(() => roomInfo.cs.socketId);
+const csName = computed(() => roomInfo.cs.name);
 const dialog = reactive({
   name: "",
   isOpen: false,
@@ -216,7 +230,8 @@ const handleSendSecondSmessage = (secondSmessage) => {
 const shouldFirstMsgSend = computed(
   () =>
     !roomInfo.chat.length ||
-    !roomInfo.chat[roomInfo.chat.length - 1].chatList.length
+    !roomInfo.chat[roomInfo.chat.length - 1].chatList.length ||
+    roomInfo.chat[roomInfo.chat.length - 1].endTime
 );
 const shouldSecondMsgSend = computed(
   () =>
@@ -287,6 +302,7 @@ onMounted(() => {
     // 判斷如果roomId為0且，送出第一則系統訊息
     if (user.room_id === 0) {
       // 確定是否滿足送出第一則系統訊息條件
+      console.log("shouldFirstMsgSend", shouldFirstMsgSend.value);
       if (shouldFirstMsgSend.value) {
         handleSendFirstSmessage(question);
         // 確定是否滿足送出第二則系統訊息條件
@@ -355,6 +371,31 @@ onMounted(() => {
     roomInfo.cs.socketId = data;
     console.log("update roomInfo", roomInfo);
   });
+  socket.on("resLeaveRoom", async (data) => {
+    const { identity, end_time, first_question, is_room_already_close } = data;
+    console.log("this is data", data);
+    if (identity === 1 && !is_room_already_close) {
+      // 先補上聊天室結束時間再冒出填寫評分燈箱
+      console.log("empty so far");
+      const currentRoom = roomInfo.chat.find((i) => i.roomId === roomId.value);
+      currentRoom.endTime = end_time;
+      handleSendFirstSmessage(first_question);
+      handleOpenDialog("afterCloseRating");
+    } else if (identity === 2 && is_room_already_close) {
+      // 客服人員已結束聊天，客戶端補評分的回應，關閉評分燈箱
+      dialog.name = "";
+      dialog.isOpen = false;
+    } else if (identity === 2 && !is_room_already_close) {
+      console.log("go heree");
+      // 成功退出房間，幫最後一間房間填上end_time
+      const currentRoom = roomInfo.chat.find((i) => i.roomId === roomId.value);
+      currentRoom.endTime = end_time;
+      handleSendFirstSmessage(first_question);
+      dialog.name = "";
+      dialog.isOpen = false;
+    }
+    await handleScrollToBottom();
+  });
   window.addEventListener("message", handleMessage);
 });
 onBeforeUnmount(() => {
@@ -405,15 +446,42 @@ const handleVisitorJoinRoom = () => {
   // socket.emit('clientJoinRoom', {authorization, name, uuid})
 };
 const handleOpenDialog = (name) => {
+  console.log("click");
+  if (name === "end" && roomId.value === 0) return;
   dialog.name = name;
   dialog.isOpen = true;
+  console.log("dialog", dialog);
 };
 
-const handleCloseDialog = () => {
-  dialog.name = "";
-  dialog.isOpen = false;
+const handleCloseDialog = (data) => {
+  const { action, ratingInfo } = data;
+  // action為0時結束聊天，1時返回聊天
+  if (!action) {
+    socket.emit("reqLeaveRoom", {
+      room_id: roomId.value,
+      socket_id: csSocketId.value,
+      resource_id: roomInfo.user.web_resource,
+      leave_room_info: {
+        ...ratingInfo,
+        identity: 2,
+        is_room_already_close: false,
+      },
+    });
+  } else {
+    dialog.name = "";
+    dialog.isOpen = false;
+  }
 };
-
+const handleCloseRating = (data) => {
+  socket.emit("reqLeaveRoom", {
+    room_id: roomId.value,
+    leave_room_info: {
+      ...data,
+      identity: 2,
+      is_room_already_close: true,
+    },
+  });
+};
 const handleSendMessage = async (data) => {
   console.log("sendData", data);
   // 先將data的answer塞值，再打socket發api
