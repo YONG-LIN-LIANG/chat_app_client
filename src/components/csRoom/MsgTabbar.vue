@@ -1,5 +1,6 @@
 <script setup>
-import { reactive, defineProps, onMounted } from 'vue'
+import { reactive,  onMounted } from 'vue'
+// defineProps,
 import ChatIcon from '@/components/svg/Chat.vue'
 import SearchIcon from '@/components/svg/Search.vue'
 import ListIcon from '@/components/svg/List.vue'
@@ -28,7 +29,7 @@ onMounted(() => {
 	socket.on('resLogin', (data) => {
     // console.log('resLogin',data)
     if(data){
-      csRoom.userList = data
+      Object.assign(csRoom.userList, data)
       // csRoom.formatChatListTime()
       console.log("csRoom.userList", csRoom.userList);
     }
@@ -50,26 +51,27 @@ onMounted(() => {
 	})
   // 客戶重整 更新socket_id
   socket.on('resUpdateSocketId', (data) => {
-    // console.log('userList',csRoom.userList)
-    let findUser = csRoom.userList.find((i) => data.member_id === i.memberId)
+    console.log('resUpdateSocketId',data)
+    let findUser = csRoom.userList.find((i) => data.memberId === i.member_id)
     if(findUser !== undefined){
       findUser.socket_id = data.socketId
       csRoom.userActive.socket_id = data.socketId
     }
-
-    // console.log('eee',csRoom.userList)
   })
 
   // 訊息送出/收到新訊息 後更新userList 
   socket.on('resSendMessage', async (data) => {
-    // console.log("data",data);
+    console.log("data",data);
     // identity = 1 :客服訊息 ; 2 : 客戶訊息
     const { identity, messageCreatedTime, message, messageId } = data;
-  // 送出訊息
+    
+    // 送出訊息
     if (identity === 1) {
       // 更新userChatList 最後一個room的最後一則訊息的created_time
       let findUserMessage = csRoom.userChatList[csRoom.userChatList.length - 1].chatList.find((i) => i.message_id === messageId)
-      findUserMessage.created_time = messageCreatedTime;
+      if(findUserMessage){
+        findUserMessage.created_time = messageCreatedTime;
+      }
       // 更新userActive.message_id
       csRoom.userActive.message_id = messageId;
       // 更新 userList.member_id = userActive.member_id 的 message.message_id
@@ -78,8 +80,8 @@ onMounted(() => {
       findUser.message_id = messageId
       findUser.created_time = messageCreatedTime
       findUser.message_status = 1
-  // 接收訊息
-   } else if (identity === 2) {
+      // 接收訊息
+    } else if (identity === 2) {
       // 更新對應的 userList 
       // csRoom.userChatList[userChatList.length - 1].chatList.push(message);
       let findUserGet = csRoom.userList.find((i) => i.member_id === message.memberId)
@@ -108,21 +110,57 @@ onMounted(() => {
           status: message.status,
         }
         findUserMessageGet.push(messageFormat)
+        csRoom.chatSectionDom.scrollTop = await csRoom.chatSectionDom.scrollHeight;
         // console.log('findUserMessageGet',findUserMessageGet)
       }
     }
 
-    csRoom.chatSectionDom.scrollTop = await csRoom.chatSectionDom.scrollHeight;
+    // csRoom.chatSectionDom.scrollTop = await csRoom.chatSectionDom.scrollHeight;
+
 
   })
 
   // 接收聊天配對
   socket.on('resPair',(data) => {
-    // console.log('resPair',data)
     csRoom.userList.unshift(data)
+  })
+  //離開聊天室 
+  socket.on('resLeaveRoom',(data) => {
+      console.log('resLeaveRoom',data)
+      console.log(typeof(csRoom.userList[0].room_id), typeof(data))
+      let findUserListDelete = csRoom.userList.find((i) => i.room_id === data)
+      let indexOfChatListDelete = csRoom.userList.indexOf(findUserListDelete)
+      
+      // 顯示客戶離開聊天室 inform 
+      csRoom.leaveClient.unshift(findUserListDelete.name)
+  
+      console.log(csRoom.leaveClient)
+      setTimeout(() => {
+        csRoom.leaveClient.splice(csRoom.leaveClient.indexOf(findUserListDelete.name),1)
+ 
+      },3000)
+
+      // find userList.roomId = data 移除
+      csRoom.userList.splice(indexOfChatListDelete, 1)
+
+      // if userActive.roomId = data 清空userChatList
+      if(csRoom.userActive.room_id === data){
+        csRoom.userActive = {}
+        csRoom.userChatList = {}
+        // Object.assign(csRoom.userActive,{})
+        // Object.assign(csRoom.userChatList,{})
+      }
+      
   })
 
 })
+
+// 離開聊天室
+const leaveChat = () => {
+  
+}
+
+// 找到roomId = csRoom.leaveClient
 
 const chatList = reactive({
 	active: 0,
@@ -318,8 +356,11 @@ const handleUserChatList = async (item)=>{
     roomId: item.room_id,
     socketId: item.socket_id,
   });
-  csRoom.chatSectionDom.scrollTop = await csRoom.chatSectionDom.scrollHeight;
+  // if(csRoom.userActive.member_id){
+  //   csRoom.chatSectionDom.scrollTop = await csRoom.chatSectionDom.value.scrollHeight;
+  // }
 };
+    
 
 const handleCloseInform = (leaveItem) => {
   let closeIndex = csRoom.leaveClient.indexOf(leaveItem)
@@ -327,7 +368,6 @@ const handleCloseInform = (leaveItem) => {
       csRoom.leaveClient.splice(closeIndex, 1)
     }
     console.log('csRoom.leaveClient',csRoom.leaveClient)
-
 };
 </script>
 <template>
@@ -595,7 +635,7 @@ const handleCloseInform = (leaveItem) => {
   <!-- 客戶端離開聊天室 提示 -->
   <div v-show="csRoom.leaveClient !== []" class="inform_section fixed top-11 right-16">
     <transition-group name="informList" >
-      <div v-for="leaveItem in csRoom.leaveClient" :key="leaveItem" class="inform_window w-66 h-8 px-4 py-3 mb-0.5 flex justify-between items-center bg-white opacity-90 shadow-layer1 rounded transition ease-in-out duration-300">
+      <div v-for="leaveItem in csRoom.leaveClient" :key="leaveItem" class="inform_window w-66 h-8 px-4 py-3 mb-0.5 flex justify-between items-center bg-green-w50 opacity-90 shadow-layer1 rounded transition ease-in-out duration-300">
         <div class="text-sm text-gray-2 flex items-center">
           <span class="client_name max-w-29 mr-1 overflow-hidden whitespace-nowrap">{{leaveItem}}</span>
           <span class="text-gray-3"> 已離開聊天室</span>

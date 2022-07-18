@@ -15,8 +15,9 @@ const toggle_searchOpen = () => {
 
 const emit = defineEmits(["onToggle"]);
 const handleToggleDialog = () => {
-  emit("onToggle");
+  emit("on-toggle");
 };
+
 </script>
 
 <template>
@@ -37,7 +38,7 @@ const handleToggleDialog = () => {
         </div>
         <div
           class="btn_primary--orange btn_endChat"
-          @click="handleToggleDialog"
+          @click="handleToggleDialog();csRoom.handleEndChat"
         >
           結束對話
         </div>
