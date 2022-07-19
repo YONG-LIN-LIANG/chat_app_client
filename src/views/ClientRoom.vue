@@ -115,9 +115,10 @@
     ]"
   >
     <div
+      v-show="newMessage"
       class="shrink-0 flex items-center py-2.5 px-5 border border-green-Default rounded-10 shadow-layer2 bg-white"
     >
-      客服人員 {{}} 在線為您服務
+      {{ newMessage }}
     </div>
     <div
       @click="handleToggleRoom"
@@ -144,6 +145,7 @@ import { handleFormatRoomListData } from "@/function/index";
 const clientStore = useClientStore();
 const socket = useSocketStore().socket;
 const chatWindow = ref(null);
+const newMessage = ref("");
 const roomInfo = reactive({
   user: {
     memberId: 0,
@@ -360,7 +362,9 @@ onMounted(() => {
       console.log("check");
       roomInfo.chat[roomInfo.chat.length - 1].chatList.push(message);
       console.log("test", roomInfo.chat[roomInfo.chat.length - 1].chatList);
+      newMessage.value = message.message;
       await handleScrollToBottom();
+      handleNewMessageCountdown();
     }
   });
   socket.on("resReadMessage", (data) => {
@@ -483,6 +487,12 @@ const handleCloseRating = (data) => {
       is_room_already_close: true,
     },
   });
+};
+const handleNewMessageCountdown = () => {
+  const newMessageTimeout = setTimeout(() => {
+    newMessage.value = "";
+  }, 3000);
+  clearTimeout(newMessageTimeout);
 };
 const handleSendMessage = async (data) => {
   console.log("sendData", data);
