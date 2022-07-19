@@ -394,6 +394,8 @@ onMounted(() => {
       dialog.name = "";
       dialog.isOpen = false;
     }
+    // 退出聊天室後重置roomId為0
+    roomInfo.user.roomId = 0;
     await handleScrollToBottom();
   });
   window.addEventListener("message", handleMessage);

@@ -1,9 +1,9 @@
 <script setup>
 import { RouterView } from "vue-router";
 import { useSocketStore } from "@/stores/socket";
+const socketIp = import.meta.env.VITE_SOCKET_URL;
 import { io } from "socket.io-client";
-const endPoint = "http://172.18.48.177:3001";
-// const endPoint = "http://172.20.10.12:3001";
+const endPoint = socketIp;
 const socket = io(endPoint);
 const socketStore = useSocketStore();
 socketStore.setSocket(socket);
