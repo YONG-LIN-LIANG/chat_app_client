@@ -6,6 +6,8 @@ const csRoom = usecsRoomStore();
 
 const chatSection = ref(null);
 
+
+
 onMounted(() => {
   csRoom.chatSectionHeight = chatSection.value.clientHeight;
   csRoom.chatSectionDom = chatSection.value;

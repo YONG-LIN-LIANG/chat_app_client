@@ -31,10 +31,11 @@ const handletoggleTab = (activeNum)=>{
     <div class="title">訊息</div>
     <div class="flex mt-10 sm:mt-[6.5rem]">
       <div
+        
         :class="['msg_chatBox w-full', tabList.active === 0 ? '' : 'lg:hidden']"
       >
         <MsgTopbar v-if="csRoom.userActive.member_id" @onToggle="handle_chatEnd_closed" />
-        <MsgChat />
+        <MsgChat v-if="csRoom.userActive.member_id"/>
         <MsgSend v-if="csRoom.userActive.member_id"/>
       </div>
       <MsgTabbar :tabList="tabList" @toggleTab="handletoggleTab" />

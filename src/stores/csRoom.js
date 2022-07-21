@@ -1,14 +1,15 @@
 import { defineStore } from 'pinia'
-import { ref, reactive, computed, watch } from 'vue'
-import { useSocketStore } from '@/stores/socket'
+import { ref, reactive } from 'vue'
+import { Socket } from 'socket.io-client'
+
+
 
 
 export const usecsRoomStore = defineStore('csRoom', () => {
-	const cs = reactive({
-		memberId: 1,
-	})
-	let userActive = reactive({})
 
+
+	const cs = reactive({})
+	let userActive = reactive({})
 	let userChatList = reactive([])
 	const userList = reactive([])
 
@@ -76,11 +77,13 @@ export const usecsRoomStore = defineStore('csRoom', () => {
 	// 	divRef.value.scrollTop = divRef.value.scrollHeight
 	// }
 
-	const chatSectionDom = ref()
+	const chatSectionDom = ref(null)
+	const chatSectionHeight = ref(null)
 
 	//客戶端離開聊天室 提示
-	let leaveClient = reactive(['陳莉莉dddddrrrrrrrrrddd','李源源'])
+	let leaveClient = reactive([])
 
+	
 	return {
 		cs,
 		userActive,
@@ -88,6 +91,7 @@ export const usecsRoomStore = defineStore('csRoom', () => {
 		userList,
 		currentTimeFormat,
 		chatSectionDom,
+		chatSectionHeight,
 		createdTimeClock,
 		leaveClient,
 	}

@@ -1,14 +1,34 @@
 <script setup>
 import { defineEmits } from "vue";
+import { useSocketStore } from '@/stores/socket'
+import { usecsRoomStore } from "@/stores/csRoom";
+const socket = useSocketStore().socket
+const csRoom = usecsRoomStore()
+
 const emit = defineEmits(["onToggle"]);
-const handleToggleDialog = () => {
-  emit("on-toggle");
-};
+
 defineProps({
   chatEnd_closed: {
     type: Boolean,
   },
 });
+
+// 結束對話
+	const handleEndChat = () => {	
+    emit("on-toggle");
+		let endObject = {	
+			room_id: csRoom.userActive.room_id,
+			socket_id: csRoom.userActive.socket_id,
+			resource_id:1,
+			leave_room_info:{
+			identity:1,
+			is_room_already_close:false,
+			}
+		}
+		console.log('endObject',endObject)
+		socket.emit('reqLeaveRoom',endObject)
+	};
+
 
 </script>
 
@@ -37,7 +57,7 @@ defineProps({
         <div class="btn_secondary-orange m-2" @click="emit('onToggle')">
           返回對話
         </div>
-        <div class="btn_primary--orange m-2" @click="emit('onToggle')">
+        <div class="btn_primary--orange m-2" @click="handleEndChat()">
           結束對話
         </div>
       </div>

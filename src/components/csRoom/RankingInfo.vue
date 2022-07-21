@@ -7,11 +7,11 @@ defineProps({
 });
 </script>
 <template>
-  <!-- @mouseover="rateItem.showDetail = true"
-    @mouseleave="rateItem.showDetail = false" -->
   <div
+    @mouseover="rateItem.showDetail = true"
+    @mouseleave="rateItem.showDetail = false"
     :class="[
-      'ranking_info w-85 h-12 flex items-center px-5 rounded-3xl  border border-solid ease-in-out duration-300',
+      'ranking_info w-85 min-w-85 h-12 flex items-center px-5 rounded-3xl  border border-solid ease-in-out duration-300',
       {
         top_bg: idx < 3,
         'border-green-neon': !rateItem.showDetail && idx < 3,
