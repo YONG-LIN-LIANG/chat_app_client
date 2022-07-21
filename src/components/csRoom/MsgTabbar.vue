@@ -23,17 +23,17 @@ const props = defineProps({
 		type: Object,
 	},
 })
-// const csId = csRoom.cs
 onMounted(() => {
-	socket.emit('reqLogin', { identity: 1, cs_id: csRoom.cs.memberId })
-	socket.on('resLogin', (data) => {
-    // console.log('resLogin',data)
-    if(data){
-      Object.assign(csRoom.userList, data)
-      // csRoom.formatChatListTime()
-      console.log("csRoom.userList", csRoom.userList);
-    }
-	})
+ 
+	// socket.emit('reqLogin', { identity: 1, cs_id: csRoom.cs.memberId })
+	// socket.on('resLogin', (data) => {
+  //   // console.log('resLogin',data)
+  //   if(data){
+  //     Object.assign(csRoom.userList, data)
+  //     // csRoom.formatChatListTime()
+  //     console.log("csRoom.userList", csRoom.userList);
+  //   }
+	// })
 
 	csRoom.userList.forEach((i) => {
 		i['timeFormat'] = i.created_time.split(' ')[1].substring(0, 5)

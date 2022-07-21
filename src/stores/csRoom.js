@@ -6,11 +6,10 @@ import { Socket } from 'socket.io-client'
 
 
 export const usecsRoomStore = defineStore('csRoom', () => {
-	const cs = reactive({
-		memberId: 1,
-	})
-	let userActive = reactive({})
 
+
+	const cs = reactive({})
+	let userActive = reactive({})
 	let userChatList = reactive([])
 	const userList = reactive([])
 
