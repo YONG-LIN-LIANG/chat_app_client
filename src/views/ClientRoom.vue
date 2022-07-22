@@ -1,14 +1,14 @@
 <template>
   <section
     :class="[
-      'room-window-container fixed right-0 bottom-0',
-      isInRoom ? 'h-full max-h-141 pt-16' : 'h-auto pt-0',
+      'room-window-container fixed top-0 bottom-0',
+      isInRoom ? 'room-window-container--active' : 'h-auto pt-0',
     ]"
   >
     <!-- 聊天室 -->
     <div
       :class="[
-        'room-window flex flex-col relative w-85 h-full bg-white rounded-md overflow-hidden shadow-layer2',
+        'room-window flex flex-col relative w-full h-full bg-white rounded-md overflow-hidden shadow-layer2',
         isRoomOpen ? 'room-window--active' : '',
       ]"
     >
@@ -122,7 +122,7 @@
     </div>
     <div
       @click="handleToggleRoom"
-      class="ml-5 p-3 border-2 border-green-neon rounded-full bg-white shadow-layer2 cursor-pointer"
+      class="flex-center w-15 h-15 mx-5 border-2 border-green-neon rounded-full bg-white shadow-layer2 cursor-pointer"
     >
       <CsAvatar />
     </div>
@@ -572,14 +572,22 @@ const handleSendMessage = async (data) => {
     @apply top-0;
   }
 }
+.room-window-container--active {
+  position: fixed;
+  left: 0;
+  right: 0;
+  margin: auto;
+  width: calc(100% - 40px);
+  height: calc(100% - 40px);
+}
 .room-window {
   @apply -z-9999 select-none opacity-0 transition-all duration-300 ease-in-out delay-0;
 }
 .room-window--active {
-  @apply select-auto -translate-y-8 delay-200 z-9999 opacity-100;
+  @apply select-auto delay-200 z-9999 opacity-100;
 }
 .chat-ball {
-  @apply z-9999 transition-all duration-300 ease-in-out delay-200 opacity-100;
+  @apply z-9999 transition-all duration-300 ease-in-out delay-500 opacity-100;
 }
 .chat-ball--active {
   @apply translate-y-8 delay-0 -z-9999 opacity-0;

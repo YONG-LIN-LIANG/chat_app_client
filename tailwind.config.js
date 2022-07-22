@@ -53,6 +53,7 @@ module.exports = {
       },
       width: {
         7.5: "30px",
+        15: "60px",
         35: "140px",
         62: "248px",
         66: "264px",
@@ -74,6 +75,7 @@ module.exports = {
         7.5: "30px",
         15: "60px",
         105: "420px",
+        141: "564px",
         165: "660px",
       },
       maxHeight: {
