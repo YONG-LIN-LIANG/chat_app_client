@@ -243,13 +243,6 @@ const shouldSecondMsgSend = computed(
     roomInfo.chat[roomInfo.chat.length - 1].chatList.length === 1
 );
 onMounted(() => {
-  setTimeout(() => {
-    console.log(
-      "timeout",
-      chatWindow.value.scrollTop,
-      chatWindow.value.scrollHeight
-    );
-  }, 1);
   // 接收登入回應時事件
   socket.on("resLogin", (data) => {
     console.log("dataa", data);
@@ -264,41 +257,6 @@ onMounted(() => {
     };
     ratingRoomId.value = user.room_id;
     roomInfo.chat = handleFormatRoomListData(chat);
-    // roomInfo.chat = chat.map((i) => {
-    //   const newChatList = i.chatList.map((msg) => {
-    //     if (msg.status === 0) {
-    //       return {
-    //         answer: msg.answer,
-    //         createdTime: msg.created_time,
-    //         question: msg.question,
-    //         questionContent: msg.question_content,
-    //         questionId: msg.question_id,
-    //         status: msg.status,
-    //       };
-    //     } else if (msg.status === 1 || msg.status === 2) {
-    //       return {
-    //         status: msg.status,
-    //         messageId: msg.message_id,
-    //         memberId: msg.member_id,
-    //         name: msg.name,
-    //         message: msg.message,
-    //         createdTime: msg.created_time,
-    //       };
-    //     }
-    //   });
-    //   const newRoomObject = {
-    //     beginTime: i.begin_time,
-    //     csName: i.cs_name,
-    //     csMemberId: i.cs_member_id,
-    //     endTime: i.end_time,
-    //     group: i.group,
-    //     isReadId: i.is_read_id,
-    //     roomId: i.room_id,
-    //     website: i.website,
-    //     chatList: newChatList,
-    //   };
-    //   return newRoomObject;
-    // });
     roomInfo.cs = {
       ...roomInfo.cs,
       ...cs,
@@ -391,12 +349,14 @@ onMounted(() => {
       handleOpenDialog("afterCloseRating");
     } else if (identity === 2 && is_room_already_close) {
       console.log("successful rating");
+      handleToggleRoom();
       // 客服人員已結束聊天，客戶端補評分的回應，關閉評分燈箱
       ratingRoomId.value = 0;
       dialog.name = "";
       dialog.isOpen = false;
     } else if (identity === 2 && !is_room_already_close) {
       console.log("go heree");
+      handleToggleRoom();
       // 成功退出房間，幫最後一間房間填上end_time
       const currentRoom = roomInfo.chat.find((i) => i.roomId === roomId.value);
       console.log("jjj", currentRoom, roomInfo, roomId.value);
@@ -426,12 +386,6 @@ const handleMessage = (message) => {
     ...data,
   };
   socket.emit("reqLogin", { ...data, identity: 2 });
-  // setTimeout(() => {
-  //   if (data.authentication === "1") {
-  //     console.log("here2");
-  //     handleConnect(data);
-  //   }
-  // }, 1);
 };
 const handleScrollToBottom = async () => {
   chatWindow.value.scrollTop = await chatWindow.value.scrollHeight;
@@ -447,16 +401,11 @@ const handleToggleRoom = async () => {
   );
 };
 
-// const handleFormatTimestamp = (time) => {
-//   return Math.floor(new Date(time) / 1000);
-// };
-
 const handleVisitorJoinRoom = () => {
   if (!visitorNameForm.name) {
     visitorNameForm.errorMessage = "欄位必填";
     return;
   }
-  // socket.emit('clientJoinRoom', {authorization, name, uuid})
 };
 const handleOpenDialog = (name) => {
   console.log("click");
