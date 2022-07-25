@@ -1,5 +1,5 @@
 <script setup>
-import { reactive,  onMounted } from 'vue'
+import { reactive,  onMounted, watch } from 'vue'
 // defineProps,
 import ChatIcon from '@/components/svg/Chat.vue'
 import SearchIcon from '@/components/svg/Search.vue'
@@ -99,7 +99,7 @@ onMounted(() => {
       if(findUserGet.member_id === csRoom.userActive.member_id){
         csRoom.userActive.message = message.message
         csRoom.userActive.message = message.messageId
-        let findUserMessageGet = csRoom.userChatList[csRoom.userChatList.length - 1].chatList
+        let findUserMessageGet = await csRoom.userChatList[csRoom.userChatList.length - 1].chatList
       // 更新聊天室內容
         let messageFormat = {
           created_time: message.createdTime,
@@ -321,23 +321,7 @@ const toggleTab = (item)=>{
 // 點擊 chatList 取得 userchatList
 const handleUserChatList = async (item)=>{
   console.log('csRoom.userList',csRoom.userList)
-  // let test = {
-  //   member_id : item.member_id,
-  //  room_id : item.room_id,
-  //  socketId : item.socket_id,
-  //  name : item.name
-  // }
-  // console.log('test',test)
-  // Object.assign(csRoom.userActive, test)
 
-  // csRoom.userActive = {
-  //  member_id : item.member_id,
-  //  room_id : item.room_id,
-  //  socket_id : item.socket_id,
-  //  name : item.name,
-  //  message : item.message,
-  //  message_id : item.message_id,
-  // }
   let setUserActive = {
    member_id : item.member_id,
    room_id : item.room_id,
@@ -348,7 +332,6 @@ const handleUserChatList = async (item)=>{
   }
   Object.assign(csRoom.userActive, setUserActive)
 
-  console.log('csRoom.userActive.length',csRoom.userActive.length)
   socket.emit("reqReadMessage", {
     getRoomMessage: true,
     identity: 1,
@@ -356,11 +339,22 @@ const handleUserChatList = async (item)=>{
     roomId: item.room_id,
     socketId: item.socket_id,
   });
+  // csRoom.chatSectionDom.scrollTop = csRoom.chatSectionHeight;
+  
+  // await csRoom.scrollBottom()
+  // console.log('csRoom.userActive',csRoom.userActive)
   // if(csRoom.userActive.member_id){
-  //   csRoom.chatSectionDom.scrollTop = await csRoom.chatSectionDom.value.scrollHeight;
+  // csRoom.chatSectionDom.scrollTop = await csRoom.chatSectionDom.scrollHeight;
+  // csRoom.chatSectionDom.scrollTop = await csRoom.chatSectionDom.value.scrollHeight;
   // }
 };
-    
+watch(
+  csRoom.chatSectionDom,
+  (state) => {
+    console.log('state',state)
+  },
+  { deep: true }
+)
 
 const handleCloseInform = (leaveItem) => {
   let closeIndex = csRoom.leaveClient.indexOf(leaveItem)
