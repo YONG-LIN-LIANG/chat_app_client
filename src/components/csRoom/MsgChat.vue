@@ -1,46 +1,28 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onUpdated } from "vue";
 import { usecsRoomStore } from "@/stores/csRoom";
 
 const csRoom = usecsRoomStore();
 
 const chatSection = ref(null);
 
-
-
-onMounted(() => {
-  // csRoom.chatSectionHeight = await chatSection.value.clientHeight;
-  // console.log('1',csRoom.chatSectionHeight)
-  // let goBottomTimer = setTimeout(() => {
-    
-  // goBottomTimer()
-  // csRoom.scrollBottom()
-  setTimeout(() => {
-    csRoom.chatSectionDom = chatSection.value;
+onUpdated(() => {
+  csRoom.chatSectionDom = chatSection.value;
     csRoom.chatSectionHeight = chatSection.value.scrollHeight;
     console.log('2',csRoom.chatSectionHeight)
     csRoom.chatSectionDom.scrollTop = csRoom.chatSectionHeight;
-      // clearTimeout(goBottomTimer)
-}, 50);
-});
+})
 
 
-// // 把created_time轉換成時間代碼
-// SourceList.data.forEach(function (i) {
-//   // 把系統訊息跟聊天訊息合併，塞回原本data
-//   const chatListAll = i.systemChatList.concat(i.chatList);
-//   i["chatListAll"] = chatListAll;
-//   // 依照陣列中物件的created_time排序
-//   i.chatListAll.forEach((j) => {
-//     j["timeCode"] = Math.floor(new Date(j.created_time) / 1000);
-//   });
-//   i.chatListAll.sort((a, b) => a.timeCode - b.timeCode);
-//   //開始時間為 SourceList.data.chatListAll一時間排序後第一筆
-//   i["startDate"] = i.chatListAll[0].created_time
-//     .split(" ")[0]
-//     .split("-")
-//     .join("/");
-// });
+const formatDate = (time) => {
+  const today = new Date();
+  const timeDate = new Date(time.split(" ")[0]);
+  if (today.toDateString() === timeDate.toDateString()) {
+    return "今天";
+  }
+  const formatTimeDate = time.replace(/-/g, "/").split(" ")[0];
+  return formatTimeDate;
+};
 </script>
 <template>
   <div
@@ -56,7 +38,7 @@ onMounted(() => {
       <div
         class="chat_date w-16 relative text-xs font-light text-center text-gray-3 mx-0 my-5"
       >
-        {{ item.begin_time.split(" ")[0].split("-").join("/") }}
+        {{ formatDate(item.begin_time) }}
       </div>
       <div class="chat_start">
         <div
