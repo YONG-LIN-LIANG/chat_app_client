@@ -171,6 +171,7 @@ const roomInfo = reactive({
   // 送出時先推送訊息，推送成功時返回系統時間及messageId並塞回原本的訊息
 });
 const roomId = computed(() => roomInfo.user.roomId);
+const ratingRoomId = ref(0);
 const csSocketId = computed(() => roomInfo.cs.socketId);
 const csName = computed(() => roomInfo.cs.name);
 const dialog = reactive({
@@ -261,6 +262,7 @@ onMounted(() => {
       roomId: user.room_id,
       socketId: user.socket_id,
     };
+    ratingRoomId.value = user.room_id;
     roomInfo.chat = handleFormatRoomListData(chat);
     // roomInfo.chat = chat.map((i) => {
     //   const newChatList = i.chatList.map((msg) => {
@@ -338,6 +340,8 @@ onMounted(() => {
           console.log("sec roominfo", roomInfo);
           const currentRoom = roomInfo.chat[roomInfo.chat.length - 1];
           currentRoom.chatList.push(firstMessage);
+          currentRoom.roomId = roomId;
+          ratingRoomId.value = roomId;
           currentRoom.beginTime = messageCreatedTime;
         }
 
@@ -386,13 +390,16 @@ onMounted(() => {
       handleSendFirstSmessage(first_question);
       handleOpenDialog("afterCloseRating");
     } else if (identity === 2 && is_room_already_close) {
+      console.log("successful rating");
       // 客服人員已結束聊天，客戶端補評分的回應，關閉評分燈箱
+      ratingRoomId.value = 0;
       dialog.name = "";
       dialog.isOpen = false;
     } else if (identity === 2 && !is_room_already_close) {
       console.log("go heree");
       // 成功退出房間，幫最後一間房間填上end_time
       const currentRoom = roomInfo.chat.find((i) => i.roomId === roomId.value);
+      console.log("jjj", currentRoom, roomInfo, roomId.value);
       currentRoom.endTime = end_time;
       handleSendFirstSmessage(first_question);
       dialog.name = "";
@@ -461,8 +468,10 @@ const handleOpenDialog = (name) => {
 
 const handleCloseDialog = (data) => {
   const { action, ratingInfo } = data;
+  console.log("111");
   // action為0時結束聊天，1時返回聊天
   if (!action) {
+    console.log("222");
     socket.emit("reqLeaveRoom", {
       room_id: roomId.value,
       socket_id: csSocketId.value,
@@ -479,8 +488,9 @@ const handleCloseDialog = (data) => {
   }
 };
 const handleCloseRating = (data) => {
+  console.log("check close", ratingRoomId.value);
   socket.emit("reqLeaveRoom", {
-    room_id: roomId.value,
+    room_id: ratingRoomId.value,
     leave_room_info: {
       ...data,
       identity: 2,
