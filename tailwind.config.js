@@ -32,6 +32,9 @@ module.exports = {
         },
         red: "#ff483d",
         purple: "#706e85",
+        white: {
+          w50: rgba(255, 255, 255, 0.5),
+        }
       },
       fontSize: {
         md: "15px",

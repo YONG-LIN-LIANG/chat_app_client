@@ -1,10 +1,21 @@
 <script setup>
-import { defineProps } from "vue";
+import { defineProps, computed } from "vue";
 import StarIcon from "@/components/svg/Star.vue";
-defineProps({
+
+const props = defineProps({
   rateItem: Object,
   idx: Object,
 });
+
+const averageRatingFloor = computed(() => {
+  return Math.floor(props.rateItem.averageRating)
+});
+const averageRatingFloat = computed(() => {
+  let last = props.rateItem.averageRating - averageRatingFloor.value
+  console.log(last)
+  return last.toFixed(1)
+});
+console.log(averageRatingFloor.value,averageRatingFloat.value)
 </script>
 <template>
   <div
