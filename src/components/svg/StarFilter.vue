@@ -1,28 +1,39 @@
 <template>
- <svg width="125" height="18" viewBox="0 0 125 18" fill="#bbdc75" xmlns="http://www.w3.org/2000/svg">;
-   <defs>
-    <clipPath id="myClip">
-        <path d="M9 0L11.0206 6.21885H17.5595L12.2694 10.0623L14.2901 16.2812L9 12.4377L3.70993 16.2812L5.73056 10.0623L0.440492 6.21885H6.97937L9 0Z" fill=""/>;
-        <path d="M33 0L35.0206 6.21885H41.5595L36.2694 10.0623L38.2901 16.2812L33 12.4377L27.7099 16.2812L29.7306 10.0623L24.4405 6.21885H30.9794L33 0Z" fill=""/>;
-        <path d="M57 0L59.0206 6.21885H65.5595L60.2694 10.0623L62.2901 16.2812L57 12.4377L51.7099 16.2812L53.7306 10.0623L48.4405 6.21885H54.9794L57 0Z" fill=""/>;
-        <path d="M81 0L83.0206 6.21885H89.5595L84.2694 10.0623L86.2901 16.2812L81 12.4377L75.7099 16.2812L77.7306 10.0623L72.4405 6.21885H78.9794L81 0Z" fill=""/>;
-        <path d="M105 0L107.021 6.21885H113.56L108.269 10.0623L110.29 16.2812L105 12.4377L99.7099 16.2812L101.731 10.0623L96.4405 6.21885H102.979L105 0Z" fill=""/>;
-    </clipPath>
-    <!-- <use clip-path="url(#myClip)" href="#heart" fill="red" /> -->
-  </defs>
- </svg>
-    <div clip-path="url(#myClip)" class="bg-red w-20 h-10"></div>
+  <section class="flex relative">
+    <StarIcon v-for="(item, idx) in 5" :key="idx" class="star text-red"/>
+    <div 
+      class="absolute top-0 left-0 overflow-hidden whitespace-nowrap"
+      :style="{'width': ratingPercentage}"
+    >
+        <StarIcon v-for="(item, idx) in 5" :key="idx" class="star text-grey-2"/>
+    </div>
+  </section>
 </template>
 
 <script>
-export default {
-
-}
+  import StarIcon from "@/components/svg/Star.vue";
+  export default {
+    components: {
+      StarIcon
+    },
+    props: {
+      rating: {
+        type: Number,
+        default: 0
+      }
+    },
+    computed: {
+      ratingPercentage() {
+        const starsTotal = 5;
+        const percentageRound = (this.rating/starsTotal*100/10)*10;
+        return `${percentageRound}%`;
+      }
+    }
+  }
 </script>
 
-<style>
-/* @keyframes openYourHeart {from {r: 0} to {r: 60px}}
-#myClip circle {
-  animation: openYourHeart 15s infinite;
-} */
+<style scoped>
+  .star{
+    @apply mx-1 mt-5 mb-4;
+  }
 </style>
