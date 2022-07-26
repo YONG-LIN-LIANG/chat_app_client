@@ -207,7 +207,7 @@ onBeforeRouteUpdate((to) => {
           ]"
           @click="menu.active = 3"
         >
-          <StarIcon class="w-4 text-green-Default" />
+          <StarIcon class="w-4 text-green" />
           <span>4.9</span>
         </router-link>
       </div>
@@ -255,7 +255,7 @@ onBeforeRouteUpdate((to) => {
           @click="menu.active = 3"
 
         >
-          <StarIcon class="w-4 text-green-Default" />
+          <StarIcon class="w-4 text-green" />
           <span>4.9</span>
         </router-link>
       </div>

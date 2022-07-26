@@ -47,7 +47,7 @@
           <h5>請登入開始聊天</h5>
           <h5>訊息將會保存在會員中心</h5>
         </div>
-        <button class="w-35 h-9 bg-green-Default rounded-full">登入</button>
+        <button class="w-35 h-9 bg-green rounded-full">登入</button>
         <button
           @click="visitorStep = 2"
           class="block mt-7.5 px-2.5 py-1.5 mx-auto bg-gray-6 rounded-md"
@@ -76,7 +76,7 @@
 
         <button
           @click="handleVisitorJoinRoom"
-          class="w-35 h-9 mx-auto mt-10 bg-green-Default rounded-full"
+          class="w-35 h-9 mx-auto mt-10 bg-green rounded-full"
         >
           下一步
         </button>
@@ -99,7 +99,7 @@
     ]"
   >
     <div
-      class="shrink-0 flex items-center py-2.5 px-5 border border-green-Default rounded-10 shadow-layer2 bg-white"
+      class="shrink-0 flex items-center py-2.5 px-5 border border-green rounded-10 shadow-layer2 bg-white"
     >
       客服人員 {{}} 在線為您服務
     </div>

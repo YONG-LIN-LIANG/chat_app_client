@@ -1,6 +1,7 @@
 <script setup>
 import { defineProps, computed } from "vue";
 import StarIcon from "@/components/svg/Star.vue";
+import StarFilter from "@/components/svg/StarFilter.vue";
 
 const props = defineProps({
   rateItem: Object,
@@ -12,8 +13,7 @@ const averageRatingFloor = computed(() => {
 });
 const averageRatingFloat = computed(() => {
   let last = props.rateItem.averageRating - averageRatingFloor.value
-  console.log(last)
-  return last.toFixed(1)
+  return Number(last.toFixed(1))
 });
 console.log(averageRatingFloor.value,averageRatingFloat.value)
 </script>
@@ -27,20 +27,21 @@ console.log(averageRatingFloor.value,averageRatingFloat.value)
         top_bg: idx < 3,
         'border-green-neon': !rateItem.showDetail && idx < 3,
         'border-transparent': !rateItem.showDetail && idx > 2,
-        'border-orange-Default': rateItem.showDetail,
+        'border-orange': rateItem.showDetail,
       },
     ]"
   >
     <div class="ranking_name w-20 font-semibold">{{ rateItem.name }}</div>
     <div class="ranking_star_wrap flex items-center mr-5">
-      <div class="ranking_star flex text-green-Default mr-2.5">
+      <div class="ranking_star flex text-green mr-2.5">
         <StarIcon
           v-for="i in 5"
           :key="i"
           :class="['mr-1', { ' text-gray-5': i > rateItem.averageRating }]"
         />
+        <StarFilter />
       </div>
-      <div class="ranking_average w-6 text-center text-green-Default mr-1">
+      <div class="ranking_average w-6 text-center text-green mr-1">
         {{ rateItem.averageRating }}
       </div>
     </div>
@@ -54,10 +55,10 @@ console.log(averageRatingFloor.value,averageRatingFloat.value)
       v-show="rateItem.showDetail"
       class="w-62 h-105 relative overflow-hidden"
     >
-      <div class="w-14 h-px absolute bg-orange-Default top-1/2 left-0"></div>
+      <div class="w-14 h-px absolute bg-orange top-1/2 left-0"></div>
 
       <div
-        class="ranking_personal w-48 flex flex-col items-center justify-center bg-gray-7 rounded-xl p-5 border border-solid border-orange-Default absolute top-[40%] left-14"
+        class="ranking_personal w-48 flex flex-col items-center justify-center bg-gray-7 rounded-xl p-5 border border-solid border-orange absolute top-[40%] left-14"
       >
         <div
           v-for="ratingPer in rateItem.ratingCal"
@@ -65,10 +66,10 @@ console.log(averageRatingFloor.value,averageRatingFloat.value)
           class="ranking_perstar w-32 h-8 flex items-center bg-white rounded-2xl mb-2.5 px-5"
         >
           <div class="ranking_star_wrap flex items-center mr-5">
-            <div class="ranking_average text-green-Default mr-1">
+            <div class="ranking_average text-green mr-1">
               {{ ratingPer.rating }}
             </div>
-            <div class="ranking_perstar_star flex text-green-Default">
+            <div class="ranking_perstar_star flex text-green">
               <StarIcon />
             </div>
           </div>

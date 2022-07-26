@@ -16,18 +16,18 @@
         @mouseleave="handleMouseOut(idx)"
       >
         <StarIcon
-          :class="idx <= score - 1 ? 'text-green-Default' : 'text-gray-6'"
+          :class="idx <= score - 1 ? 'text-green' : 'text-gray-6'"
         />
       </div>
     </div>
     <textarea class="w-full h-16 resize-none outline-0"></textarea>
     <button
-      class="w-35 mt-5 p-2.5 mx-auto text-gray-2 bg-orange-Default rounded-full"
+      class="w-35 mt-5 p-2.5 mx-auto text-gray-2 bg-orange rounded-full"
     >
       結束對話
     </button>
     <button
-      class="w-35 mt-5 p-2.5 mx-auto text-gray-2 border border-orange-Default rounded-full"
+      class="w-35 mt-5 p-2.5 mx-auto text-gray-2 border border-orange rounded-full"
       @click="$emit('onCloseDialog')"
     >
       返回對話

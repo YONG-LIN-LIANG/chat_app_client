@@ -42,7 +42,7 @@ const formatDate = (time) => {
       </div>
       <div class="chat_start">
         <div
-          class="chat_status text-sm font-medium text-green-Default text-center mx-0 my-1.5"
+          class="chat_status text-sm font-medium text-green text-center mx-0 my-1.5"
         >
           開始聊天
         </div>
@@ -115,7 +115,7 @@ const formatDate = (time) => {
 
       <div v-if="item.end_time" class="chat_end">
         <div
-          class="chat_status text-sm font-medium text-green-Default text-center mx-0 my-1.5"
+          class="chat_status text-sm font-medium text-green text-center mx-0 my-1.5"
         >
           結束聊天
         </div>
@@ -159,6 +159,6 @@ const formatDate = (time) => {
 }
 
 .chat_tags_opts{
-@apply text-sm text-gray-2 rounded-20 m-1 border border-solid border-green-Default px-3.5 py-1.5 cursor-pointer
+@apply text-sm text-gray-2 rounded-20 m-1 border border-solid border-green px-3.5 py-1.5 cursor-pointer
 }
 </style>

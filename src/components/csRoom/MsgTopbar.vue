@@ -62,7 +62,7 @@ const handleToggleDialog = () => {
             class="input_search w-64 h-10 box-border tracking-wider rounded-r-none px-2.5 py-0"
           />
           <div
-            class="btn_search w-10 h-10 flex items-center justify-center cursor-pointer text-white bg-green-Default hover:bg-green-w50 rounded-r ease-in duration-300"
+            class="btn_search w-10 h-10 flex items-center justify-center cursor-pointer text-white bg-green hover:bg-green-w50 rounded-r ease-in duration-300"
           >
             <SearchIcon />
           </div>
@@ -110,7 +110,7 @@ const handleToggleDialog = () => {
 }
 
 .input_search:focus {
-  @apply border border-solid border-green-Default;
+  @apply border border-solid border-green;
 }
 .msg_name{
   overflow-wrap: anywhere;

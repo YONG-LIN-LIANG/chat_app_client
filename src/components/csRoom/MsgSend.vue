@@ -60,7 +60,7 @@ const handleMsgSend = async (value) => {
     <SendIcon
       @click="
         handleMsgSend(inputValue);"
-      class="cursor-pointer text-orange-Default hover:text-orange-b90 m-2.5"
+      class="cursor-pointer text-orange hover:text-orange-b90 m-2.5"
     />
         <!-- inputSend(); -->
   </div>
