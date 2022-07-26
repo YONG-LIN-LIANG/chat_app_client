@@ -22,20 +22,22 @@
     </div>
     <textarea
       v-model="comment"
-      class="w-full h-16 resize-none outline-0"
+      class="w-full h-16 py-2 resize-none outline-0"
     ></textarea>
-    <button
-      class="w-35 mt-5 p-2.5 mx-auto text-gray-2 bg-orange-Default rounded-full"
-      @click="handleCloseDialog(0)"
-    >
-      結束對話
-    </button>
-    <button
-      class="w-35 mt-5 p-2.5 mx-auto text-gray-2 border border-orange-Default rounded-full"
-      @click="handleCloseDialog(1)"
-    >
-      返回對話
-    </button>
+    <div class="flex flex-col">
+      <button
+        class="w-35 mt-5 p-2.5 mx-auto text-gray-2 bg-orange-Default rounded-full"
+        @click="handleCloseDialog(0)"
+      >
+        結束對話
+      </button>
+      <button
+        class="w-35 mt-5 p-2.5 mx-auto text-gray-2 border border-orange-Default rounded-full"
+        @click="handleCloseDialog(1)"
+      >
+        返回對話
+      </button>
+    </div>
   </section>
 </template>
 

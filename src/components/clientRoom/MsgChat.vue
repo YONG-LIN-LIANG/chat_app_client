@@ -14,7 +14,7 @@
         {{ formatDate(props.messageInfo.chatList[0].createdTime) }}
       </div>
       <div
-        v-show="props.messageInfo.chatList.length"
+        v-show="props.messageInfo.roomId"
         class="text-sm font-medium text-green-Default text-center mx-0 my-1.5"
       >
         開始聊天

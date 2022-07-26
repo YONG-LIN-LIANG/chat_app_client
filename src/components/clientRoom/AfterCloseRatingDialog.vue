@@ -3,7 +3,7 @@
     <h4>對話已結束</h4>
     <h4>請為此客服評分</h4>
     <div class="mt-2.5 text-gray-2 text-xs">
-      <h4>請為客服人員 劉傑明 本次的服務評分</h4>
+      <h4>請為客服人員 {{ csName }} 本次的服務評分</h4>
       <h4>留下評論讓我們做得更好</h4>
     </div>
     <div class="flex justify-center my-5">
@@ -22,7 +22,7 @@
     </div>
     <textarea
       v-model="comment"
-      class="w-full h-16 resize-none outline-0"
+      class="w-full h-16 py-2 resize-none outline-0"
     ></textarea>
     <button
       class="w-35 mt-5 p-2.5 mx-auto text-gray-2 bg-orange-Default rounded-full"
@@ -38,6 +38,12 @@ import StarIcon from "@/components/svg/BigStar.vue";
 // import { reactive } from '@vue/reactivity'
 import { ref } from "vue";
 const emit = defineEmits(["onRatingRoom"]);
+defineProps({
+  csName: {
+    type: String,
+    default: "",
+  },
+});
 const score = ref(0);
 const clickScore = ref(0);
 const comment = ref("");

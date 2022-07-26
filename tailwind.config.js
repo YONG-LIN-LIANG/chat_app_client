@@ -31,6 +31,10 @@ module.exports = {
         },
         red: "#ff483d",
         purple: "#706e85",
+        white: {
+          DEFAULT: "#ffffff",
+          w50: "rgba(255, 255, 255, 0.5)",
+        },
       },
       fontSize: {
         md: "15px",
@@ -68,6 +72,7 @@ module.exports = {
         66: "264px",
       },
       maxWidth: {
+        55: "220px",
         56: "224px",
         66: "264px",
       },
@@ -91,6 +96,15 @@ module.exports = {
       transitionDelay: {
         0: "0ms",
       },
+    },
+    borderWidth: {
+      DEFAULT: "1px",
+      0: "0",
+      2: "2px",
+      3: "3px",
+      4: "4px",
+      6: "6px",
+      8: "8px",
     },
     screens: {
       xxl: { max: "1919px" },
@@ -121,5 +135,5 @@ module.exports = {
   variants: {
     extend: {},
   },
-  plugins: [],
+  plugins: [require("@tailwindcss/line-clamp")],
 };
