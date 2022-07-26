@@ -16,7 +16,7 @@ onBeforeMount(() => {
     if (status === 200) {
       // 導頁到csRome
       alert("登入成功");
-      // console.log("login successfully", data);
+      console.log("login successfully", data.user_list);
       Object.assign(csRoom.cs, data.cs_info)
       Object.assign(csRoom.userList, data.user_list)
       // 切換到登入後訊息路由 csRoom/msg
