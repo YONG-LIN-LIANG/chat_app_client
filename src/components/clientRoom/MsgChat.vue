@@ -117,10 +117,6 @@
           </div>
         </div>
       </div>
-      <div v-show="props.csInfo.typing" class="chat_action flex items-center">
-        <span class="text-xs text-gray-3 mx-1.5 my-0">林三良 正在輸入訊息</span>
-        <DoingIcon />
-      </div>
 
       <div v-show="props.messageInfo.endTime" class="mb-5">
         <div
@@ -138,7 +134,6 @@
 </template>
 
 <script setup>
-import DoingIcon from "@/components/svg/Doing.vue";
 import { defineProps, defineEmits } from "vue";
 const props = defineProps({
   messageInfo: {
