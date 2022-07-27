@@ -152,13 +152,12 @@ onMounted(() => {
       }
       
   })
-
+  // 打字中
+  socket.on("resTyping", (data) => {
+    console.log("typing", data);
+    csRoom.isTyping = data;
+  });
 })
-
-// 離開聊天室
-const leaveChat = () => {
-  
-}
 
 // 找到roomId = csRoom.leaveClient
 

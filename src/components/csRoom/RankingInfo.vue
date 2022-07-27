@@ -1,7 +1,6 @@
 <script setup>
 import { ref, defineProps, computed } from "vue";
 import StarIcon from "@/components/svg/Star.vue";
-import StarFilter from "@/components/svg/StarFilter.vue";
 
 const props = defineProps({
   rateItem: Object,
@@ -46,7 +45,6 @@ const starWidthCalc = computed(() => {
           :key="i"
           :class="['mr-1', { ' text-gray-5': i > rateItem.averageRating }]"
         /> -->
-        <!-- <StarFilter :rating="rateItem.averageRating" /> -->
         <svg width="125" height="18" viewBox="0 0 125 18" fill="#bbdc75" xmlns="http://www.w3.org/2000/svg">;
             <defs>  
               <clipPath id="myClip">
@@ -58,7 +56,7 @@ const starWidthCalc = computed(() => {
               </clipPath>
             </defs>
         </svg>
-        <div ref="starWidth" id="test" :style="{'width': starWidthCalc}" class="bg-green h-6 absolute left-0 top-0"></div>
+        <div ref="starWidth" :style="{'width': starWidthCalc}" class="starColor bg-green h-6 absolute left-0 top-0"></div>
       </div>
       <div class="ranking_average w-6 text-center text-green mr-1">
         {{ rateItem.averageRating }}
@@ -117,7 +115,7 @@ const starWidthCalc = computed(() => {
   opacity: 0;
   width: 0%;
 }
-#test{
+.starColor{
     clip-path: url(#myClip);
 }
 </style>
