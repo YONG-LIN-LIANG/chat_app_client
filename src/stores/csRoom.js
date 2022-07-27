@@ -53,6 +53,7 @@ export const usecsRoomStore = defineStore('csRoom', () => {
 	//客戶端離開聊天室 提示
 	let leaveClient = reactive([])
 
+	let isTyping = ref(false)
 	
 	return {
 		cs,
@@ -64,5 +65,6 @@ export const usecsRoomStore = defineStore('csRoom', () => {
 		chatSectionHeight,
 		createdTimeClock,
 		leaveClient,
+		isTyping,
 	}
 })

@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import SendIcon from "@/components/svg/Send.vue";
 import { useSocketStore } from '@/stores/socket'
 import { usecsRoomStore } from "@/stores/csRoom";
@@ -9,14 +9,10 @@ const socket = useSocketStore().socket
 
 let inputValue = ref("");
 
-// const inputSend = async () => {
-//   csRoom.chatSectionDom.scrollTop = await csRoom.chatSectionDom.scrollHeight;
-// };
-
 const handleMsgSend = async (value) => {
-		console.log('csRoom.userList',csRoom.userList)
+	console.log('csRoom.userList',csRoom.userList)
 		// console.log('csRoom.userActive',csRoom.userActive)
-		if (value.trim()) {
+	if (value.trim()) {
 			let findRoom = csRoom.userChatList.find((i) => i.room_id === csRoom.userActive.room_id)
 			findRoom.chatList.push({
 				created_time: csRoom.currentTimeFormat(),
@@ -40,9 +36,14 @@ const handleMsgSend = async (value) => {
       csRoom.chatSectionDom.scrollTop = await csRoom.chatSectionDom.scrollHeight;
 
       inputValue.value = ''
-    }
-	};
+  }
+};
 
+watch( inputValue , (newVal) => {
+  console.log('newVal',newVal);
+  // 告知對方正打字中
+  socket.emit("reqTyping", csRoom.userActive.socket_id);
+});
 </script>
 
 <template>
@@ -60,7 +61,7 @@ const handleMsgSend = async (value) => {
     <SendIcon
       @click="
         handleMsgSend(inputValue);"
-      class="cursor-pointer text-orange-Default hover:text-orange-b90 m-2.5"
+      class="cursor-pointer text-orange hover:text-orange-b90 m-2.5"
     />
         <!-- inputSend(); -->
   </div>

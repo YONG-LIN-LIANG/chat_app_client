@@ -18,7 +18,7 @@ module.exports = {
           7: "#FCFCFC",
         },
         green: {
-          Default: "#bbdc75",
+          DEFAULT: "#bbdc75",
           w20: "#f1f8e3",
           w50: "#ddedba",
           b50: "#5d6e3a",
@@ -26,14 +26,15 @@ module.exports = {
           neon: "#e3ff39",
         },
         orange: {
-          Default: "#faa677",
+          DEFAULT: "#faa677",
           w20: "#feede4",
           b90: "#e1956b",
         },
         red: "#ff483d",
         purple: "#706e85",
         white: {
-          w50: rgba(255, 255, 255, 0.5),
+          DEFAULT:"#ffffff",
+          w50: "rgba(255, 255, 255, 0.5)",
         }
       },
       fontSize: {
@@ -69,13 +70,15 @@ module.exports = {
         4.5: "18px",
         14: "56px",
         16: "64px",
+        20: "80px",
         48: "192px",
         66: "264px",
         85: "340px",
       },
       maxWidth: {
-        66: "264px",
+        20: "80px",
         29: "116px",
+        66: "264px",
       },
       height: {
         4.5: "18px",

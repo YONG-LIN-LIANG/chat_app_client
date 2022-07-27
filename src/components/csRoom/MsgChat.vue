@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted, onUpdated } from "vue";
 import { usecsRoomStore } from "@/stores/csRoom";
+import EllipsisIcon from "@/components/svg/Ellipsis.vue";
 
 const csRoom = usecsRoomStore();
 
@@ -42,7 +43,7 @@ const formatDate = (time) => {
       </div>
       <div class="chat_start">
         <div
-          class="chat_status text-sm font-medium text-green-Default text-center mx-0 my-1.5"
+          class="chat_status text-sm font-medium text-green text-center mx-0 my-1.5"
         >
           開始聊天
         </div>
@@ -115,7 +116,7 @@ const formatDate = (time) => {
 
       <div v-if="item.end_time" class="chat_end">
         <div
-          class="chat_status text-sm font-medium text-green-Default text-center mx-0 my-1.5"
+          class="chat_status text-sm font-medium text-green text-center mx-0 my-1.5"
         >
           結束聊天
         </div>
@@ -123,6 +124,10 @@ const formatDate = (time) => {
           <span class="text-xs">客服人員 : </span>
           <span class="text-xs">{{ item.cs_name }}</span>
         </div>
+      </div>
+      <div v-show="csRoom.isTyping" class="client_typing text-xs text-gray-3 flex items-center">
+        <span class="mr-2">對方正在輸入訊息</span>
+        <img class="w-10" src="@/assets/typing.gif" alt="">
       </div>
     </div>
   </div>
@@ -159,6 +164,6 @@ const formatDate = (time) => {
 }
 
 .chat_tags_opts{
-@apply text-sm text-gray-2 rounded-20 m-1 border border-solid border-green-Default px-3.5 py-1.5 cursor-pointer
+@apply text-sm text-gray-2 rounded-20 m-1 border border-solid border-green px-3.5 py-1.5 cursor-pointer
 }
 </style>

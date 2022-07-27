@@ -313,10 +313,10 @@ const handleNextPage = () => {
     >
       <div class="ranking_name w-20 font-semibold">盧立倫</div>
       <div class="ranking_star_wrap flex items-center mr-5">
-        <div class="ranking_star flex text-green-Default mr-2.5">
+        <div class="ranking_star flex text-green mr-2.5">
           <StarIcon v-for="i in 5" :key="i" :class="['mr-1', i > rateAverageFloor ? 'flex items-center text-gray-6' : '']" />
         </div>
-        <div class="ranking_average text-green-Default mr-1">{{rateAverageFormat}}</div>
+        <div class="ranking_average text-green mr-1">{{rateAverageFormat}}</div>
       </div>
       <div class="ranking_amount whitespace-nowrap text-sm text-gray-3">
         {{ commentsCount }} 則
@@ -334,14 +334,14 @@ const handleNextPage = () => {
             ]"
             @click="ratingCountFilter = item.star"
           >
-            <div class="ranking_star flex text-green-Default mr-2.5">
+            <div class="ranking_star flex text-green mr-2.5">
               <StarIcon
                 v-for="i in 5"
                 :key="i"
                 :class="[{ 'text-gray-6': item.star < i }, 'mr-1']"
               />
             </div>
-            <div class="ranking_average text-green-Default mr-5">
+            <div class="ranking_average text-green mr-5">
               {{ item.star }}
             </div>
             <div class="ranking_amount whitespace-nowrap text-sm text-gray-3">
@@ -376,7 +376,7 @@ const handleNextPage = () => {
               <input class="hidden" type="checkbox" id="tag_containComment" />
               <label
                 for="tag_containComment"
-                class="chat_tags_opts text-sm text-gray-2 rounded-20 m-1 border border-solid border-green-Default px-3.5 py-1.5 cursor-pointer"
+                class="chat_tags_opts text-sm text-gray-2 rounded-20 m-1 border border-solid border-green px-3.5 py-1.5 cursor-pointer"
                 checked
               >
                 包含評論
@@ -433,7 +433,7 @@ const handleNextPage = () => {
             <div class="h-6 my-8 text-red text-center">請輸入完整日期區間</div>
             <div class="btn_primary--green mx-auto">搜尋</div>
             <p
-              class="text-green-b50 my-4 text-center cursor-pointer hover:text-orange-Default"
+              class="text-green-b50 my-4 text-center cursor-pointer hover:text-orange"
             >
               清除所有篩選條件
             </p>
@@ -511,7 +511,7 @@ const handleNextPage = () => {
             <div class="flex items-center mt-2">
               <div class="comment_star flex items-center mr-3">
                 <span class="text-gray-3 mr-1.5">{{ comment.rating }}</span>
-                <StarIcon class="flex items-center text-green-Default" />
+                <StarIcon class="flex items-center text-green" />
               </div>
               <p class="comment_content text-gray-3">
                 {{ comment.comment }}
@@ -529,7 +529,7 @@ const handleNextPage = () => {
   
           <div 
             :class="['pagination',
-            pageActive === 1 ? 'bg-green-Default' : '',]"
+            pageActive === 1 ? 'bg-green' : '',]"
             @click="handleFirstPage">
               1
           </div>
@@ -543,7 +543,7 @@ const handleNextPage = () => {
             v-for="number in pageneighbor" :key="number"
             
             :class="['pagination',
-            number === pageActive ? 'bg-green-Default' : '',]"
+            number === pageActive ? 'bg-green' : '',]"
             @click="handleChangePage(number)">
               {{number}}
           </div>
@@ -555,7 +555,7 @@ const handleNextPage = () => {
           </div>
           <div 
             :class="['pagination',
-            pageActive === pageLast ? 'bg-green-Default' : '',]"
+            pageActive === pageLast ? 'bg-green' : '',]"
             @click="handleLastPage">
               {{pageLast}}
           </div>
@@ -587,7 +587,7 @@ const handleNextPage = () => {
   @apply bg-green-w50;
 }
 .pagination {
-  @apply w-7 h-9 mx-1 text-gray-2 text-sm bg-green-w50 flex items-center justify-center rounded-lg hover:bg-green-Default cursor-pointer;
+  @apply w-7 h-9 mx-1 text-gray-2 text-sm bg-green-w50 flex items-center justify-center rounded-lg hover:bg-green cursor-pointer;
 }
 .ellipsis{
   @apply w-7 h-9 mx-1 text-gray-2 text-sm flex items-center justify-center ;

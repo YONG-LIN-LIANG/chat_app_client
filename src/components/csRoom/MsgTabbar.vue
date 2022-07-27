@@ -152,13 +152,12 @@ onMounted(() => {
       }
       
   })
-
+  // 打字中
+  socket.on("resTyping", (data) => {
+    console.log("typing", data);
+    csRoom.isTyping = data;
+  });
 })
-
-// 離開聊天室
-const leaveChat = () => {
-  
-}
 
 // 找到roomId = csRoom.leaveClient
 
@@ -401,11 +400,11 @@ const handleCloseInform = (leaveItem) => {
               <div class="chat_tag w-3/4 flex items-center">
                 <ReturnIcon
                   v-show="item.message_status === 1"
-                  class="min-w-3 text-green-Default mr-1.5"
+                  class="min-w-3 text-green mr-1.5"
                 />
                 <span
                   v-show="item.message_status === 0"
-                  class="chat_tags_opts selected inline-block text-sm text-gray-2 rounded-20 bg-green-w20 px-3.5 py-1.5 ml-1 border border-solid border-green-Default"
+                  class="chat_tags_opts selected inline-block text-sm text-gray-2 rounded-20 bg-green-w20 px-3.5 py-1.5 ml-1 border border-solid border-green"
                   >{{ item.answer }}</span
                 >
                 <div v-show="item.message_status !== 0" class="chat_list_msg text-ellipsis overflow-hidden line-clamp-1">{{
@@ -493,11 +492,11 @@ const handleCloseInform = (leaveItem) => {
               <div class="chat_tag flex items-center">
                 <ReturnIcon
                   v-show="item.lastMsg.from === 'service'"
-                  class="min-w-3 text-green-Default mr-1.5"
+                  class="min-w-3 text-green mr-1.5"
                 />
                 <span
                   v-show="item.type === 'tag'"
-                  class="chat_tags_opts selected inline-block text-sm text-gray-2 rounded-20 bg-green-w20 px-3.5 py-1.5 ml-1 border border-solid border-green-Default"
+                  class="chat_tags_opts selected inline-block text-sm text-gray-2 rounded-20 bg-green-w20 px-3.5 py-1.5 ml-1 border border-solid border-green"
                   >{{ item.lastTag }}</span
                 >
                 <span v-show="item.type === 'text'" class="text-gray-2">{{
@@ -588,11 +587,11 @@ const handleCloseInform = (leaveItem) => {
               <div class="chat_tag flex items-center">
                 <ReturnIcon
                   v-show="item.lastMsg.from === 'service'"
-                  class="min-w-3 text-green-Default mr-1.5"
+                  class="min-w-3 text-green mr-1.5"
                 />
                 <span
                   v-show="item.type === 'tag'"
-                  class="chat_tags_opts selected inline-block text-sm text-gray-2 rounded-20 bg-green-w20 px-3.5 py-1.5 ml-1 border border-solid border-green-Default"
+                  class="chat_tags_opts selected inline-block text-sm text-gray-2 rounded-20 bg-green-w20 px-3.5 py-1.5 ml-1 border border-solid border-green"
                   >{{ item.lastTag }}</span
                 >
                 <span v-show="item.type === 'text'" class="text-gray-2">{{
@@ -659,7 +658,7 @@ const handleCloseInform = (leaveItem) => {
 }
 
 .btn_tab:hover {
-	@apply border border-solid border-green-Default;
+	@apply border border-solid border-green;
 }
 /* min-w-66 */
 .tabbar_func {
