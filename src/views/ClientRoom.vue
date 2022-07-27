@@ -28,25 +28,28 @@
           </button>
         </div>
       </div>
-      <div
-        ref="chatWindow"
-        v-show="isInRoom"
-        class="flex-grow pt-4 overflow-y-auto"
-      >
+      <div ref="chatWindow" class="flex-grow pt-4 overflow-y-auto">
         <!-- :roomInfo="roomInfo" -->
-        <MsgChat
-          v-for="(item, idx) in roomInfo.chat"
-          :key="idx"
-          :messageInfo="item"
-          :csInfo="roomInfo.cs"
-          @onSendMessage="handleSendMessage"
-        />
-        <!-- 對方打字中提示 -->
-        <div v-show="isTyping" class="flex justify-center items-center mb-8">
-          <span class="text-xs text-gray-3 mx-1.5 my-0"
-            >客服人員 正在輸入訊息</span
-          >
-          <DoingIcon />
+        <div v-if="!isVisitor">
+          <MsgChat
+            v-for="(item, idx) in roomInfo.chat"
+            :key="idx"
+            :messageInfo="item"
+            :csInfo="roomInfo.cs"
+            @onSendMessage="handleSendMessage"
+          />
+          <!-- 對方打字中提示 -->
+          <div v-show="isTyping" class="flex justify-center items-center mb-8">
+            <span class="text-xs text-gray-3 mx-1.5 my-0"
+              >客服人員 正在輸入訊息</span
+            >
+            <DoingIcon />
+          </div>
+        </div>
+
+        <div v-else class="flex-center flex-col h-full">
+          <h2>訪客聊天功能開發中</h2>
+          <h3>請登入進行諮詢</h3>
         </div>
       </div>
       <div v-show="isInRoom" class="flex-none h-15">
@@ -206,7 +209,7 @@ let newMessageInfo = reactive({
   isNewMessageExist: false,
 });
 const visitorStep = ref(1);
-const isVisitor = roomInfo.user.authorization === 1;
+let isVisitor = computed(() => roomInfo.user.authorization === "2");
 const clientName = roomInfo.user.name;
 const isInRoom = roomInfo.user.socketId;
 
