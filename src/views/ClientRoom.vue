@@ -41,13 +41,17 @@
           :csInfo="roomInfo.cs"
           @onSendMessage="handleSendMessage"
         />
+        <!-- 對方打字中提示 -->
+        <div v-show="isTyping" class="flex justify-center items-center mb-8">
+          <span class="text-xs text-gray-3 mx-1.5 my-0"
+            >客服人員 正在輸入訊息</span
+          >
+          <DoingIcon />
+        </div>
       </div>
       <div v-show="isInRoom" class="flex-none h-15">
         <MsgSend
           :csSocketId="roomInfo.cs.socketId"
-          :roomId="roomInfo.user.roomId"
-          :memberId="roomInfo.user.memberId"
-          :clientName="roomInfo.user.name"
           @onSendMessage="handleSendMessage"
         />
       </div>
@@ -139,6 +143,7 @@
   </section>
 </template>
 <script setup>
+import DoingIcon from "@/components/svg/Doing.vue";
 import SearchIcon from "@/components/svg/Search.vue";
 import HideIcon from "@/components/svg/Hide.vue";
 import CrossIcon from "@/components/svg/Cross.vue";
@@ -184,6 +189,7 @@ const roomInfo = reactive({
 const roomId = computed(() => roomInfo.user.roomId);
 const ratingRoomId = ref(0);
 const csSocketId = computed(() => roomInfo.cs.socketId);
+let isTyping = ref(false);
 const csName = computed(() => roomInfo.cs.name);
 const dialog = reactive({
   name: "",
@@ -283,7 +289,6 @@ const handleMessage = (message) => {
 };
 
 const handleInitializeSocketOnEvent = () => {
-  // 接收登入回應時事件
   socket.on("resLogin", (data) => {
     console.log("dataa", data);
     const { chat, cs, user, question, secondSmessage } = data;
@@ -314,7 +319,6 @@ const handleInitializeSocketOnEvent = () => {
     }
     console.log("roomInfoo", roomInfo);
   });
-  // 接收傳送訊息回應時事件
   socket.on("resSendMessage", async (data) => {
     const { identity, messageCreatedTime } = data;
     if (identity === 0) {
@@ -405,6 +409,11 @@ const handleInitializeSocketOnEvent = () => {
     }
     // 退出聊天室後重置roomId為0
     roomInfo.user.roomId = 0;
+    await handleScrollToBottom();
+  });
+  socket.on("resTyping", async (data) => {
+    console.log("typing", data);
+    isTyping.value = data;
     await handleScrollToBottom();
   });
 };
