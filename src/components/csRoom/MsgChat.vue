@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted, onUpdated } from "vue";
 import { usecsRoomStore } from "@/stores/csRoom";
+import EllipsisIcon from "@/components/svg/Ellipsis.vue";
 
 const csRoom = usecsRoomStore();
 
@@ -123,6 +124,10 @@ const formatDate = (time) => {
           <span class="text-xs">客服人員 : </span>
           <span class="text-xs">{{ item.cs_name }}</span>
         </div>
+      </div>
+      <div v-show="csRoom.isTyping" class="client_typing text-xs text-gray-3 flex items-center">
+        <span class="mr-2">對方正在輸入訊息</span>
+        <img class="w-10" src="@/assets/typing.gif" alt="">
       </div>
     </div>
   </div>
