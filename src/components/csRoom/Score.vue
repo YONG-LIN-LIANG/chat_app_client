@@ -229,18 +229,23 @@ comments.forEach((i) => {
 // 計算個人評分平均
 let rateTotal = ref(0)
 let rateAmount = ref(0)
-let rateAverage = ref(0)
 
-const calRateAverage = () => {
+const rateAverage = computed(() => {
   ratingCount.forEach((i) => {
       rateTotal.value += i.star * i.count
       rateAmount.value += i.count
   })
-  rateAverage.value = rateTotal.value / rateAmount.value
-}
-calRateAverage()
+  return rateTotal.value / rateAmount.value
+})
+
 const rateAverageFormat = ref(rateAverage.value.toFixed(1))
 const rateAverageFloor = ref(Math.floor(rateAverage.value))
+const rateAverageFloat = computed(() => rateAverageFormat.value - rateAverageFloor.value)
+const csStarWidthCalc = computed(() => {
+  let width = rateAverageFloor.value * 24;
+  width += rateAverageFloat.value * 18
+  return `${width}px`
+});
 
 
 // pagination
@@ -250,8 +255,8 @@ let j
 const pageLast = ref(10);
 const handlePageShow = (pageActive)=>{
   if(pageActive < 3){
-  Object.assign(pageneighbor, [2,3])
-  pageneighbor.length = 2
+    Object.assign(pageneighbor, [2,3])
+    pageneighbor.length = 2
   }
   else if(pageActive > pageLast.value - 2){
     Object.assign(pageneighbor, [pageActive.value-2, pageActive.value-1])
@@ -313,9 +318,28 @@ const handleNextPage = () => {
     >
       <div class="ranking_name w-20 font-semibold">盧立倫</div>
       <div class="ranking_star_wrap flex items-center mr-5">
-        <div class="ranking_star flex text-green mr-2.5">
+        <!-- <div class="ranking_star flex text-green mr-2.5">
           <StarIcon v-for="i in 5" :key="i" :class="['mr-1', i > rateAverageFloor ? 'flex items-center text-gray-6' : '']" />
-        </div>
+        </div> -->
+        <div class="ranking_star flex text-green mr- w-32 min-w-32 relative">
+        <!-- <StarIcon
+          v-for="i in 5"
+          :key="i"
+          :class="['mr-1', { ' text-gray-5': i > rateItem.averageRating }]"
+        /> -->
+        <svg width="125" height="18" viewBox="0 0 125 18" fill="#bbdc75" xmlns="http://www.w3.org/2000/svg">;
+            <defs>  
+              <clipPath id="scoreClip">
+                  <path d="M9 0L11.0206 6.21885H17.5595L12.2694 10.0623L14.2901 16.2812L9 12.4377L3.70993 16.2812L5.73056 10.0623L0.440492 6.21885H6.97937L9 0Z" fill="red"/>;
+                  <path d="M33 0L35.0206 6.21885H41.5595L36.2694 10.0623L38.2901 16.2812L33 12.4377L27.7099 16.2812L29.7306 10.0623L24.4405 6.21885H30.9794L33 0Z" fill=""/>;
+                  <path d="M57 0L59.0206 6.21885H65.5595L60.2694 10.0623L62.2901 16.2812L57 12.4377L51.7099 16.2812L53.7306 10.0623L48.4405 6.21885H54.9794L57 0Z" fill=""/>;
+                  <path d="M81 0L83.0206 6.21885H89.5595L84.2694 10.0623L86.2901 16.2812L81 12.4377L75.7099 16.2812L77.7306 10.0623L72.4405 6.21885H78.9794L81 0Z" fill=""/>;
+                  <path d="M105 0L107.021 6.21885H113.56L108.269 10.0623L110.29 16.2812L105 12.4377L99.7099 16.2812L101.731 10.0623L96.4405 6.21885H102.979L105 0Z" fill=""/>;
+              </clipPath>
+            </defs>
+        </svg>
+        <div ref="starWidth" :style="{'width': csStarWidthCalc}" class="starColor bg-green h-6 absolute left-0 top-0"></div>
+      </div>
         <div class="ranking_average text-green mr-1">{{rateAverageFormat}}</div>
       </div>
       <div class="ranking_amount whitespace-nowrap text-sm text-gray-3">
@@ -591,5 +615,8 @@ const handleNextPage = () => {
 }
 .ellipsis{
   @apply w-7 h-9 mx-1 text-gray-2 text-sm flex items-center justify-center ;
+}
+.starColor{
+    clip-path: url(#scoreClip);
 }
 </style>

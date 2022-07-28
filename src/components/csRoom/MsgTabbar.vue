@@ -338,6 +338,10 @@ const handleUserChatList = async (item)=>{
     roomId: item.room_id,
     socketId: item.socket_id,
   });
+  
+  if(csRoom.windowWidth < 1023){
+    props.tabList.active = 0
+  }
   // csRoom.chatSectionDom.scrollTop = csRoom.chatSectionHeight;
   
   // await csRoom.scrollBottom()

@@ -38,8 +38,8 @@ const starWidthCalc = computed(() => {
     ]"
   >
     <div class="ranking_name w-20 max-w-20 min-w-20 font-semibold whitespace-nowrap">{{ rateItem.name }}</div>
-    <div class="ranking_star_wrap flex items-center mr-5">
-      <div class="ranking_star flex text-green mr-2.5 w-32 min-w-32 relative">
+    <div class="ranking_star_wrap flex items-center mr-3">
+      <div class="ranking_star flex text-green mr- w-32 min-w-32 relative">
         <!-- <StarIcon
           v-for="i in 5"
           :key="i"

@@ -39,21 +39,14 @@ export const usecsRoomStore = defineStore('csRoom', () => {
 	const chatSectionDom = ref(null)
 	const chatSectionHeight = ref(null)
 
-	// const scrollBottom = async () => {
-  	// 	console.log('chatSectionDom', chatSectionDom.value, chatSectionDom.value?.scrollHeight, chatSectionDom.value?.scrollTop)
-	// 	console.log("ccc", chatSectionHeight.value)
-	// 	if(chatSectionDom.value !== undefined && chatSectionDom.value !== null){
-	// 		console.log("inn")
-	// 		chatSectionDom.value.scrollTop = chatSectionHeight;
-	// 		console.log("current height", chatSectionDom.value, chatSectionDom.value.scrollTop)
-	// 	}
-		
-	// }
-
 	//客戶端離開聊天室 提示
 	let leaveClient = reactive([])
-
+	// 打字中
 	let isTyping = ref(false)
+	// 視窗寬度
+	let windowWidth = ref(window.innerWidth)
+
+
 	
 	return {
 		cs,
@@ -66,5 +59,6 @@ export const usecsRoomStore = defineStore('csRoom', () => {
 		createdTimeClock,
 		leaveClient,
 		isTyping,
+		windowWidth,
 	}
 })
