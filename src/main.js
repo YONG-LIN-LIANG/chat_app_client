@@ -13,14 +13,14 @@ app.use(router);
 import { usecsRoomStore } from "@/stores/csRoom";
 const csRoomStore = usecsRoomStore();
 router.beforeEach((to, from, next) => {
-  if(to.fullPath.includes("/csRoom")) {
-    if(typeof(csRoomStore.cs?.member_id) === "number"){
-        next()
-    } else{
-        next({ name:"login" })
+  if (to.fullPath.includes("/csRoom")) {
+    if (typeof csRoomStore.cs?.member_id === "number") {
+      next();
+    } else {
+      next({ name: "login" });
     }
   }
-//   console.log("to", to, "from", from);
+  //   console.log("to", to, "from", from);
   next();
 });
 

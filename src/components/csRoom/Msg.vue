@@ -7,7 +7,7 @@ import MsgTabbar from "@/components/csRoom/MsgTabbar.vue";
 import LeaveModule from "@/components/csRoom/LeaveModule.vue";
 
 import { usecsRoomStore } from "@/stores/csRoom";
-const csRoom = usecsRoomStore()
+const csRoom = usecsRoomStore();
 
 const chatEnd_closed = ref(true);
 const handle_chatEnd_closed = () => {
@@ -22,8 +22,8 @@ const tabList = reactive({
     { id: 3, name: "分類", icon: "ListIcon" },
   ],
 });
-const handletoggleTab = (activeNum)=>{
-  tabList.active = activeNum
+const handletoggleTab = (activeNum) => {
+  tabList.active = activeNum;
 };
 </script>
 <template>
@@ -31,12 +31,14 @@ const handletoggleTab = (activeNum)=>{
     <div class="title">訊息</div>
     <div class="flex mt-10 sm:mt-[6.5rem]">
       <div
-        
         :class="['msg_chatBox w-full', tabList.active === 0 ? '' : 'lg:hidden']"
       >
-        <MsgTopbar v-if="csRoom.userActive.member_id" @onToggle="handle_chatEnd_closed" />
-        <MsgChat v-if="csRoom.userActive.member_id"/>
-        <MsgSend v-if="csRoom.userActive.member_id"/>
+        <MsgTopbar
+          v-if="csRoom.userActive.member_id"
+          @onToggle="handle_chatEnd_closed"
+        />
+        <MsgChat v-if="csRoom.userActive.member_id" />
+        <MsgSend v-if="csRoom.userActive.member_id" />
       </div>
       <MsgTabbar :tabList="tabList" @toggleTab="handletoggleTab" />
       <LeaveModule

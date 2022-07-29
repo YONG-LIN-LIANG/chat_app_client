@@ -15,15 +15,11 @@
         @mouseover="handleMouseIn(idx)"
         @mouseleave="handleMouseOut(idx)"
       >
-        <StarIcon
-          :class="idx <= score - 1 ? 'text-green' : 'text-gray-6'"
-        />
+        <StarIcon :class="idx <= score - 1 ? 'text-green' : 'text-gray-6'" />
       </div>
     </div>
     <textarea class="w-full h-16 resize-none outline-0"></textarea>
-    <button
-      class="w-35 mt-5 p-2.5 mx-auto text-gray-2 bg-orange rounded-full"
-    >
+    <button class="w-35 mt-5 p-2.5 mx-auto text-gray-2 bg-orange rounded-full">
       結束對話
     </button>
     <button

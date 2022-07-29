@@ -6,7 +6,7 @@ import UpIcon from "@/components/svg/Up.vue";
 import DownIcon from "@/components/svg/Down.vue";
 
 import { usecsRoomStore } from "@/stores/csRoom";
-const csRoom = usecsRoomStore()
+const csRoom = usecsRoomStore();
 
 const searchOpen = ref(false);
 const toggle_searchOpen = () => {
@@ -17,7 +17,6 @@ const emit = defineEmits(["onToggle"]);
 const handleToggleDialog = () => {
   emit("on-toggle");
 };
-
 </script>
 
 <template>
@@ -25,10 +24,12 @@ const handleToggleDialog = () => {
     <div
       class="msg_topbar h-16 px-14 lg:px-7 py-0 flex justify-between items-center box-border shadow-layer3"
     >
-      <div  class="msg_name line-clamp-1 text-clip text-ellipsis text-lg font-medium text-gray-1">
-        {{csRoom.userActive.name}}
+      <div
+        class="msg_name line-clamp-1 text-clip text-ellipsis text-lg font-medium text-gray-1"
+      >
+        {{ csRoom.userActive.name }}
       </div>
-     
+
       <div class="msg_funcgroup flex items-center justify-center">
         <div
           class="btn_search w-9 h-9 flex items-center justify-center cursor-pointer text-gray-2 bg-gray-6 hover:bg-green-w20 rounded-md mx-4 my-0 ease-in duration-300"
@@ -38,7 +39,10 @@ const handleToggleDialog = () => {
         </div>
         <div
           class="btn_primary--orange btn_endChat"
-          @click="handleToggleDialog();csRoom.handleEndChat"
+          @click="
+            handleToggleDialog();
+            csRoom.handleEndChat;
+          "
         >
           結束對話
         </div>
@@ -112,7 +116,7 @@ const handleToggleDialog = () => {
 .input_search:focus {
   @apply border border-solid border-green;
 }
-.msg_name{
+.msg_name {
   overflow-wrap: anywhere;
 }
 </style>

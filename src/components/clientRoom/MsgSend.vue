@@ -9,7 +9,6 @@ const handleSendMessage = () => {
   emit("onSendMessage", { status: 2, content: message.value });
   message.value = "";
 };
-
 </script>
 
 <template>

@@ -1,7 +1,6 @@
 <script setup>
-import { ref, onMounted, onUpdated } from "vue";
+import { ref, onUpdated } from "vue";
 import { usecsRoomStore } from "@/stores/csRoom";
-import EllipsisIcon from "@/components/svg/Ellipsis.vue";
 
 const csRoom = usecsRoomStore();
 
@@ -9,11 +8,10 @@ const chatSection = ref(null);
 
 onUpdated(() => {
   csRoom.chatSectionDom = chatSection.value;
-    csRoom.chatSectionHeight = chatSection.value.scrollHeight;
-    console.log('2',csRoom.chatSectionHeight)
-    csRoom.chatSectionDom.scrollTop = csRoom.chatSectionHeight;
-})
-
+  csRoom.chatSectionHeight = chatSection.value.scrollHeight;
+  console.log("2", csRoom.chatSectionHeight);
+  csRoom.chatSectionDom.scrollTop = csRoom.chatSectionHeight;
+});
 
 const formatDate = (time) => {
   const today = new Date();
@@ -64,7 +62,7 @@ const formatDate = (time) => {
         :key="chatItem.created_time"
         class="w-full mx-0 my-3"
       >
-      <!-- 系統訊息 -->
+        <!-- 系統訊息 -->
         <div v-if="chatItem.status === 0" class="chat_tags_wrap">
           <div
             class="chat_tags_ques text-xs text-gray-2 text-center mx-0 my-2.5"
@@ -96,7 +94,7 @@ const formatDate = (time) => {
             </div>
           </div>
         </div>
-      <!-- 客戶訊息 -->
+        <!-- 客戶訊息 -->
         <div v-if="chatItem.status === 2" class="msg_receive">
           <span class="msg_receive_text bg-gray-6">{{ chatItem.message }}</span>
           <span
@@ -104,7 +102,7 @@ const formatDate = (time) => {
             >{{ csRoom.createdTimeClock(chatItem.created_time) }}
           </span>
         </div>
-      <!-- 客服訊息 -->
+        <!-- 客服訊息 -->
         <div v-if="chatItem.status === 1" class="msg_send justify-end">
           <span
             class="msg_time text-xs font-light text-gray-3 tracking-wide mx-2 my-0.5"
@@ -125,9 +123,12 @@ const formatDate = (time) => {
           <span class="text-xs">{{ item.cs_name }}</span>
         </div>
       </div>
-      <div v-show="csRoom.isTyping" class="client_typing text-xs text-gray-3 flex items-center">
+      <div
+        v-show="csRoom.isTyping"
+        class="client_typing text-xs text-gray-3 flex items-center"
+      >
         <span class="mr-2">對方正在輸入訊息</span>
-        <img class="w-10" src="@/assets/typing.gif" alt="">
+        <img class="w-10" src="@/assets/typing.gif" alt="" />
       </div>
     </div>
   </div>
@@ -163,7 +164,7 @@ const formatDate = (time) => {
   word-break: break-word;
 }
 
-.chat_tags_opts{
-@apply text-sm text-gray-2 rounded-20 m-1 border border-solid border-green px-3.5 py-1.5 cursor-pointer
+.chat_tags_opts {
+  @apply text-sm text-gray-2 rounded-20 m-1 border border-solid border-green px-3.5 py-1.5 cursor-pointer;
 }
 </style>
