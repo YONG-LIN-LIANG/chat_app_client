@@ -1,5 +1,10 @@
 <template>
-  <div class="flex items-center flex-col px-5 py-5 box-border">
+  <div
+    :class="[
+      'flex items-center flex-col px-5 box-border',
+      props.messageInfo.endTime ? '' : 'pb-5',
+    ]"
+  >
     <div class="w-full flex items-center flex-col">
       <!-- messageInfo.chatList[0].created_time -->
       <div
@@ -9,7 +14,7 @@
         {{ formatDate(props.messageInfo.chatList[0].createdTime) }}
       </div>
       <div
-        v-show="props.messageInfo.chatList.length"
+        v-show="props.messageInfo.roomId"
         class="text-sm font-medium text-green text-center mx-0 my-1.5"
       >
         開始聊天
@@ -32,7 +37,8 @@
             <div
               v-for="(option, idx2) in item.questionContent"
               :key="idx2"
-              :class="['chat_tags_opts text-sm text-gray-2 rounded-20 m-1 border border-solid border-green-Default px-3.5 py-1.5 ',
+              :class="[
+                'chat_tags_opts text-sm text-gray-2 rounded-20 m-1 border border-solid border-green px-3.5 py-1.5 ',
                 !item.answer
                   ? 'cursor-pointer hover:bg-green-w50'
                   : item.answer === option
@@ -59,7 +65,8 @@
             <div
               v-for="(option, idx2) in item.questionContent"
               :key="idx2"
-              :class="['chat_tags_opts text-sm text-gray-2 rounded-20 m-1 border border-solid border-green-Default px-3.5 py-1.5',
+              :class="[
+                'chat_tags_opts text-sm text-gray-2 rounded-20 m-1 border border-solid border-green px-3.5 py-1.5',
                 !item.answer
                   ? 'cursor-pointer hover:bg-green-w50'
                   : item.answer === option.name
@@ -85,7 +92,7 @@
             class="message w-full flex items-end mr-7"
           >
             <span
-              class="text-md text-gray-1 bg-gray-6 tracking-wide rounded-md px-4 py-2"
+              class="max-w-56 text-md text-gray-1 bg-gray-6 tracking-wide break-words rounded-md px-4 py-2"
               >{{ item.message }}</span
             >
             <span
@@ -104,21 +111,15 @@
               >{{ formatTime(item.createdTime) }}</span
             >
             <span
-              class="text-md text-gray-1 bg-green-w50 tracking-wide rounded-md px-4 py-2"
+              class="max-w-56 text-md text-gray-1 bg-green-w50 tracking-wide break-words rounded-md px-4 py-2"
               >{{ item.message }}</span
             >
           </div>
         </div>
       </div>
-      <div v-show="props.csInfo.typing" class="chat_action flex items-center">
-        <span class="text-xs text-gray-3 mx-1.5 my-0">林三良 正在輸入訊息</span>
-        <DoingIcon />
-      </div>
 
       <div v-show="props.messageInfo.endTime" class="mb-5">
-        <div
-          class="text-sm font-medium text-green text-center mx-0 my-1.5"
-        >
+        <div class="text-sm font-medium text-green text-center mx-0 my-1.5">
           結束聊天
         </div>
         <div class="text-gray-3">
@@ -131,7 +132,6 @@
 </template>
 
 <script setup>
-import DoingIcon from "@/components/svg/Doing.vue";
 import { defineProps, defineEmits } from "vue";
 const props = defineProps({
   messageInfo: {

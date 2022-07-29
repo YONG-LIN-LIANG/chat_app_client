@@ -173,17 +173,7 @@ onBeforeRouteUpdate((to) => {
     :class="['sidebar_section', hamOpen ? '' : 'sm:hidden']"
   >
     <div
-      class="
-        sidebar_info
-        box-border
-        px-8
-        lg:px-3.5
-        py-6
-        border-b border-solid border-white
-        sm:hidden
-        xxs:block
-      "
-
+      class="sidebar_info box-border px-8 lg:px-3.5 py-6 border-b border-solid border-white sm:hidden xxs:block"
     >
       <div class="flex items-center justify-between xxs:hidden">
         <div class="sidebar_logo w-9 flex">
@@ -253,7 +243,6 @@ onBeforeRouteUpdate((to) => {
             menu.active === 3 ? 'bg-green-w50 ' : 'bg-white',
           ]"
           @click="menu.active = 3"
-
         >
           <StarIcon class="w-4 text-green" />
           <span>4.9</span>

@@ -1,9 +1,9 @@
 <script setup>
 import { defineEmits } from "vue";
-import { useSocketStore } from '@/stores/socket'
+import { useSocketStore } from "@/stores/socket";
 import { usecsRoomStore } from "@/stores/csRoom";
-const socket = useSocketStore().socket
-const csRoom = usecsRoomStore()
+const socket = useSocketStore().socket;
+const csRoom = usecsRoomStore();
 
 const emit = defineEmits(["onToggle"]);
 
@@ -14,22 +14,20 @@ defineProps({
 });
 
 // 結束對話
-	const handleEndChat = () => {	
-    emit("on-toggle");
-		let endObject = {	
-			room_id: csRoom.userActive.room_id,
-			socket_id: csRoom.userActive.socket_id,
-			resource_id:1,
-			leave_room_info:{
-			identity:1,
-			is_room_already_close:false,
-			}
-		}
-		console.log('endObject',endObject)
-		socket.emit('reqLeaveRoom',endObject)
-	};
-
-
+const handleEndChat = () => {
+  emit("on-toggle");
+  let endObject = {
+    room_id: csRoom.userActive.room_id,
+    socket_id: csRoom.userActive.socket_id,
+    resource_id: 1,
+    leave_room_info: {
+      identity: 1,
+      is_room_already_close: false,
+    },
+  };
+  console.log("endObject", endObject);
+  socket.emit("reqLeaveRoom", endObject);
+};
 </script>
 
 <template>
@@ -47,7 +45,6 @@ defineProps({
     ></div>
 
     <div class="module_window">
-
       <div>要結束對話嗎?</div>
       <div class="py-3 text-xs text-gray-4 text-center">
         <p>對話結束後聊天室將被關閉，</p>

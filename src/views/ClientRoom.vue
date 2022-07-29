@@ -1,14 +1,14 @@
 <template>
   <section
     :class="[
-      'room-window-container fixed right-0 bottom-0',
-      isInRoom ? 'h-full max-h-141 pt-16' : 'h-auto pt-0',
+      'room-window-container fixed top-0 bottom-0',
+      isInRoom ? 'room-window-container--active' : 'h-auto pt-0',
     ]"
   >
     <!-- 聊天室 -->
     <div
       :class="[
-        'room-window flex flex-col relative w-85 h-full bg-white rounded-md overflow-hidden shadow-layer2',
+        'room-window flex flex-col relative w-full h-full bg-white rounded-md overflow-hidden shadow-layer2',
         isRoomOpen ? 'room-window--active' : '',
       ]"
     >
@@ -28,22 +28,33 @@
           </button>
         </div>
       </div>
-      <div ref="chatWindow" v-show="isInRoom" class="flex-grow overflow-y-auto">
+      <div ref="chatWindow" class="flex-grow pt-4 overflow-y-auto">
         <!-- :roomInfo="roomInfo" -->
-        <MsgChat
-          v-for="(item, idx) in roomInfo.chat"
-          :key="idx"
-          :messageInfo="item"
-          :csInfo="roomInfo.cs"
-          @onSendMessage="handleSendMessage"
-        />
+        <div v-if="!isVisitor">
+          <MsgChat
+            v-for="(item, idx) in roomInfo.chat"
+            :key="idx"
+            :messageInfo="item"
+            :csInfo="roomInfo.cs"
+            @onSendMessage="handleSendMessage"
+          />
+          <!-- 對方打字中提示 -->
+          <div v-show="isTyping" class="flex justify-center items-center mb-8">
+            <span class="text-xs text-gray-3 mx-1.5 my-0"
+              >客服人員 正在輸入訊息</span
+            >
+            <DoingIcon />
+          </div>
+        </div>
+
+        <div v-else class="flex-center flex-col h-full">
+          <h2>訪客聊天功能開發中</h2>
+          <h3>請登入進行諮詢</h3>
+        </div>
       </div>
       <div v-show="isInRoom" class="flex-none h-15">
         <MsgSend
           :csSocketId="roomInfo.cs.socketId"
-          :roomId="roomInfo.user.roomId"
-          :memberId="roomInfo.user.memberId"
-          :clientName="roomInfo.user.name"
           @onSendMessage="handleSendMessage"
         />
       </div>
@@ -90,10 +101,21 @@
       <!-- 結束聊天燈箱 -->
       <CloseRoomDialog
         :class="[
-          'endDialog absolute left-0 top-12 right-0 w-full',
+          'endDialog absolute left-0 top-12 right-0 bottom-0 w-full',
           dialog.name === 'end' && dialog.isOpen ? 'endDialog-active' : '',
         ]"
+        :csName="csName"
         @onCloseDialog="handleCloseDialog"
+      />
+      <AfterCloseRating
+        :class="[
+          'endDialog absolute left-0 top-12 right-0 w-full',
+          dialog.name === 'afterCloseRating' && dialog.isOpen
+            ? 'endDialog-active'
+            : '',
+        ]"
+        :csName="csName"
+        @onRatingRoom="handleCloseRating"
       />
     </div>
   </section>
@@ -105,33 +127,44 @@
     ]"
   >
     <div
-      class="shrink-0 flex items-center py-2.5 px-5 border border-green rounded-10 shadow-layer2 bg-white"
+      v-show="newMessageInfo.isNewMessageExist"
+      class="w-auto max-w-55 shrink-0 flex items-center border-2 border-green rounded-10 shadow-layer2 bg-white overflow-hidden"
     >
-      客服人員 {{}} 在線為您服務
+      <div class="my-2.5 mx-5 overflow-hidden">
+        {{ newMessage }}
+      </div>
     </div>
     <div
       @click="handleToggleRoom"
-      class="ml-5 p-3 border-2 border-green-neon rounded-full bg-white shadow-layer2 cursor-pointer"
+      :class="[
+        'flex-center w-15 h-15 mx-5 rounded-full bg-white shadow-layer2 cursor-pointer',
+        newMessageInfo.isMessageShow ? 'border-3 border-green-neon' : '',
+      ]"
     >
       <CsAvatar />
     </div>
   </section>
 </template>
 <script setup>
+import DoingIcon from "@/components/svg/Doing.vue";
 import SearchIcon from "@/components/svg/Search.vue";
 import HideIcon from "@/components/svg/Hide.vue";
 import CrossIcon from "@/components/svg/Cross.vue";
 import MsgChat from "@/components/clientRoom/MsgChat.vue";
 import MsgSend from "@/components/clientRoom/MsgSend.vue";
 import CsAvatar from "@/components/svg/CsAvatar.vue";
-// import CloseRoomDialog from "@/components/clientRoom/CloseRoomDialog";
+import CloseRoomDialog from "@/components/clientRoom/CloseRoomDialog.vue";
+import AfterCloseRating from "@/components/clientRoom/AfterCloseRatingDialog.vue";
 import { reactive } from "@vue/reactivity";
 import { ref, computed, onMounted, onBeforeUnmount } from "vue";
 import { useClientStore } from "@/stores/client";
 import { useSocketStore } from "@/stores/socket";
+import { handleFormatRoomListData } from "@/function/index";
 const clientStore = useClientStore();
 const socket = useSocketStore().socket;
 const chatWindow = ref(null);
+let newMessageTimeout = ref(null);
+const newMessage = ref("");
 const roomInfo = reactive({
   user: {
     memberId: 0,
@@ -156,6 +189,11 @@ const roomInfo = reactive({
   // {status:1, messageId:1, csName:, message:, createdTime}
   // 送出時先推送訊息，推送成功時返回系統時間及messageId並塞回原本的訊息
 });
+const roomId = computed(() => roomInfo.user.roomId);
+const ratingRoomId = ref(0);
+const csSocketId = computed(() => roomInfo.cs.socketId);
+let isTyping = ref(false);
+const csName = computed(() => roomInfo.cs.name);
 const dialog = reactive({
   name: "",
   isOpen: false,
@@ -165,8 +203,13 @@ const visitorNameForm = reactive({
   errorMessage: "",
 });
 let isRoomOpen = ref(false);
+// let isNewMessageShow = ref(false);
+let newMessageInfo = reactive({
+  isMessageShow: false,
+  isNewMessageExist: false,
+});
 const visitorStep = ref(1);
-const isVisitor = roomInfo.user.authorization === 1;
+let isVisitor = computed(() => roomInfo.user.authorization === "2");
 const clientName = roomInfo.user.name;
 const isInRoom = roomInfo.user.socketId;
 
@@ -215,7 +258,8 @@ const handleSendSecondSmessage = (secondSmessage) => {
 const shouldFirstMsgSend = computed(
   () =>
     !roomInfo.chat.length ||
-    !roomInfo.chat[roomInfo.chat.length - 1].chatList.length
+    !roomInfo.chat[roomInfo.chat.length - 1].chatList.length ||
+    roomInfo.chat[roomInfo.chat.length - 1].endTime
 );
 const shouldSecondMsgSend = computed(
   () =>
@@ -223,122 +267,11 @@ const shouldSecondMsgSend = computed(
     roomInfo.chat[roomInfo.chat.length - 1].chatList[0].answer &&
     roomInfo.chat[roomInfo.chat.length - 1].chatList.length === 1
 );
-onMounted(() => {
-  setTimeout(() => {
-    console.log(
-      "timeout",
-      chatWindow.value.scrollTop,
-      chatWindow.value.scrollHeight
-    );
-  }, 1);
-  // 接收登入回應時事件
-  socket.on("resLogin", (data) => {
-    console.log("dataa", data);
-    const { chat, cs, user, question, secondSmessage } = data;
-    roomInfo.user = {
-      ...roomInfo.user,
-      group: user.group_name,
-      website: user.website_name,
-      memberId: user.member_id,
-      roomId: user.room_id,
-      socketId: user.socket_id,
-    };
-    roomInfo.chat = chat.map((i) => {
-      const newChatList = i.chatList.map((msg) => {
-        if (msg.status === 0) {
-          return {
-            answer: msg.answer,
-            createdTime: msg.created_time,
-            question: msg.question,
-            questionContent: msg.question_content,
-            questionId: msg.question_id,
-            status: msg.status,
-          };
-        } else if (msg.status === 1 || msg.status === 2) {
-          return {
-            status: msg.status,
-            messageId: msg.message_id,
-            memberId: msg.member_id,
-            name: msg.name,
-            message: msg.message,
-            createdTime: msg.created_time,
-          };
-        }
-      });
-      const newRoomObject = {
-        beginTime: i.begin_time,
-        csName: i.cs_name,
-        csMemberId: i.cs_member_id,
-        endTime: i.end_time,
-        group: i.group,
-        isReadId: i.is_read_id,
-        roomId: i.room_id,
-        website: i.website,
-        chatList: newChatList,
-      };
-      return newRoomObject;
-    });
-    roomInfo.cs = {
-      ...roomInfo.cs,
-      ...cs,
-    };
-    // 判斷如果roomId為0且，送出第一則系統訊息
-    if (user.room_id === 0) {
-      // 確定是否滿足送出第一則系統訊息條件
-      if (shouldFirstMsgSend.value) {
-        handleSendFirstSmessage(question);
-        // 確定是否滿足送出第二則系統訊息條件
-      } else if (shouldSecondMsgSend.value) {
-        handleSendSecondSmessage(secondSmessage);
-      }
-    }
-    console.log("roomInfoo", roomInfo);
-  });
-  // 接收傳送訊息回應時事件
-  socket.on("resSendMessage", (data) => {
-    const { identity, messageCreatedTime } = data;
-    console.log("xxxxxxxx", data);
-    if (identity === 0) {
-      const { questionId } = data;
-      if (messageCreatedTime) {
-        roomInfo.chat[roomInfo.chat.length - 1].chatList.find(
-          (i) => i.questionId === questionId
-        ).createdTime = messageCreatedTime;
-        // 送第二則系統訊息，在handleSendSecondSmessage裡寫死
-        if (questionId === 1) {
-          const { secondSmessage } = data;
-          handleSendSecondSmessage(secondSmessage);
-        } else if (questionId === 2) {
-          const { roomId, csInfo, firstMessage } = data;
-          roomInfo.cs = {
-            ...roomInfo.cs,
-            ...csInfo,
-          };
-          roomInfo.user.roomId = roomId;
-          console.log("sec roominfo", roomInfo);
-          const currentRoom = roomInfo.chat[roomInfo.chat.length - 1];
-          currentRoom.chatList.push(firstMessage);
-          currentRoom.beginTime = messageCreatedTime;
-        }
-
-        // 發送第二則系統訊息(先寫死)
-        // roomInfo.chat[roomInfo.chat.length - 1].chatList.push({
-        //   ...secondSmessage,
-        //   answer: "",
-        //   createdTime: "",
-        // });
-        console.log("roomInfo", roomInfo);
-      } else {
-        // 提示系統異常
-      }
-    } else if (identity === 1 || identity === 2) {
-      const { messageId } = data;
-      // 用messageId找到那則訊息
-      roomInfo.chat[roomInfo.chat.length - 1].chatList.find(
-        (i) => i.messageId === messageId
-      ).createdTime = messageCreatedTime;
-    }
-  });
+onMounted(async () => {
+  // 把localstorage聊天室狀態塞回data
+  handleInitializeRoomSetting();
+  // 初始化socket on接收事件
+  handleInitializeSocketOnEvent();
   window.addEventListener("message", handleMessage);
 });
 onBeforeUnmount(() => {
@@ -356,48 +289,234 @@ const handleMessage = (message) => {
     ...data,
   };
   socket.emit("reqLogin", { ...data, identity: 2 });
-  // setTimeout(() => {
-  //   if (data.authentication === "1") {
-  //     console.log("here2");
-  //     handleConnect(data);
-  //   }
-  // }, 1);
+};
+
+const handleInitializeSocketOnEvent = () => {
+  socket.on("resLogin", (data) => {
+    console.log("dataa", data);
+    const { chat, cs, user, question, secondSmessage } = data;
+    roomInfo.user = {
+      ...roomInfo.user,
+      group: user.group_name,
+      website: user.website_name,
+      memberId: user.member_id,
+      roomId: user.room_id,
+      socketId: user.socket_id,
+    };
+    ratingRoomId.value = user.room_id;
+    roomInfo.chat = handleFormatRoomListData(chat);
+    roomInfo.cs = {
+      ...roomInfo.cs,
+      ...cs,
+    };
+    // 判斷如果roomId為0且，送出第一則系統訊息
+    if (user.room_id === 0) {
+      // 確定是否滿足送出第一則系統訊息條件
+      console.log("shouldFirstMsgSend", shouldFirstMsgSend.value);
+      if (shouldFirstMsgSend.value) {
+        handleSendFirstSmessage(question);
+        // 確定是否滿足送出第二則系統訊息條件
+      } else if (shouldSecondMsgSend.value) {
+        handleSendSecondSmessage(secondSmessage);
+      }
+    }
+    console.log("roomInfoo", roomInfo);
+  });
+  socket.on("resSendMessage", async (data) => {
+    const { identity, messageCreatedTime } = data;
+    if (identity === 0) {
+      const { questionId } = data;
+      if (messageCreatedTime) {
+        roomInfo.chat[roomInfo.chat.length - 1].chatList.find(
+          (i) => i.questionId === questionId
+        ).createdTime = messageCreatedTime;
+        // 送第二則系統訊息，在handleSendSecondSmessage裡寫死
+        if (questionId === 1) {
+          const { secondSmessage } = data;
+          handleSendSecondSmessage(secondSmessage);
+        } else if (questionId === 2) {
+          // 把系統訊息2及配對拆開
+          const { roomId, csInfo, firstMessage } = data;
+          roomInfo.cs = {
+            ...roomInfo.cs,
+            ...csInfo,
+          };
+          roomInfo.user.roomId = roomId;
+          console.log("sec roominfo", roomInfo);
+          const currentRoom = roomInfo.chat[roomInfo.chat.length - 1];
+          currentRoom.chatList.push(firstMessage);
+          currentRoom.roomId = roomId;
+          ratingRoomId.value = roomId;
+          currentRoom.beginTime = messageCreatedTime;
+        }
+        console.log("roomInfo", roomInfo);
+      } else {
+        // 提示系統異常
+      }
+    } else if (identity === 2) {
+      const { messageId } = data;
+      // 用messageId找到那則訊息
+      roomInfo.chat[roomInfo.chat.length - 1].chatList.find(
+        (i) => i.messageId === messageId
+      ).createdTime = messageCreatedTime;
+    } else if (identity === 1) {
+      const { message } = data;
+      console.log("check");
+      roomInfo.chat[roomInfo.chat.length - 1].chatList.push(message);
+      console.log("test", roomInfo.chat[roomInfo.chat.length - 1].chatList);
+      newMessage.value = message.message;
+      await handleScrollToBottom();
+      // 圓圈、訊息都顯示，然後啟動3秒timer
+      newMessageInfo.isMessageShow = true;
+      newMessageInfo.isNewMessageExist = true;
+      console.log("check", newMessageInfo);
+      handlePostMessageToParent();
+      handleNewMessageCountdown();
+    }
+  });
+  socket.on("resReadMessage", (data) => {
+    console.log("readId", data);
+  });
+  socket.on("resUpdateSocketId", (data) => {
+    console.log("new cs socket id", data);
+    roomInfo.cs.socketId = data;
+    console.log("update roomInfo", roomInfo);
+  });
+  socket.on("resLeaveRoom", async (data) => {
+    const { identity, end_time, first_question, is_room_already_close } = data;
+    console.log("this is data", data);
+    if (identity === 1 && !is_room_already_close) {
+      // 先補上聊天室結束時間再冒出填寫評分燈箱
+      console.log("empty so far");
+      const currentRoom = roomInfo.chat.find((i) => i.roomId === roomId.value);
+      currentRoom.endTime = end_time;
+      handleSendFirstSmessage(first_question);
+      handleOpenDialog("afterCloseRating");
+    } else if (identity === 2 && is_room_already_close) {
+      console.log("successful rating");
+      handleToggleRoom();
+      // 客服人員已結束聊天，客戶端補評分的回應，關閉評分燈箱
+      ratingRoomId.value = 0;
+      dialog.name = "";
+      dialog.isOpen = false;
+    } else if (identity === 2 && !is_room_already_close) {
+      console.log("go heree");
+      handleToggleRoom();
+      // 成功退出房間，幫最後一間房間填上end_time
+      const currentRoom = roomInfo.chat.find((i) => i.roomId === roomId.value);
+      console.log("jjj", currentRoom, roomInfo, roomId.value);
+      currentRoom.endTime = end_time;
+      handleSendFirstSmessage(first_question);
+      dialog.name = "";
+      dialog.isOpen = false;
+    }
+    // 退出聊天室後重置roomId為0
+    roomInfo.user.roomId = 0;
+    await handleScrollToBottom();
+  });
+  socket.on("resTyping", async (data) => {
+    console.log("typing", data);
+    isTyping.value = data;
+    await handleScrollToBottom();
+  });
+};
+const handleInitializeRoomSetting = () => {
+  const chatRoomObj = localStorage.getItem("chatRoom")
+    ? JSON.parse(localStorage.getItem("chatRoom"))
+    : { isMessageShow: false, isRoomOpen: false };
+  isRoomOpen.value = chatRoomObj.isRoomOpen;
+  newMessageInfo.isMessageShow = chatRoomObj.isMessageShow;
+  handlePostMessageToParent();
+  setTimeout(async () => {
+    await handleScrollToBottom();
+  }, 500);
+};
+const handlePostMessageToParent = () => {
+  const chatRoomObj = {
+    isRoomOpen: isRoomOpen.value,
+    isMessageShow: newMessageInfo.isMessageShow,
+  };
+  localStorage.setItem("chatRoom", JSON.stringify(chatRoomObj));
+  window.parent.postMessage(
+    {
+      isRoomOpen: isRoomOpen.value,
+      isNewMessageShow: newMessageInfo.isNewMessageExist,
+    },
+    "*"
+  );
 };
 const handleScrollToBottom = async () => {
+  console.log("check scroll down", chatWindow.value.scrollHeight);
   chatWindow.value.scrollTop = await chatWindow.value.scrollHeight;
 };
 const handleToggleRoom = async () => {
   await handleScrollToBottom();
   isRoomOpen.value = !isRoomOpen.value;
-  window.parent.postMessage(
-    {
-      isRoomOpen: isRoomOpen.value,
-    },
-    "*"
-  );
+  console.log("aaa", isRoomOpen.value);
+  // 強制移除圈圈及新訊息
+  newMessageInfo.isMessageShow = false;
+  newMessageInfo.isNewMessageExist = false;
+  handlePostMessageToParent();
 };
-
-// const handleFormatTimestamp = (time) => {
-//   return Math.floor(new Date(time) / 1000);
-// };
 
 const handleVisitorJoinRoom = () => {
   if (!visitorNameForm.name) {
     visitorNameForm.errorMessage = "欄位必填";
     return;
   }
-  // socket.emit('clientJoinRoom', {authorization, name, uuid})
 };
 const handleOpenDialog = (name) => {
+  console.log("click");
+  if (name === "end" && roomId.value === 0) return;
   dialog.name = name;
   dialog.isOpen = true;
+  console.log("dialog", dialog);
 };
 
-const handleCloseDialog = () => {
-  dialog.name = "";
-  dialog.isOpen = false;
+const handleCloseDialog = (data) => {
+  const { action, ratingInfo } = data;
+  console.log("111");
+  // action為0時結束聊天，1時返回聊天
+  if (!action) {
+    console.log("222");
+    socket.emit("reqLeaveRoom", {
+      room_id: roomId.value,
+      socket_id: csSocketId.value,
+      resource_id: roomInfo.user.web_resource,
+      leave_room_info: {
+        ...ratingInfo,
+        identity: 2,
+        is_room_already_close: false,
+      },
+    });
+  } else {
+    dialog.name = "";
+    dialog.isOpen = false;
+  }
+};
+const handleCloseRating = (data) => {
+  console.log("check close", ratingRoomId.value);
+  socket.emit("reqLeaveRoom", {
+    room_id: ratingRoomId.value,
+    leave_room_info: {
+      ...data,
+      identity: 2,
+      is_room_already_close: true,
+    },
+  });
 };
 
+const handleStartTimer = () => {
+  newMessageTimeout.value = setTimeout(() => {
+    clearTimeout(newMessageTimeout.value);
+    newMessageInfo.isNewMessageExist = false;
+    handlePostMessageToParent();
+  }, 3000);
+};
+const handleNewMessageCountdown = () => {
+  clearTimeout(newMessageTimeout.value);
+  handleStartTimer();
+};
 const handleSendMessage = async (data) => {
   console.log("sendData", data);
   // 先將data的answer塞值，再打socket發api
@@ -423,7 +542,6 @@ const handleSendMessage = async (data) => {
         memberId: roomInfo.user.memberId,
         questionId,
         question: findSmessage.question,
-        // questionContent: findSmessage.questionContent.toString(),
         questionContent: findSmessage.questionContent,
         answer: findSmessage.answer,
       };
@@ -476,20 +594,28 @@ const handleSendMessage = async (data) => {
     @apply top-0;
   }
 }
+.room-window-container--active {
+  position: fixed;
+  left: 0;
+  right: 0;
+  margin: auto;
+  width: calc(100% - 40px);
+  height: calc(100% - 40px);
+}
 .room-window {
   @apply -z-9999 select-none opacity-0 transition-all duration-300 ease-in-out delay-0;
 }
 .room-window--active {
-  @apply select-auto -translate-y-8 delay-200 z-9999 opacity-100;
+  @apply select-auto delay-200 z-9999 opacity-100;
 }
 .chat-ball {
-  @apply z-9999 transition-all duration-300 ease-in-out delay-200 opacity-100;
+  @apply z-9999 transition-all duration-300 ease-in-out delay-500 opacity-100;
 }
 .chat-ball--active {
   @apply translate-y-8 delay-0 -z-9999 opacity-0;
 }
 .header-icon {
-  @apply flex justify-center items-center w-7.5 h-7.5 cursor-pointer hover:bg-white rounded-full transition-all duration-300 ease-in-out;
+  @apply flex justify-center items-center w-7.5 h-7.5 cursor-pointer hover:bg-white-w50 rounded-full transition-all duration-300 ease-in-out;
 }
 .header-icon + .header-icon {
   @apply ml-2;
