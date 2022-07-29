@@ -1,8 +1,12 @@
 <script setup>
 import { ref, defineEmits } from "vue";
+
 import SearchIcon from "@/components/svg/Search.vue";
 import UpIcon from "@/components/svg/Up.vue";
 import DownIcon from "@/components/svg/Down.vue";
+
+import { usecsRoomStore } from "@/stores/csRoom";
+const csRoom = usecsRoomStore();
 
 const searchOpen = ref(false);
 const toggle_searchOpen = () => {
@@ -11,7 +15,7 @@ const toggle_searchOpen = () => {
 
 const emit = defineEmits(["onToggle"]);
 const handleToggleDialog = () => {
-  emit("onToggle");
+  emit("on-toggle");
 };
 </script>
 
@@ -20,9 +24,12 @@ const handleToggleDialog = () => {
     <div
       class="msg_topbar h-16 px-14 lg:px-7 py-0 flex justify-between items-center box-border shadow-layer3"
     >
-      <div class="msg_name whitespace-nowrap text-lg font-medium text-gray-1">
-        林三良
+      <div
+        class="msg_name line-clamp-1 text-clip text-ellipsis text-lg font-medium text-gray-1"
+      >
+        {{ csRoom.userActive.name }}
       </div>
+
       <div class="msg_funcgroup flex items-center justify-center">
         <div
           class="btn_search w-9 h-9 flex items-center justify-center cursor-pointer text-gray-2 bg-gray-6 hover:bg-green-w20 rounded-md mx-4 my-0 ease-in duration-300"
@@ -32,7 +39,10 @@ const handleToggleDialog = () => {
         </div>
         <div
           class="btn_primary--orange btn_endChat"
-          @click="handleToggleDialog"
+          @click="
+            handleToggleDialog();
+            csRoom.handleEndChat;
+          "
         >
           結束對話
         </div>
@@ -56,7 +66,7 @@ const handleToggleDialog = () => {
             class="input_search w-64 h-10 box-border tracking-wider rounded-r-none px-2.5 py-0"
           />
           <div
-            class="btn_search w-10 h-10 flex items-center justify-center cursor-pointer text-white bg-green-Default hover:bg-green-w50 rounded-r ease-in duration-300"
+            class="btn_search w-10 h-10 flex items-center justify-center cursor-pointer text-white bg-green hover:bg-green-w50 rounded-r ease-in duration-300"
           >
             <SearchIcon />
           </div>
@@ -104,6 +114,9 @@ const handleToggleDialog = () => {
 }
 
 .input_search:focus {
-  @apply border border-solid border-green-Default;
+  @apply border border-solid border-green;
+}
+.msg_name {
+  overflow-wrap: anywhere;
 }
 </style>

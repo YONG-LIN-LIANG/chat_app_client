@@ -1,48 +1,36 @@
 <script setup>
 import CSLogo from "@/components/svg/Logo.vue";
-// import { useSocketStore } from '@/stores/socket'
-// import { useCsStore } from "@/stores/cs";
-import { reactive } from "vue";
-// import { useRouter, useRoute } from "vue-router";
-// const router = useRouter();
-// const socketStore = useSocketStore()
-// const csStore = useCsStore();
-// const { socket } = socketStore
-// onBeforeMount(() => {
-// 	socket.on('resLogin', (data) => {
-// 		const { identity, status } = data
-// 		if (identity !== 1) return
-// 		else {
-// 			if (status === 201) {
-// 				// 登入成功
-// 				console.log('loginData', data)
-// 				csStore.setCs({
-// 					uuid: data.uuid,
-// 					socketId: data.socketId,
-// 					name: data.name,
-// 				})
-// 				csStore.setRoomList(data.roomList)
-// 				router.push({ name: 'csRoom' })
-// 			} else {
-// 				// 帳號密碼錯誤
-// 				console.log('loginFail', data)
-// 			}
-// 		}
-// 	})
-// 	socket.on('resLogout', (data) => {
-// 		const { identity } = data
-// 		if (identity === 1) {
-// 			console.log('this is..', identity)
-// 			// 推回登入頁
-// 			router.push({ name: 'login' })
-// 			// 把客服人員個人資料清空
-// 			csStore.setCs({})
-// 		}
-// 	})
-// })
+import { useSocketStore } from "@/stores/socket";
+import { usecsRoomStore } from '@/stores/csRoom';
+import { reactive, onBeforeMount } from "vue";
+import { useRouter } from "vue-router";
+
+const socketStore = useSocketStore();
+const csRoom = usecsRoomStore();
+const router = useRouter();
+
+const { socket } = socketStore;
+onBeforeMount(() => {
+  socket.on("resLogin", (data) => {
+    const { status } = data;
+    if (status === 200) {
+      // 導頁到csRome
+      alert("登入成功");
+      console.log("login successfully", data.user_list);
+      Object.assign(csRoom.cs, data.cs_info)
+      Object.assign(csRoom.userList, data.user_list)
+      // 切換到登入後訊息路由 csRoom/msg
+      router.push('/csRoom/msg')
+    } else {
+      // 顯示登入失敗訊息
+      alert("帳號密碼有誤");
+    }
+  });
+});
+
 const form = reactive({
-  account: "",
-  password: "",
+  account: "aa12345",
+  password: "aa12345",
   errorMessage: "",
 });
 function handleLogin() {
@@ -51,12 +39,14 @@ function handleLogin() {
     return;
   }
   form.errorMessage = "";
-  // const socketData = {
-  // 	identity: 1,
-  // 	account: form.account,
-  // 	password: form.password,
-  // }
-  // socket.emit('reqLogin', socketData)
+  const socketData = {
+    identity: 1,
+    account: form.account,
+    password: form.password,
+  };
+  // console.log("ttt", socketData);
+  socket.emit("reqLogin", socketData);
+ 
 }
 </script>
 

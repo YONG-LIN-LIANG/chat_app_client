@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import CsLogin from "@/views/CsLogin.vue";
-import CsRoom from "@/views/CsRoom.vue";
+import csRoom from "@/views/csRoom.vue";
 import ClientRoom from "@/views/ClientRoom.vue";
 import Msg from "@/components/csRoom/Msg.vue";
 import Ranking from "@/components/csRoom/Ranking.vue";
@@ -10,6 +10,12 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
+      path: "/",
+      redirect: {
+        name: "login",
+      },
+    },
+    {
       path: "/login",
       name: "login",
       component: CsLogin,
@@ -17,7 +23,7 @@ const router = createRouter({
     {
       path: "/csRoom",
       name: "csRoom",
-      component: CsRoom,
+      component: csRoom,
       children: [
         {
           path: "msg",

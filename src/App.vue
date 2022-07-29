@@ -2,27 +2,13 @@
 import { RouterView } from "vue-router";
 import { useSocketStore } from "@/stores/socket";
 const socketIp = import.meta.env.VITE_SOCKET_URL;
-import { io } from "socket.io-client";
+
 const endPoint = socketIp;
+import { io } from "socket.io-client";
 const socket = io(endPoint);
 const socketStore = useSocketStore();
 socketStore.setSocket(socket);
-
-// 重整時呼叫socket檢查userInfo是否存在，有的話把socketId更新，並返回新的object，
-// socket.emit('reqCsUser')
-// socket.on("resCsUser", (data) => {
-//   if (data === null) return;
-//   console.log("new user data", data);
-//   const { status, userInfo } = data;
-//   if (status === 200) {
-//     csStore.setCs(userInfo);
-//     if (route.name === "login") {
-//       router.push({ name: "csRoom" });
-//     }
-//   } else {
-//     router.push({ name: "login" });
-//   }
-// });
+console.log("data2", socket);
 </script>
 <template>
   <RouterView />

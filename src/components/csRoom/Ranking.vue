@@ -90,7 +90,7 @@ const ratingList = reactive([
   },
   {
     name: "阿成",
-    averageRating: 4.9,
+    averageRating: 4.1,
     totalRatingNum: 373,
     showDetail: false,
     ratingCal: [
@@ -118,7 +118,7 @@ const ratingList = reactive([
   },
   {
     name: "阿成",
-    averageRating: 4.9,
+    averageRating: 3.7,
     totalRatingNum: 33,
     showDetail: false,
     ratingCal: [
@@ -146,7 +146,7 @@ const ratingList = reactive([
   },
   {
     name: "阿成",
-    averageRating: 4.9,
+    averageRating: 3.2,
     totalRatingNum: 33,
     showDetail: false,
     ratingCal: [
@@ -174,7 +174,7 @@ const ratingList = reactive([
   },
   {
     name: "阿成",
-    averageRating: 4.9,
+    averageRating: 2.5,
     totalRatingNum: 33,
     showDetail: false,
     ratingCal: [

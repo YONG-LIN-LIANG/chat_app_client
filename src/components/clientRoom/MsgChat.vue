@@ -15,7 +15,7 @@
       </div>
       <div
         v-show="props.messageInfo.roomId"
-        class="text-sm font-medium text-green-Default text-center mx-0 my-1.5"
+        class="text-sm font-medium text-green text-center mx-0 my-1.5"
       >
         開始聊天
       </div>
@@ -38,7 +38,7 @@
               v-for="(option, idx2) in item.questionContent"
               :key="idx2"
               :class="[
-                'chat_tags_opts text-sm text-gray-2 rounded-20 m-1 border border-solid border-green-Default px-3.5 py-1.5 ',
+                'chat_tags_opts text-sm text-gray-2 rounded-20 m-1 border border-solid border-green px-3.5 py-1.5 ',
                 !item.answer
                   ? 'cursor-pointer hover:bg-green-w50'
                   : item.answer === option
@@ -66,7 +66,7 @@
               v-for="(option, idx2) in item.questionContent"
               :key="idx2"
               :class="[
-                'chat_tags_opts text-sm text-gray-2 rounded-20 m-1 border border-solid border-green-Default px-3.5 py-1.5',
+                'chat_tags_opts text-sm text-gray-2 rounded-20 m-1 border border-solid border-green px-3.5 py-1.5',
                 !item.answer
                   ? 'cursor-pointer hover:bg-green-w50'
                   : item.answer === option.name
@@ -119,9 +119,7 @@
       </div>
 
       <div v-show="props.messageInfo.endTime" class="mb-5">
-        <div
-          class="text-sm font-medium text-green-Default text-center mx-0 my-1.5"
-        >
+        <div class="text-sm font-medium text-green text-center mx-0 my-1.5">
           結束聊天
         </div>
         <div class="text-gray-3">

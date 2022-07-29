@@ -17,7 +17,7 @@ module.exports = {
           7: "#FCFCFC",
         },
         green: {
-          Default: "#bbdc75",
+          DEFAULT: "#bbdc75",
           w20: "#f1f8e3",
           w50: "#ddedba",
           b50: "#5d6e3a",
@@ -25,7 +25,7 @@ module.exports = {
           neon: "#e3ff39",
         },
         orange: {
-          Default: "#faa677",
+          DEFAULT: "#faa677",
           w20: "#feede4",
           b90: "#e1956b",
         },
@@ -56,6 +56,7 @@ module.exports = {
         "1/2Re": "-50%",
       },
       width: {
+        4.5: "18px",
         7.5: "30px",
         15: "60px",
         35: "140px",
@@ -66,17 +67,23 @@ module.exports = {
       },
       minWidth: {
         3: "12px",
+        4.5: "18px",
         14: "56px",
         16: "64px",
+        20: "80px",
         48: "192px",
         66: "264px",
+        85: "340px",
       },
       maxWidth: {
+        20: "80px",
+        29: "116px",
         55: "220px",
         56: "224px",
         66: "264px",
       },
       height: {
+        4.5: "18px",
         7.5: "30px",
         15: "60px",
         105: "420px",

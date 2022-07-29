@@ -34,7 +34,7 @@ const handleTyping = () => {
     />
     <SendIcon
       @click="handleSendMessage"
-      class="ml-5 cursor-pointer text-orange-Default hover:text-orange-b90"
+      class="ml-5 cursor-pointer text-orange hover:text-orange-b90"
     />
   </div>
 </template>
