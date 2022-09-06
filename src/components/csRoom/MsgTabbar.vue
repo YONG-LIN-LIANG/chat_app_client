@@ -129,7 +129,7 @@ onMounted(() => {
 
   // 接收聊天配對
   socket.on("resPair", (data) => {
-    console.log('rrr',data)
+    console.log("rrr", data);
     csRoom.userList.unshift(data);
   });
   //離開聊天室
@@ -346,8 +346,8 @@ const handleUserChatList = async (item) => {
     socketId: item.socket_id,
   });
   // console.log('window.innerWidth',window.innerWidth)
-  if(window.innerWidth < 1023){
-    emit("toggleTab", 0)
+  if (window.innerWidth < 1023) {
+    emit("toggleTab", 0);
   }
   // csRoom.chatSectionDom.scrollTop = csRoom.chatSectionHeight;
 
