@@ -1,8 +1,9 @@
 <script setup>
-import { reactive } from "vue";
+import { ref, reactive } from "vue";
 import RankingInfo from "@/components/csRoom/RankingInfo.vue";
 import SunIcon from "@/components/svg/Sun.vue";
 
+const ratingListHover = ref(null)
 const ratingList = reactive([
   {
     name: "林三良",
@@ -201,6 +202,11 @@ const ratingList = reactive([
     ],
   },
 ]);
+const handleRankingDetail = (data) => {
+  ratingListHover.value = data
+  console.log("data", data)
+};
+
 </script>
 
 <template>
@@ -227,7 +233,7 @@ const ratingList = reactive([
               >{{ idx + 1 }}</span
             >
           </div>
-          <RankingInfo :rateItem="rateItem" :idx="idx" />
+          <RankingInfo :rateItem="rateItem" :idx="idx" :ratingListHover="ratingListHover" @onRankingDetail="handleRankingDetail"/>
         </div>
       </div>
     </div>

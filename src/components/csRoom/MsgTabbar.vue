@@ -344,14 +344,13 @@ const handleUserChatList = async (item) => {
     roomId: item.room_id,
     socketId: item.socket_id,
   });
+  
+  if(csRoom.windowWidth < 1023){
+    props.tabList.active = 0
+  }
   // csRoom.chatSectionDom.scrollTop = csRoom.chatSectionHeight;
 
   // await csRoom.scrollBottom()
-  // console.log('csRoom.userActive',csRoom.userActive)
-  // if(csRoom.userActive.member_id){
-  // csRoom.chatSectionDom.scrollTop = await csRoom.chatSectionDom.scrollHeight;
-  // csRoom.chatSectionDom.scrollTop = await csRoom.chatSectionDom.value.scrollHeight;
-  // }
 };
 watch(
   csRoom.chatSectionDom,
