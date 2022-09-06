@@ -230,33 +230,27 @@ comments.forEach((i) => {
 let rateTotal = ref(0)
 let rateAmount = ref(0)
 
-const rateAverage = computed(() => {
+const calRateAverage = () => {
   ratingCount.forEach((i) => {
       rateTotal.value += i.star * i.count
       rateAmount.value += i.count
   })
-  return rateTotal.value / rateAmount.value
-})
-
+  rateAverage.value = rateTotal.value / rateAmount.value
+}
+calRateAverage()
 const rateAverageFormat = ref(rateAverage.value.toFixed(1))
 const rateAverageFloor = ref(Math.floor(rateAverage.value))
-const rateAverageFloat = computed(() => rateAverageFormat.value - rateAverageFloor.value)
-const csStarWidthCalc = computed(() => {
-  let width = rateAverageFloor.value * 24;
-  width += rateAverageFloat.value * 18
-  return `${width}px`
-});
 
 
 // pagination
 let pageneighbor = reactive([]);
-let newpageneighbor = []
-let j
+let newpageneighbor = [];
+let j;
 const pageLast = ref(10);
 const handlePageShow = (pageActive)=>{
   if(pageActive < 3){
-    Object.assign(pageneighbor, [2,3])
-    pageneighbor.length = 2
+  Object.assign(pageneighbor, [2,3])
+  pageneighbor.length = 2
   }
   else if(pageActive > pageLast.value - 2){
     Object.assign(pageneighbor, [pageActive.value-2, pageActive.value-1])
@@ -276,39 +270,38 @@ const handlePageShow = (pageActive)=>{
 handlePageShow(pageActive.value);
 
 const handleChangePage = (number) => {
-  if( number < pageLast.value){
-    pageActive.value = number
-    handlePageShow(pageActive.value)
-  };
+  if (number < pageLast.value) {
+    pageActive.value = number;
+    handlePageShow(pageActive.value);
+  }
 };
 const handleFirstPage = () => {
-  pageActive.value = 1
-  newpageneighbor =  [2 , 3]
-  Object.assign(pageneighbor, newpageneighbor)
-  pageneighbor.length = 2
+  pageActive.value = 1;
+  newpageneighbor = [2, 3];
+  Object.assign(pageneighbor, newpageneighbor);
+  pageneighbor.length = 2;
 };
 const handleLastPage = () => {
-  pageActive.value = pageLast.value
-  newpageneighbor =  [pageLast.value-2, pageLast.value-1]
-  Object.assign(pageneighbor, newpageneighbor)
-  pageneighbor.length = 2
+  pageActive.value = pageLast.value;
+  newpageneighbor = [pageLast.value - 2, pageLast.value - 1];
+  Object.assign(pageneighbor, newpageneighbor);
+  pageneighbor.length = 2;
 };
 
 const handlePrevPage = () => {
-  if(pageActive.value === 2){
-    handleFirstPage()
-  }else if(pageActive.value !== 1){
-    handleChangePage(pageActive.value - 1)
+  if (pageActive.value === 2) {
+    handleFirstPage();
+  } else if (pageActive.value !== 1) {
+    handleChangePage(pageActive.value - 1);
   }
 };
 const handleNextPage = () => {
-  if(pageActive.value === pageLast.value - 1){
-    handleLastPage()
-  }else if(pageActive.value !== pageLast.value){
-    handleChangePage(pageActive.value + 1)
+  if (pageActive.value === pageLast.value - 1) {
+    handleLastPage();
+  } else if (pageActive.value !== pageLast.value) {
+    handleChangePage(pageActive.value + 1);
   }
 };
-
 </script>
 <template>
   <div class="msg mt-10 sm:mt-[104px] ml-48 lg:ml-36 sm:ml-0">
@@ -544,51 +537,64 @@ const handleNextPage = () => {
           </div>
         </div>
         <div class="pagination_wrap my-10 flex justify-center">
-          <div @click="handleFirstPage" :class="['pagination', pageActive === 1 ? 'bg-gray-5 hover:bg-gray-5' : '']">
+          <div
+            @click="handleFirstPage"
+            :class="[
+              'pagination',
+              pageActive === 1 ? 'bg-gray-5 hover:bg-gray-5' : '',
+            ]"
+          >
             <PageStart class="text-white" />
           </div>
-          <div @click="handlePrevPage" :class="['pagination', pageActive === 1 ? 'bg-gray-5 hover:bg-gray-5' : '']" >
+          <div
+            @click="handlePrevPage"
+            :class="[
+              'pagination',
+              pageActive === 1 ? 'bg-gray-5 hover:bg-gray-5' : '',
+            ]"
+          >
             <Prev class="text-white" />
           </div>
-  
-          <div 
-            :class="['pagination',
-            pageActive === 1 ? 'bg-green' : '',]"
-            @click="handleFirstPage">
-              1
-          </div>
-          <div 
-            v-if="pageActive > 3"
-            class="ellipsis"
+
+          <div
+            :class="['pagination', pageActive === 1 ? 'bg-green' : '']"
+            @click="handleFirstPage"
           >
-              ...
+            1
           </div>
-          <div 
-            v-for="number in pageneighbor" :key="number"
-            
-            :class="['pagination',
-            number === pageActive ? 'bg-green' : '',]"
-            @click="handleChangePage(number)">
-              {{number}}
-          </div>
-          <div 
-            v-if="pageActive < pageLast - 2"
-            class="ellipsis"
+          <div v-if="pageActive > 3" class="ellipsis">...</div>
+          <div
+            v-for="number in pageneighbor"
+            :key="number"
+            :class="['pagination', number === pageActive ? 'bg-green' : '']"
+            @click="handleChangePage(number)"
           >
-              ...
+            {{ number }}
           </div>
-          <div 
-            :class="['pagination',
-            pageActive === pageLast ? 'bg-green' : '',]"
-            @click="handleLastPage">
-              {{pageLast}}
+          <div v-if="pageActive < pageLast - 2" class="ellipsis">...</div>
+          <div
+            :class="['pagination', pageActive === pageLast ? 'bg-green' : '']"
+            @click="handleLastPage"
+          >
+            {{ pageLast }}
           </div>
-          
- 
-          <div @click="handleNextPage" :class="['pagination', pageActive === pageLast ? 'bg-gray-5 hover:bg-gray-5' : '']">
+
+          <div
+            @click="handleNextPage"
+            :class="[
+              'pagination',
+              pageActive === pageLast ? 'bg-gray-5 hover:bg-gray-5' : '',
+            ]"
+          >
             <Next class="text-white" />
           </div>
-          <div @click="handleLastPage" :class="['pagination', pageActive === pageLast ? 'bg-gray-5 hover:bg-gray-5' : '']">
+          <div
+            @click="handleLastPage"
+            :class="[
+              'pagination',
+              pageActive === pageLast ? 'bg-gray-5 hover:bg-gray-5' : '',
+            ]"
+          >
             <PageEnd class="text-white" />
           </div>
         </div>
@@ -615,8 +621,5 @@ const handleNextPage = () => {
 }
 .ellipsis{
   @apply w-7 h-9 mx-1 text-gray-2 text-sm flex items-center justify-center ;
-}
-.starColor{
-    clip-path: url(#scoreClip);
 }
 </style>

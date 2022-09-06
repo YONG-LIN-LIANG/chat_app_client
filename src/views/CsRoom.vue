@@ -3,12 +3,6 @@ import Sidebar from "@/components/csRoom/Sidebar.vue";
 import { onMounted } from 'vue'
 import { usecsRoomStore } from "@/stores/csRoom"
 const csRoom = usecsRoomStore()
-// export default {
-//   name: "csRoom",
-//   components: {
-//     Sidebar,
-//   },
-// };
 
 onMounted(() => {
   window.addEventListener('resize', onWidthChange)
