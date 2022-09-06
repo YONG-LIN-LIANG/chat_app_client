@@ -326,7 +326,7 @@ const toggleTab = (item) => {
 
 // 點擊 chatList 取得 userchatList
 const handleUserChatList = async (item) => {
-  console.log("csRoom.userList", csRoom.userList);
+  // console.log("csRoom.userList", csRoom.userList);
 
   let setUserActive = {
     member_id: item.member_id,
@@ -345,9 +345,9 @@ const handleUserChatList = async (item) => {
     roomId: item.room_id,
     socketId: item.socket_id,
   });
-  
-  if(csRoom.windowWidth < 1023){
-    props.tabList.active = 0
+  // console.log('window.innerWidth',window.innerWidth)
+  if(window.innerWidth < 1023){
+    emit("toggleTab", 0)
   }
   // csRoom.chatSectionDom.scrollTop = csRoom.chatSectionHeight;
 

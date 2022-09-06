@@ -4,11 +4,13 @@ import { onMounted } from 'vue'
 import { usecsRoomStore } from "@/stores/csRoom"
 const csRoom = usecsRoomStore()
 
-onMounted(() => {
-  window.addEventListener('resize', onWidthChange)
-})
+// onMounted(() => {
+//   window.addEventListener('resize', onWidthChange)
+// })
 
-const onWidthChange = () => csRoom.windowWidth = window.innerWidth
+// const onWidthChange = () => {
+//   csRoom.windowWidth = window.innerWidth
+// }
 
 </script>
 
