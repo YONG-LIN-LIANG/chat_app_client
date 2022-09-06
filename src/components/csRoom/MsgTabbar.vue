@@ -129,12 +129,13 @@ onMounted(() => {
 
   // 接收聊天配對
   socket.on("resPair", (data) => {
+    console.log('rrr',data)
     csRoom.userList.unshift(data);
   });
   //離開聊天室
   socket.on("resLeaveRoom", (data) => {
     console.log("resLeaveRoom", data);
-    console.log(typeof csRoom.userList[0].room_id, typeof data);
+    // console.log(typeof csRoom.userList[0].room_id, typeof data);
     let findUserListDelete = csRoom.userList.find((i) => i.room_id === data);
     let indexOfChatListDelete = csRoom.userList.indexOf(findUserListDelete);
 
@@ -155,7 +156,7 @@ onMounted(() => {
     // if userActive.roomId = data 清空userChatList
     if (csRoom.userActive.room_id === data) {
       csRoom.userActive = {};
-      csRoom.userChatList = {};
+      csRoom.userChatList = [];
       // Object.assign(csRoom.userActive,{})
       // Object.assign(csRoom.userChatList,{})
     }
