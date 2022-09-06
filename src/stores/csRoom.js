@@ -1,8 +1,5 @@
 import { defineStore } from 'pinia'
 import { ref, reactive } from 'vue'
-import { Socket } from 'socket.io-client'
-
-
 
 
 export const usecsRoomStore = defineStore('csRoom', () => {
