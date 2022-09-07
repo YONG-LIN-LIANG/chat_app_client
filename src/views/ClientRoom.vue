@@ -406,6 +406,7 @@ const handleInitializeSocketOnEvent = () => {
       const currentRoom = roomInfo.chat.find((i) => i.roomId === roomId.value);
       console.log("jjj", currentRoom, roomInfo, roomId.value);
       currentRoom.endTime = end_time;
+      currentRoom.csName = roomInfo.cs.name;
       handleSendFirstSmessage(first_question);
       dialog.name = "";
       dialog.isOpen = false;
